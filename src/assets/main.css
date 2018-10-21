@@ -1,0 +1,29 @@
+#app {
+  max-width: 400px;
+  box-shadow: 2px 2px 2px 3px #ccc;
+}
+
+h3.title {
+  margin: 0;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.content {
+  padding: 10px;
+  height: 300px;
+  overflow-y: auto;
+}
+
+.box {
+  display: flex;
+}
+
+.footer {
+  height: 35px;
+  background: #ccc;
+}

@@ -2,8 +2,8 @@ const STORAGE = chrome.storage.sync;
 
 export default {
   async update(host, seconds) {
-    const currentDate = this.getKey();
-    const data = await this.getCurrent(currentDate);
+    const currentDate = this.getCurrentDate();
+    const data = await this.getData(currentDate);
     if (data[host]) {
       data[host] += seconds;
     } else {
@@ -13,10 +13,10 @@ export default {
   },
 
   /**
-   * @description get the record for the current day
+   * @description get the record for the specified day or current day
    * @param {string} date - format(YYYY-MM-DD) the date to retrieve data for
    */
-  getCurrent(date) {
+  getData(date = this.getCurrentDate()) {
     return new Promise(resolve => {
       STORAGE.get(date, (result) => {
         return result[date] ? resolve(result[date]) : resolve({});
@@ -40,7 +40,7 @@ export default {
   /**
    * @description returns the current date in the format YYYY-MM-DD
    */
-  getKey() {
+  getCurrentDate() {
     return new Date().toISOString().substr(0, 10);
   }
 }

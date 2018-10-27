@@ -1,18 +1,29 @@
 import { HorizontalBar } from 'vue-chartjs';
+import storage from '../assets/js/storage';
 
 export default {
   extends: HorizontalBar,
-  mounted() {
+  async mounted() {
+    const data = await storage.getData();
     // Overwriting base render method with actual data.
     this.renderChart({
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      labels: Object.keys(data),
       datasets: [
         {
-          label: 'GitHub Commits',
+          label: `Stats for ${storage.getCurrentDate()}`,
           backgroundColor: '#f87979',
-          data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
+          data: Object.values(data)
         }
       ]
-    });
+    }, {
+      scales: {
+          xAxes: [{
+              ticks: {
+                  beginAtZero: true
+              }
+          }]
+      },
+      barThickness: 30
+  });
   }
 };

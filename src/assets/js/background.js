@@ -15,7 +15,6 @@ const getActiveTab = () => {
   }, activeTab => {
     const { url } = activeTab[0];
     const name = getName(url);
-    console.log(name)
     if (isTabAMatch(name)) {
       cacheStorage.push({
         name,

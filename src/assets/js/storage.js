@@ -1,3 +1,5 @@
+import { allSites } from './data';
+
 const STORAGE = chrome.storage.sync;
 
 export default {
@@ -14,13 +16,11 @@ export default {
 
   /**
    * @description get the record for the specified day or current day
-   * @param {string} date - format(YYYY-MM-DD) the date to retrieve data for
+   * @param {string} key - string for date, the format is YYYY-MM-DD
    */
-  getData(date = this.getCurrentDate()) {
-    return new Promise(resolve => {
-      STORAGE.get(date, (result) => {
-        return result[date] ? resolve(result[date]) : resolve({});
-      });
+  getData(key = this.getCurrentDate()) {
+    return new Promise((resolve) => {
+      STORAGE.get(key, result => (result[key] ? resolve(result[key]) : resolve({})));
     });
   },
 
@@ -30,8 +30,8 @@ export default {
    * @param {object} value - value to save in the sync storage
    */
   save(key, value) {
-    return new Promise(resolve => {
-      STORAGE.set({ [key] : value }, () => {
+    return new Promise((resolve) => {
+      STORAGE.set({ [key]: value }, () => {
         resolve();
       });
     });
@@ -42,5 +42,15 @@ export default {
    */
   getCurrentDate() {
     return new Date().toISOString().substr(0, 10);
+  },
+
+  /**
+   * @description set up all the records for social media sites supported by default
+   */
+  async initialize() {
+    const record = await getData('sites');
+    if (!record) {
+      this.save('sites', allSites);
+    }
   }
-}
+};

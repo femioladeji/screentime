@@ -1,9 +1,13 @@
 import storage from './storage';
+
+// set up initial data
+storage.initialize();
 export const networkFilters = {
   urls: [
     "*://*.twitter.com/",
     "*://*.facebook.com/",
-    "*://*.instagram.com/"
+    "*://*.instagram.com/",
+    "*://*.youtube.com/"
   ]
 };
 export const isTabAMatch = tabUrl => networkFilters.urls.some(each => each.includes(tabUrl));
@@ -21,6 +25,10 @@ export const end = (all) => {
 };
 
 export const getName = url => {
-  const host = new URL(url).hostname;
-  return host.replace('www.', '').replace('.com', '');
+  try {
+    const host = new URL(url).hostname;
+    return host.replace('www.', '').replace('.com', '');
+  } catch(error) {
+    return '';
+  }
 }

@@ -1,6 +1,5 @@
 #app {
   max-width: 400px;
-  box-shadow: 2px 2px 2px 3px #ccc;
 }
 
 h3.title {
@@ -26,4 +25,50 @@ h3.title {
 .footer {
   height: 35px;
   background: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.table {
+  width: 100%;
+  border-spacing: 2px;
+  border-color: grey;
+  display: table;
+  border-collapse: separate;
+  border-spacing: 2px;
+  border-color: grey;
+}
+
+.table thead tr {
+  background: #cacaca;
+}
+
+.table td, .table th {
+  padding-left: 10px;
+  text-transform: capitalize;
+}
+
+.table tr {
+  line-height: 40px;
+  text-align: left;
+}
+
+.table tbody tr:nth-of-type(odd) {
+  background-color: rgba(0,0,0,.05);
+}
+
+input[type="number"] {
+  height: 30px;
+  width: 50px;
+  text-align: center;
+  border: 1px solid #d5d5d5;
+}
+
+input[type="number"]:focus {
+  outline: none;
+}
+
+input[type="number"]:disabled {
+  background: #ededed;
 }

@@ -2,15 +2,18 @@
   <div id="app">
     <h3 class="title text-center">Social Network Timer</h3>
     <router-view/>
-    <div class="box footer">
-
-    </div>
+    <Footer />
   </div>
 </template>
 
 <script>
+import Footer from './components/footer';
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    Footer
+  }
 };
 </script>
 

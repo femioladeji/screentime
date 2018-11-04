@@ -5,7 +5,6 @@
 </template>
 
 <script>
-// import { HorizontalBar } from 'vue-chartjs';
 import Chart from './chart';
 
 export default {

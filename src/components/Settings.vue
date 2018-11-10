@@ -10,8 +10,8 @@
       </thead>
         <tr v-for="(each, key) in sites" :key="key">
           <td>{{key}}</td>
-          <td><switch-button v-model="each.control"></switch-button></td>
-          <td><input :disabled="!each.control" type="number" v-model="each.time" /></td>
+          <td><switch-button @change="update" v-model="each.control"></switch-button></td>
+          <td><input @change="update" :disabled="!each.control" type="number" v-model="each.time" /></td>
         </tr>
       <tbody>
         <tr>
@@ -23,9 +23,7 @@
 
 <script>
 import Switch from './switch';
-import storage from '../assets/js/storage';
-
-const KEY = 'sites';
+import utils, { CONFIGKEY } from '../assets/js/utils';
 
 export default {
   name: 'Settings',
@@ -38,12 +36,13 @@ export default {
     };
   },
   async mounted() {
-    const allSites = await storage.getData(KEY);
+    const allSites = await utils.getData(CONFIGKEY);
     this.sites = allSites;
   },
   methods: {
     update() {
-      storage.save(KEY, this.sites);
+      console.log('updated', this.sites);
+      utils.saveConfiguration(CONFIGKEY, this.sites);
     }
   }
 };

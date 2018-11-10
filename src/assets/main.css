@@ -16,6 +16,7 @@ h3.title {
   padding: 10px;
   height: 300px;
   overflow-y: auto;
+  min-width: 350px;
 }
 
 .box {

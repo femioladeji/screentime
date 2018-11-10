@@ -12,7 +12,7 @@
     "lint": "eslint --ext .js,.vue src test/unit",
     "build": "node build/build.js && npm run build2 && npm run move",
     "build2": "webpack src/assets/js/background.js --output-filename dist/static/js/background.js",
-    "move": "cp manifest.json dist/manifest.json"
+    "move": "cp manifest.json dist/manifest.json && cp -r src/assets/images dist/static/images"
   },
   "dependencies": {
     "chart.js": "^2.7.3",

@@ -1,39 +1,40 @@
-import {
-  isTabAMatch,
-  hostVisited,
-  networkFilters,
-  end,
-  getName
-} from './utils';
+import utils, { networkFilters, CONFIGKEY } from './utils';
 
-let cacheStorage = [];
+let cacheStorage = {
+  active: [],
+  configuration: {},
+  data: {}
+};
 
 const getActiveTab = () => {
   chrome.tabs.query({
     active: true,
     currentWindow: true
   }, activeTab => {
-    const { url } = activeTab[0];
-    const name = getName(url);
-    if (isTabAMatch(name)) {
-      cacheStorage.push({
-        name,
-        timeStamp: Date.now()
-      });
+    const { url, id } = activeTab[0];
+    const name = utils.getName(url);
+    if (utils.isTabAMatch(name)) {
+      if (utils.isTimeExceeded(cacheStorage, name)) {
+        chrome.tabs.remove(id);
+      } else {
+        cacheStorage.active.push({
+          name,
+          timeStamp: Date.now()
+        });
+      }
     }
   });
 }
 
 (function () {
-  chrome.webRequest.onResponseStarted.addListener((details) => {
+  chrome.webRequest.onResponseStarted.addListener(details => {
     const {
       url,
-      timeStamp,
-      type
+      timeStamp
     } = details;
-    const name = getName(url);
-    if (!hostVisited(cacheStorage, name)) {
-      cacheStorage.push({
+    const name = utils.getName(url);
+    if (!utils.hostVisited(cacheStorage.active, name)) {
+      cacheStorage.active.push({
         name,
         timeStamp
       });
@@ -42,16 +43,34 @@ const getActiveTab = () => {
 
   chrome.tabs.onActivated.addListener(() => {
     // close all opened hosts
-    end(cacheStorage);
-    cacheStorage = [];
+    utils.end(cacheStorage.active);
+    cacheStorage.active = [];
     getActiveTab();
   });
+
   chrome.windows.onFocusChanged.addListener(window => {
     if (window === -1) {
-      end(cacheStorage);
-      cacheStorage = [];
+      utils.end(cacheStorage.active);
+      cacheStorage.active = [];
     } else {
       getActiveTab();
+    }
+  });
+
+  chrome.webRequest.onBeforeRequest.addListener(details => {
+    const cancelRequest = utils.isTimeExceeded(cacheStorage, utils.getName(details.url));
+    return { cancel: cancelRequest };
+  }, networkFilters, ['blocking']);
+
+  chrome.alarms.create('cache', {
+    periodInMinutes: 1
+  });
+
+  chrome.alarms.onAlarm.addListener(async ({ name }) => {
+    if (name === 'cache') {
+      const record = await Promise.all([utils.getData(CONFIGKEY), utils.getData(utils.getCurrentDate())]);
+      cacheStorage.configuration = record[0];
+      cacheStorage.data = record[1];
     }
   });
 }());

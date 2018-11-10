@@ -1,6 +1,6 @@
-import { allSites } from './data';
+import allSites from './data';
 
-const STORAGE = chrome.storage.sync;
+const STORAGE = chrome.storage.local;
 
 export default {
   async update(host, seconds) {
@@ -16,9 +16,9 @@ export default {
 
   /**
    * @description get the record for the specified day or current day
-   * @param {string} key - string for date, the format is YYYY-MM-DD
+   * @param {string} key - data key
    */
-  getData(key = this.getCurrentDate()) {
+  getData(key) {
     return new Promise((resolve) => {
       STORAGE.get(key, result => (result[key] ? resolve(result[key]) : resolve({})));
     });
@@ -38,19 +38,16 @@ export default {
   },
 
   /**
-   * @description returns the current date in the format YYYY-MM-DD
-   */
-  getCurrentDate() {
-    return new Date().toISOString().substr(0, 10);
-  },
-
-  /**
    * @description set up all the records for social media sites supported by default
    */
   async initialize() {
-    const record = await getData('sites');
-    if (!record) {
+    const record = await this.getData('sites');
+    if (!Object.values(record).length) {
       this.save('sites', allSites);
     }
+  },
+
+  getCurrentDate() {
+    return new Date().toISOString().substr(0, 10);
   }
 };

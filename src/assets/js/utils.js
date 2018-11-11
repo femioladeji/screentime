@@ -29,7 +29,7 @@ export default {
   },
 
   hostVisited(store, name) {
-    return this.getHostIndex(store, name) >= 0
+    return this.getHostIndex(store, name) >= 0;
   },
 
   /**
@@ -45,10 +45,15 @@ export default {
    * @param {Array<string>} all array of sites currently being tracked (this should
    * typically be an array of length 1)
    */
-  end(all) {
+  end(cacheStorage) {
     const moment = Date.now();
-    all.forEach((eachHost) => {
+    const { active } = cacheStorage;
+    active.forEach((eachHost) => {
       const seconds = parseInt((moment - eachHost.timeStamp) / 1000, 10);
+      // intentionally manipulating cache storage to keep it updated real time
+      cacheStorage.data[eachHost.name] = cacheStorage.data[eachHost.name]
+        ? cacheStorage.data[eachHost.name] + seconds
+        : seconds;
       storage.update(eachHost.name, seconds);
     });
   },
@@ -72,6 +77,7 @@ export default {
    * @param {string} name site name
    */
   notify(name) {
+    // eslint-disable-next-line
     chrome.notifications.create({
       type: 'basic',
       iconUrl: 'static/images/control.png',

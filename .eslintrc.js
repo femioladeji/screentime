@@ -38,7 +38,8 @@ module.exports = {
       ignorePropertyModificationsFor: [
         'state', // for vuex state
         'acc', // for reduce accumulators
-        'e' // for e.returnvalue
+        'e', // for e.returnvalue
+        'cacheStorage' // used to cache data
       ]
     }],
     // allow optionalDependencies

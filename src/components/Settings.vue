@@ -5,13 +5,19 @@
         <tr>
           <th width="40%">Site</th>
           <th>Control</th>
-          <th>Time allowed</th>
+          <th>Time allowe (minutes)</th>
         </tr>
       </thead>
         <tr v-for="(each, key) in sites" :key="key">
           <td>{{key}}</td>
           <td><switch-button @change="update" v-model="each.control"></switch-button></td>
-          <td><input @change="update" :disabled="!each.control" type="number" v-model="each.time" /></td>
+          <td>
+            <input
+              @change="update"
+              :disabled="!each.control"
+              type="number"
+              v-model="each.time" />
+          </td>
         </tr>
       <tbody>
         <tr>
@@ -41,7 +47,6 @@ export default {
   },
   methods: {
     update() {
-      console.log('updated', this.sites);
       utils.saveConfiguration(CONFIGKEY, this.sites);
     }
   }

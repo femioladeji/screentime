@@ -1,5 +1,5 @@
 import allSites from './data';
-
+// eslint-disable-next-line
 const STORAGE = chrome.storage.local;
 
 export default {

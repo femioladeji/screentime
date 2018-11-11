@@ -43,14 +43,14 @@ const getActiveTab = () => {
 
   chrome.tabs.onActivated.addListener(() => {
     // close all opened hosts
-    utils.end(cacheStorage.active);
+    utils.end(cacheStorage);
     cacheStorage.active = [];
     getActiveTab();
   });
 
   chrome.windows.onFocusChanged.addListener(window => {
     if (window === -1) {
-      utils.end(cacheStorage.active);
+      utils.end(cacheStorage);
       cacheStorage.active = [];
     } else {
       getActiveTab();
@@ -68,9 +68,8 @@ const getActiveTab = () => {
 
   chrome.alarms.onAlarm.addListener(async ({ name }) => {
     if (name === 'cache') {
-      const record = await Promise.all([utils.getData(CONFIGKEY), utils.getData(utils.getCurrentDate())]);
-      cacheStorage.configuration = record[0];
-      cacheStorage.data = record[1];
+      const configuration = await utils.getData(CONFIGKEY);
+      cacheStorage.configuration = configuration;
     }
   });
 }());

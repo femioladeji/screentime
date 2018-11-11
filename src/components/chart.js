@@ -25,7 +25,7 @@ export default {
           },
           scaleLabel: {
             display: true,
-            labelString: 'hours'
+            labelString: 'Minutes'
           }
         }],
         yAxes: [{

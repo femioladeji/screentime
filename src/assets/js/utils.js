@@ -75,15 +75,24 @@ export default {
   /**
    * @description post a notification
    * @param {string} name site name
+   * @param {boolean} action if action buttons should be added
    */
-  notify(name) {
-    // eslint-disable-next-line
-    chrome.notifications.create({
+  notify(name, action) {
+    const notificationObject = {
       type: 'basic',
       iconUrl: 'static/images/control.png',
       title: 'TIME LIMIT',
       message: `Time limit exceeded for ${name}`
-    }, () => {
+    };
+    if (action) {
+      notificationObject.buttons = [
+        { title: 'Close' },
+        { title: 'Close later' }
+      ];
+      notificationObject.requireInteraction = true;
+    }
+    // eslint-disable-next-line
+    chrome.notifications.create(notificationObject, () => {
       // console.log(id);
     });
   },

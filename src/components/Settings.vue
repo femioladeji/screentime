@@ -16,13 +16,18 @@
             <input
               :disabled="!each.control"
               type="number"
-              v-model="each.time" />
+              v-model.number="each.time" />
           </td>
         </tr>
       </tbody>
     </table>
     <div class="box center">
-      <button :disabled="saveStatus !== 0" type="button" @click="update" class="btn">{{caption}}</button>
+      <button
+        :disabled="saveStatus !== 0"
+        type="button"
+        @click="update"
+        class="btn">{{caption}}
+      </button>
     </div>
   </div>
 </template>

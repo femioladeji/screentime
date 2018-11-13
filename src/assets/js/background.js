@@ -25,9 +25,23 @@ const getActiveTab = () => {
           name,
           timeStamp: Date.now()
         });
+        setDelayedAction(name);
       }
     }
   });
+}
+
+let delayHandler;
+
+const setDelayedAction = async (name) => {
+  clearTimeout(delayHandler);
+  const configuration = await utils.getData(CONFIGKEY);
+  if (configuration[name].control) {
+    const secondsLeft = configuration[name].time * 60 - (cacheStorage.data[name] || 0);
+    delayHandler = setTimeout(() => {
+      utils.notify(name, true);
+    }, secondsLeft * 1000);
+  }
 }
 
 const synchronize = async (fetchData = false) => {
@@ -46,15 +60,11 @@ const synchronize = async (fetchData = false) => {
   synchronize(true);
   chrome.webRequest.onResponseStarted.addListener(details => {
     const {
-      url,
-      timeStamp
+      url
     } = details;
     const name = utils.getName(url);
     if (!utils.hostVisited(cacheStorage.active, name)) {
-      cacheStorage.active.push({
-        name,
-        timeStamp
-      });
+      getActiveTab();
     }
   }, networkFilters);
 
@@ -79,13 +89,17 @@ const synchronize = async (fetchData = false) => {
     return { cancel: cancelRequest };
   }, networkFilters, ['blocking']);
 
-  chrome.alarms.create('cache', {
-    periodInMinutes: 1
-  });
-
-  chrome.alarms.onAlarm.addListener(async ({ name }) => {
-    if (name === 'cache') {
-      synchronize();
+  chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
+    if (buttonIndex === 0) {
+      //close the tab
+      chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      }, activeTab => {
+        chrome.tabs.remove(activeTab[0].id);
+      });
     }
   });
+
+  setInterval(synchronize, 10000);
 }());

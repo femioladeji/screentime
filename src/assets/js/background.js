@@ -15,7 +15,11 @@ const getActiveTab = () => {
     const name = utils.getName(url);
     if (utils.isTabAMatch(name)) {
       if (utils.isTimeExceeded(cacheStorage, name)) {
-        chrome.tabs.remove(id);
+        try {
+          chrome.tabs.remove(id);
+        } catch (error) {
+          console.log('error', error);
+        }
       } else {
         cacheStorage.active.push({
           name,
@@ -26,7 +30,20 @@ const getActiveTab = () => {
   });
 }
 
+const synchronize = async (fetchData = false) => {
+  const promises = [utils.getData(CONFIGKEY)];
+  if (fetchData) {
+    promises.push(utils.getData(utils.getCurrentDate()));
+  }
+  const details = await Promise.all(promises);
+  cacheStorage.configuration = details[0];
+  if (fetchData) {
+    cacheStorage.data = details[1];
+  }
+}
+
 (function () {
+  synchronize(true);
   chrome.webRequest.onResponseStarted.addListener(details => {
     const {
       url,
@@ -68,8 +85,7 @@ const getActiveTab = () => {
 
   chrome.alarms.onAlarm.addListener(async ({ name }) => {
     if (name === 'cache') {
-      const configuration = await utils.getData(CONFIGKEY);
-      cacheStorage.configuration = configuration;
+      synchronize();
     }
   });
 }());

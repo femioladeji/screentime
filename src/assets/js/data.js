@@ -18,5 +18,10 @@ export default {
     control: false,
     time: 0,
     url: '*://*.youtube.com/'
+  },
+  netflix: {
+    control: false,
+    time: 0,
+    url: '*://*.netflix.com/'
   }
 };

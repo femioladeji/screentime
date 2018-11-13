@@ -23,6 +23,10 @@ h3.title {
   display: flex;
 }
 
+.box.center {
+  justify-content: center;
+}
+
 .footer {
   height: 35px;
   background: #ccc;
@@ -72,4 +76,21 @@ input[type="number"]:focus {
 
 input[type="number"]:disabled {
   background: #ededed;
+}
+
+button.btn {
+  border: 1px solid #d5d5d5;
+  margin-top: 10px;
+  width: 100px;
+  height: 30px;
+  background: #50a2ac;
+  color: #fff;
+}
+
+button.btn:focus {
+  outline: none;
+}
+
+button.btn:disabled {
+  background: #7eb6bd;
 }

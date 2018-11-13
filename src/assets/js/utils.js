@@ -89,7 +89,7 @@ export default {
   },
 
   saveConfiguration(key, data) {
-    storage.save(key, data);
+    return storage.save(key, data);
   },
 
   /**

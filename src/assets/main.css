@@ -1,0 +1,96 @@
+#app {
+  max-width: 400px;
+}
+
+h3.title {
+  margin: 0;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.content {
+  padding: 10px;
+  height: 300px;
+  overflow-y: auto;
+  min-width: 350px;
+}
+
+.box {
+  display: flex;
+}
+
+.box.center {
+  justify-content: center;
+}
+
+.footer {
+  height: 35px;
+  background: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.table {
+  width: 100%;
+  border-spacing: 2px;
+  border-color: grey;
+  display: table;
+  border-collapse: separate;
+  border-spacing: 2px;
+  border-color: grey;
+}
+
+.table thead tr {
+  background: #cacaca;
+}
+
+.table td, .table th {
+  padding-left: 10px;
+  text-transform: capitalize;
+}
+
+.table tr {
+  line-height: 40px;
+  text-align: left;
+}
+
+.table tbody tr:nth-of-type(odd) {
+  background-color: rgba(0,0,0,.05);
+}
+
+input[type="number"] {
+  height: 30px;
+  width: 50px;
+  text-align: center;
+  border: 1px solid #d5d5d5;
+}
+
+input[type="number"]:focus {
+  outline: none;
+}
+
+input[type="number"]:disabled {
+  background: #ededed;
+}
+
+button.btn {
+  border: 1px solid #d5d5d5;
+  margin-top: 10px;
+  width: 100px;
+  height: 30px;
+  background: #50a2ac;
+  color: #fff;
+}
+
+button.btn:focus {
+  outline: none;
+}
+
+button.btn:disabled {
+  background: #7eb6bd;
+}

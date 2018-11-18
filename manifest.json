@@ -1,0 +1,31 @@
+{
+    "manifest_version": 2,
+    "name": "Social Media Screentime",
+    "description": "Control how much time you invest in social media",
+    "short_name": "social media screentime",
+    "version": "1.0",
+    "browser_action": {
+      "default_popup": "index.html"
+    },
+    "background": {
+      "scripts": [
+        "static/js/background.js"
+      ]
+    },
+    "permissions": [
+      "storage",
+      "notifications",
+      "tabs",
+      "webRequest",
+      "alarms",
+      "webRequestBlocking",
+      "*://*.twitter.com/",
+      "*://*.facebook.com/",
+      "*://*.instagram.com/",
+      "*://*.youtube.com/",
+      "*://*.netflix.com/",
+      "*://*.whatsapp.com/"
+    ],
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  }
+  

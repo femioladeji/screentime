@@ -85,7 +85,7 @@ export default {
   notify(name, action) {
     const notificationObject = {
       type: 'basic',
-      iconUrl: 'static/images/control.png',
+      iconUrl: 'images/control.png',
       title: 'TIME LIMIT',
       message: `Time limit exceeded for ${name}`
     };

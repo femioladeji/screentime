@@ -17,7 +17,6 @@
       "notifications",
       "tabs",
       "webRequest",
-      "alarms",
       "webRequestBlocking",
       "*://*.twitter.com/",
       "*://*.facebook.com/",

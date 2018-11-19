@@ -1,34 +1,14 @@
-# screentime
+# social-media-timer
 
-## Project setup
+> A chrome extension for keeping track and managing your time on major social media platforms
+
+## Project Setup
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
+## Package extension
 ```
 npm run build
 ```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Run your unit tests
-```
-npm run test:unit
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Go to `chrome://extensions` on your chrome browser. Click on `Load unpacked` and select the dist folder

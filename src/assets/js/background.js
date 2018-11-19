@@ -1,7 +1,7 @@
 import utils, { networkFilters, CONFIGKEY } from './utils';
 
 let cacheStorage = {
-  active: [],
+  active: {},
   configuration: {},
   data: {}
 };
@@ -66,10 +66,7 @@ const synchronize = async (fetchData = false) => {
 (function () {
   synchronize(true);
 
-  chrome.webRequest.onResponseStarted.addListener(details => {
-    const {
-      url
-    } = details;
+  chrome.webRequest.onResponseStarted.addListener(({ url }) => {
     const name = utils.getName(url);
     if (!utils.hostVisited(cacheStorage.active, name)) {
       getActiveTab();

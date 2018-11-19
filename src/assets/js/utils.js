@@ -48,19 +48,17 @@ export default {
   end(cacheStorage) {
     const moment = Date.now();
     const { active } = cacheStorage;
-    active.forEach((eachHost) => {
-      const seconds = parseInt((moment - eachHost.timeStamp) / 1000, 10);
-      const currentDate = this.getCurrentDate();
-      if (!cacheStorage.data[currentDate]) {
-        cacheStorage.data = {};
-        cacheStorage.data[currentDate] = {};
-      }
-      // intentionally manipulating cache storage to keep it updated real time
-      cacheStorage.data[currentDate][eachHost.name] = cacheStorage.data[currentDate][eachHost.name]
-        ? cacheStorage.data[currentDate][eachHost.name] + seconds
-        : seconds;
-      storage.update(eachHost.name, seconds);
-    });
+    const seconds = parseInt((moment - active.timeStamp) / 1000, 10);
+    const currentDate = this.getCurrentDate();
+    if (!cacheStorage.data[currentDate]) {
+      cacheStorage.data = {};
+      cacheStorage.data[currentDate] = {};
+    }
+    // intentionally manipulating cache storage to keep it updated real time
+    cacheStorage.data[currentDate][active.name] = cacheStorage.data[currentDate][active.name]
+      ? cacheStorage.data[currentDate][active.name] + seconds
+      : seconds;
+    storage.update(active.name, seconds);
   },
 
   /**

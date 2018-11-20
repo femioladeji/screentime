@@ -17,5 +17,5 @@ export default new Router({
       name: 'Settings',
       component: Settings
     }
-  ],
+  ]
 });

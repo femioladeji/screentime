@@ -26,11 +26,12 @@ export default {
   },
 
   getActiveTab() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
+    // eslint-disable-next-line
       chrome.tabs.query({
         active: true,
         currentWindow: true
-      }, activeTab => {
+      }, (activeTab) => {
         resolve(activeTab[0]);
       });
     });
@@ -117,8 +118,8 @@ export default {
   isTimeExceeded({ configuration, data }, name) {
     // check if the control is on and time spent on the site is greater than allotted time
     const current = data[this.getCurrentDate()];
-    if (configuration[name] && configuration[name].control &&
-      current && current[name] > configuration[name].time * 60) {
+    if (configuration[name] && configuration[name].control
+      && current && current[name] > configuration[name].time * 60) {
       this.notify(name);
       return true;
     }

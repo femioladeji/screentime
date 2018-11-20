@@ -1,11 +1,17 @@
 {
     "manifest_version": 2,
-    "name": "Social Media Screentime",
-    "description": "Control how much time you invest in social media",
-    "short_name": "social media screentime",
+    "name": "Screentime",
+    "description": "Control how much time you spend on social media",
+    "short_name": "screentime",
     "version": "1.0",
     "browser_action": {
-      "default_popup": "index.html"
+      "default_popup": "index.html",
+      "default_icon" : "images/icon_128.png"
+    },
+    "icons": {
+      "16": "images/icon_16.png",
+      "48": "images/icon_48.png",
+      "128": "images/icon_128.png"
     },
     "background": {
       "scripts": [

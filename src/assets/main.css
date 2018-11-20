@@ -14,7 +14,7 @@ h3.title {
 
 .content {
   padding: 10px;
-  height: 300px;
+  height: 320px;
   overflow-y: auto;
   min-width: 350px;
 }
@@ -93,4 +93,9 @@ button.btn:focus {
 
 button.btn:disabled {
   background: #7eb6bd;
+}
+
+a {
+  text-decoration: none;
+  color: #1a7c89;
 }

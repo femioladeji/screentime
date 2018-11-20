@@ -101,5 +101,9 @@ const synchronize = async (fetchData = false) => {
     }
   });
 
-  setInterval(synchronize, 10000);
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (changes.sites && area === 'local') {
+      synchronize();
+    }
+  });
 }());

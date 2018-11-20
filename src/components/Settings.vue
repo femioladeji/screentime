@@ -16,6 +16,7 @@
             <input
               :disabled="!each.control"
               type="number"
+              min="0"
               v-model.number="each.time" />
           </td>
         </tr>

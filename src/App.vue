@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h3 class="title text-center">Social Network Timer</h3>
+    <h3 class="title text-center">SCREENTIME</h3>
     <router-view/>
     <Footer />
   </div>

@@ -8,13 +8,10 @@ let cacheStorage = {
 
 let delayHandler;
 
-const getActiveTab = () => {
-  clearTimeout(delayHandler);
-  chrome.tabs.query({
-    active: true,
-    currentWindow: true
-  }, activeTab => {
-    const { url, id } = activeTab[0];
+const setActive = async () => {
+  const activeTab = await utils.getActiveTab();
+  if (activeTab) {
+    const { url, id } = activeTab;
     const name = utils.getName(url);
     if (utils.isTabAMatch(name)) {
       if (utils.isTimeExceeded(cacheStorage, name)) {
@@ -24,14 +21,21 @@ const getActiveTab = () => {
           console.log('error', error);
         }
       } else {
-        cacheStorage.active.push({
-          name,
-          timeStamp: Date.now()
-        });
-        setDelayedAction(name);
+        if (cacheStorage.active.name !== name) {
+          // if a different site is active then end the existing site's session
+          utils.end(cacheStorage);
+          cacheStorage.active = {
+            name,
+            timeStamp: Date.now()
+          };
+          console.log(`${cacheStorage.active.name} visited at ${cacheStorage.active.timeStamp}`);
+          clearTimeout(delayHandler);
+          setDelayedAction(name);
+          console.log('timer cleared and reset');
+        }
       }
     }
-  });
+  }
 }
 
 const setDelayedAction = async (name) => {
@@ -66,34 +70,26 @@ const synchronize = async (fetchData = false) => {
 (function () {
   synchronize(true);
 
-  chrome.webRequest.onResponseStarted.addListener(({ url }) => {
-    const name = utils.getName(url);
-    if (!utils.hostVisited(cacheStorage.active, name)) {
-      getActiveTab();
-    }
-  }, networkFilters);
+  chrome.tabs.onUpdated.addListener(() => {
+    setActive();
+  });
 
   chrome.tabs.onActivated.addListener(() => {
-    // close all opened hosts
-    utils.end(cacheStorage);
-    cacheStorage.active = [];
-    getActiveTab();
+    clearTimeout(delayHandler);
+    if (cacheStorage.active.name) {
+      utils.end(cacheStorage);
+    }
+    setActive();
   });
 
   chrome.windows.onFocusChanged.addListener(window => {
+    clearTimeout(delayHandler);
     if (window === -1) {
-      clearTimeout(delayHandler);
       utils.end(cacheStorage);
-      cacheStorage.active = [];
     } else {
-      getActiveTab();
+      setActive();
     }
   });
-
-  chrome.webRequest.onBeforeRequest.addListener(details => {
-    const cancelRequest = utils.isTimeExceeded(cacheStorage, utils.getName(details.url));
-    return { cancel: cancelRequest };
-  }, networkFilters, ['blocking']);
 
   chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
     if (buttonIndex === 0) {

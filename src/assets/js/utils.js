@@ -24,12 +24,15 @@ export default {
     return networkFilters.urls.some(each => each.includes(tabUrl));
   },
 
-  getHostIndex(store, name) {
-    return store.findIndex(each => each.name === name);
-  },
-
-  hostVisited(store, name) {
-    return this.getHostIndex(store, name) >= 0;
+  getActiveTab() {
+    return new Promise(resolve => {
+      chrome.tabs.query({
+        active: true,
+        currentWindow: true
+      }, activeTab => {
+        resolve(activeTab[0]);
+      });
+    });
   },
 
   /**
@@ -48,17 +51,21 @@ export default {
   end(cacheStorage) {
     const moment = Date.now();
     const { active } = cacheStorage;
-    const seconds = parseInt((moment - active.timeStamp) / 1000, 10);
-    const currentDate = this.getCurrentDate();
-    if (!cacheStorage.data[currentDate]) {
-      cacheStorage.data = {};
-      cacheStorage.data[currentDate] = {};
+    if (active.name) {
+      const seconds = parseInt((moment - active.timeStamp) / 1000, 10);
+      const currentDate = this.getCurrentDate();
+      if (!cacheStorage.data[currentDate]) {
+        cacheStorage.data = {};
+        cacheStorage.data[currentDate] = {};
+      }
+      // intentionally manipulating cache storage to keep it updated real time
+      cacheStorage.data[currentDate][active.name] = cacheStorage.data[currentDate][active.name]
+        ? cacheStorage.data[currentDate][active.name] + seconds
+        : seconds;
+      console.log(`${active.name} for ${seconds}`)
+      cacheStorage.active = {};
+      storage.update(active.name, seconds);
     }
-    // intentionally manipulating cache storage to keep it updated real time
-    cacheStorage.data[currentDate][active.name] = cacheStorage.data[currentDate][active.name]
-      ? cacheStorage.data[currentDate][active.name] + seconds
-      : seconds;
-    storage.update(active.name, seconds);
   },
 
   /**

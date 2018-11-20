@@ -15,15 +15,7 @@
     "permissions": [
       "storage",
       "notifications",
-      "tabs",
-      "webRequest",
-      "webRequestBlocking",
-      "*://*.twitter.com/",
-      "*://*.facebook.com/",
-      "*://*.instagram.com/",
-      "*://*.youtube.com/",
-      "*://*.netflix.com/",
-      "*://*.whatsapp.com/"
+      "tabs"
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
   }

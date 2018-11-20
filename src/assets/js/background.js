@@ -1,4 +1,4 @@
-import utils, { networkFilters, CONFIGKEY } from './utils';
+import utils, { CONFIGKEY } from './utils';
 
 let cacheStorage = {
   active: {},
@@ -15,11 +15,7 @@ const setActive = async () => {
     const name = utils.getName(url);
     if (utils.isTabAMatch(name)) {
       if (utils.isTimeExceeded(cacheStorage, name)) {
-        try {
-          chrome.tabs.remove(id);
-        } catch (error) {
-          console.log('error', error);
-        }
+        chrome.tabs.remove(id);
       } else {
         if (cacheStorage.active.name !== name) {
           // if a different site is active then end the existing site's session
@@ -28,10 +24,8 @@ const setActive = async () => {
             name,
             timeStamp: Date.now()
           };
-          console.log(`${cacheStorage.active.name} visited at ${cacheStorage.active.timeStamp}`);
           clearTimeout(delayHandler);
           setDelayedAction(name);
-          console.log('timer cleared and reset');
         }
       }
     }
@@ -70,8 +64,12 @@ const synchronize = async (fetchData = false) => {
 (function () {
   synchronize(true);
 
-  chrome.tabs.onUpdated.addListener(() => {
-    setActive();
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    const { url } = tab;
+    const name = utils.getName(url);
+    if (cacheStorage.active.name !== name) {
+      setActive();
+    }
   });
 
   chrome.tabs.onActivated.addListener(() => {

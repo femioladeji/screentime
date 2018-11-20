@@ -62,7 +62,6 @@ export default {
       cacheStorage.data[currentDate][active.name] = cacheStorage.data[currentDate][active.name]
         ? cacheStorage.data[currentDate][active.name] + seconds
         : seconds;
-      console.log(`${active.name} for ${seconds}`)
       cacheStorage.active = {};
       storage.update(active.name, seconds);
     }
@@ -91,7 +90,7 @@ export default {
     const notificationObject = {
       type: 'basic',
       iconUrl: 'images/control.png',
-      title: 'TIME LIMIT',
+      title: 'SCREENTIME',
       message: `Time limit exceeded for ${name}`
     };
     if (action) {
@@ -102,7 +101,6 @@ export default {
     }
     // eslint-disable-next-line
     chrome.notifications.create(notificationObject, () => {
-      // console.log(id);
     });
   },
 

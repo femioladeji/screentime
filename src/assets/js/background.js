@@ -1,4 +1,4 @@
-import utils, { CONFIGKEY } from './utils';
+import utils, { CONFIGKEY, DATAKEY } from './utils';
 
 let cacheStorage = {
   active: {},
@@ -47,16 +47,17 @@ const setDelayedAction = async (name) => {
 
 const synchronize = async (fetchData = false) => {
   const promises = [utils.getData(CONFIGKEY)];
+  let currentDate;
   if (fetchData) {
-    promises.push(utils.getData(utils.getCurrentDate()));
+    currentDate = utils.getCurrentDate();
+    promises.push(utils.getData(DATAKEY));
   }
   const details = await Promise.all(promises);
   cacheStorage.configuration = details[0];
   if (fetchData) {
-    const currentDate = utils.getCurrentDate();
     if (!cacheStorage.data[currentDate]) {
       cacheStorage.data = {};
-      cacheStorage.data[currentDate] = details[1];
+      cacheStorage.data[currentDate] = details[1][currentDate];
     }
   }
 }

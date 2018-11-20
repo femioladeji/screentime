@@ -1,11 +1,12 @@
 import { HorizontalBar } from 'vue-chartjs';
-import utils from '../assets/js/utils';
+import utils, { DATAKEY } from '../assets/js/utils';
 
 export default {
   extends: HorizontalBar,
   async mounted() {
     const currentDate = utils.getCurrentDate();
-    const data = await utils.getData(currentDate);
+    let data = await utils.getData(DATAKEY);
+    data = data[currentDate] || {};
     const values = Object.values(data).map(each => (each / 60).toFixed(2));
     // Overwriting base render method with actual data.
     this.renderChart({

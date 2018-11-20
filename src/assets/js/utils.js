@@ -8,6 +8,7 @@ export const networkFilters = {
   urls: Object.values(allSites).map(each => each.url)
 };
 
+export const DATAKEY = 'timer';
 export const CONFIGKEY = 'sites';
 
 export default {
@@ -89,7 +90,7 @@ export default {
   notify(name, action) {
     const notificationObject = {
       type: 'basic',
-      iconUrl: 'images/control.png',
+      iconUrl: 'images/icon_128.png',
       title: 'SCREENTIME',
       message: `Time limit exceeded for ${name}`
     };

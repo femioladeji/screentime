@@ -1,17 +1,22 @@
 import allSites from './data';
 // eslint-disable-next-line
 const STORAGE = chrome.storage.local;
+const DATAKEY = 'timer';
 
 export default {
   async update(host, seconds) {
     const currentDate = this.getCurrentDate();
-    const data = await this.getData(currentDate);
+    let data = await this.getData(DATAKEY);
+    data = data[currentDate];
+    if (!data) {
+      data = {};
+    }
     if (data[host]) {
       data[host] += seconds;
     } else {
       data[host] = seconds;
     }
-    this.save(currentDate, data);
+    this.save(DATAKEY, { [currentDate]: data });
   },
 
   /**

@@ -7,10 +7,7 @@ export default {
   async update(host, seconds) {
     const currentDate = this.getCurrentDate();
     let data = await this.getData(DATAKEY);
-    data = data[currentDate];
-    if (!data) {
-      data = {};
-    }
+    data = data[currentDate] || {};
     if (data[host]) {
       data[host] += seconds;
     } else {

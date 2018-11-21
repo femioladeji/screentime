@@ -63,6 +63,10 @@ h3.title {
   background-color: rgba(0,0,0,.05);
 }
 
+.table td img {
+  vertical-align: middle;
+}
+
 input[type="number"] {
   height: 30px;
   width: 50px;
@@ -78,7 +82,7 @@ input[type="number"]:disabled {
   background: #ededed;
 }
 
-button.btn {
+.btn {
   border: 1px solid #d5d5d5;
   margin-top: 10px;
   width: 100px;
@@ -87,7 +91,7 @@ button.btn {
   color: #fff;
 }
 
-button.btn:focus {
+.btn:focus {
   outline: none;
 }
 
@@ -98,4 +102,20 @@ button.btn:disabled {
 a {
   text-decoration: none;
   color: #1a7c89;
+}
+
+.form {
+  width: 80%;
+  margin: auto;
+}
+
+.form input {
+  width: 100%;
+  height: 30px;
+  margin-bottom: 20px;
+  padding: 3px;
+}
+
+.form input:focus {
+  outline: none;
 }

@@ -10,7 +10,7 @@ let delayHandler;
 
 const setDelayedAction = async (name) => {
   const configuration = await utils.getData(CONFIGKEY);
-  if (configuration[name].control) {
+  if (configuration[name] && configuration[name].control) {
     const currentDate = utils.getCurrentDate();
     const { data } = cacheStorage;
     let timeSpent = 0;
@@ -29,7 +29,7 @@ const setActive = async () => {
   if (activeTab) {
     const { url, id } = activeTab;
     const name = utils.getName(url);
-    if (utils.isTabAMatch(name)) {
+    if (utils.isTabAMatch(name, cacheStorage.configuration)) {
       if (utils.isTimeExceeded(cacheStorage, name)) {
         // eslint-disable-next-line
         chrome.tabs.remove(id);

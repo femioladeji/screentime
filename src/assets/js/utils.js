@@ -1,17 +1,13 @@
 import storage from './storage';
-import allSites from './data';
 
 // set up initial data
 storage.initialize();
-
-export const networkFilters = {
-  urls: Object.values(allSites).map(each => each.url)
-};
 
 export const DATAKEY = 'timer';
 export const CONFIGKEY = 'sites';
 
 export default {
+
   getData(key) {
     return storage.getData(key);
   },
@@ -21,8 +17,9 @@ export default {
    * @param {string} tabUrl
    * @returns {boolean}
    */
-  isTabAMatch(tabUrl) {
-    return networkFilters.urls.some(each => each.includes(tabUrl));
+  isTabAMatch(tabUrl, configuration) {
+    const allSites = Object.values(configuration).map(each => each.url);
+    return allSites.some(each => each.includes(tabUrl));
   },
 
   getActiveTab() {

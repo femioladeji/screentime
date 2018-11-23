@@ -36,7 +36,6 @@ export default {
           time: 0,
           url: this.siteurl
         };
-        console.log(allSites);
         await utils.saveConfiguration(CONFIGKEY, allSites);
         this.sitename = '';
         this.siteurl = '';

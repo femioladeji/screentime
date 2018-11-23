@@ -6,6 +6,8 @@ storage.initialize();
 export const DATAKEY = 'timer';
 export const CONFIGKEY = 'sites';
 
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
 export default {
 
   getData(key) {
@@ -82,15 +84,15 @@ export default {
 
   /**
    * @description post a notification
-   * @param {string} name site name
+   * @param {string} message message to show
    * @param {boolean} action if action buttons should be added
    */
-  notify(name, action) {
+  notify(message, action) {
     const notificationObject = {
       type: 'basic',
       iconUrl: 'images/icon_128.png',
       title: 'SCREENTIME',
-      message: `Time limit exceeded for ${name}`
+      message
     };
     if (action) {
       notificationObject.buttons = [
@@ -117,8 +119,34 @@ export default {
     const current = data[this.getCurrentDate()];
     if (configuration[name] && configuration[name].control
       && current && current[name] > configuration[name].time * 60) {
-      this.notify(name);
+      this.notify(`Time limit exceeded for ${name}`);
       return true;
+    }
+    return false;
+  },
+
+  isTimeframeBlocked({ configuration }, name) {
+    const currentDate = new Date();
+    const day = days[currentDate.getDay()];
+    // load the days data if there's any
+    if (!configuration[name].control || !configuration[name].days ||!configuration[name].days[day]) {
+      return false;
+    }
+    let hours = currentDate.getHours();
+    let minutes = currentDate.getMinutes();
+    if (hours < 10) {
+      hours = `0${hours}`;
+    }
+    if (minutes < 10) {
+      minutes = `0${minutes}`;
+    }
+    const currentTime = `${hours}:${minutes}`;
+    for (let i = 0; i < configuration[name].days[day].length; i++) {
+      const { from, to } = configuration[name].days[day][i];
+      if (from <= currentTime && to >= currentTime) {
+          this.notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
+          return true;
+        }
     }
     return false;
   }

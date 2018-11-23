@@ -19,7 +19,7 @@ const setDelayedAction = async (name) => {
     }
     const secondsLeft = configuration[name].time * 60 - timeSpent;
     delayHandler = setTimeout(() => {
-      utils.notify(name, true);
+      utils.notify(`Time limit exceeded for ${name}`, true);
     }, secondsLeft * 1000);
   }
 };
@@ -31,6 +31,9 @@ const setActive = async () => {
     const name = utils.getName(url);
     if (utils.isTabAMatch(name, cacheStorage.configuration)) {
       if (utils.isTimeExceeded(cacheStorage, name)) {
+        // eslint-disable-next-line
+        chrome.tabs.remove(id);
+      } else if (utils.isTimeframeBlocked(cacheStorage, name)) {
         // eslint-disable-next-line
         chrome.tabs.remove(id);
       } else if (cacheStorage.active.name !== name) {

@@ -129,8 +129,50 @@ export default {
     const currentDate = new Date();
     const day = days[currentDate.getDay()];
     // load the days data if there's any
-    if (!configuration[name].control || !configuration[name].days ||!configuration[name].days[day]) {
+    if (!configuration[name] || !configuration[name].control || !configuration[name].days ||!configuration[name].days[day]) {
       return false;
+    }
+    const currentTime = this.getCurrentTime(currentDate);
+    for (let i = 0; i < configuration[name].days[day].length; i++) {
+      const { from, to } = configuration[name].days[day][i];
+      if (from <= currentTime && to >= currentTime) {
+          this.notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
+          return true;
+        }
+    }
+    return false;
+  },
+
+  getSecondsToNextBlock(config) {
+    const currentDate = new Date();
+    const day = days[currentDate.getDay()];
+    if (!config || !config.days || !config.days[day]) {
+      return null;
+    }
+    const frames = config.days[day];
+    const currentTime = this.getCurrentTime(currentDate);
+    let leastStart = null;
+    frames.forEach(each => {
+      if (currentTime < each.from) {
+        if (!leastStart) {
+          leastStart = each.from;
+        } else if (each.from < leastStart) {
+          leastStart = each.from;
+        }
+      }
+    });
+    if (leastStart) {
+      const leastStartDate = new Date();
+      const leastStartParts = leastStart.split(':');
+      leastStartDate.setHours(leastStartParts[0], leastStartParts[1]);
+      return (leastStartDate - currentDate) / 1000;
+    }
+    return null;
+  },
+
+  getCurrentTime(currentDate = null) {
+    if (!currentDate) {
+      currentDate = new Date();
     }
     let hours = currentDate.getHours();
     let minutes = currentDate.getMinutes();
@@ -140,14 +182,6 @@ export default {
     if (minutes < 10) {
       minutes = `0${minutes}`;
     }
-    const currentTime = `${hours}:${minutes}`;
-    for (let i = 0; i < configuration[name].days[day].length; i++) {
-      const { from, to } = configuration[name].days[day][i];
-      if (from <= currentTime && to >= currentTime) {
-          this.notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
-          return true;
-        }
-    }
-    return false;
+    return `${hours}:${minutes}`;
   }
 };

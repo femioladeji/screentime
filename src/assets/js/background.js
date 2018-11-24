@@ -8,8 +8,8 @@ const cacheStorage = {
 
 let delayHandler;
 
-const setDelayedAction = async (name) => {
-  const configuration = await utils.getData(CONFIGKEY);
+const setDelayedAction = async (name, tabId) => {
+  const { configuration } = cacheStorage;
   if (configuration[name] && configuration[name].control) {
     const currentDate = utils.getCurrentDate();
     const { data } = cacheStorage;
@@ -17,9 +17,15 @@ const setDelayedAction = async (name) => {
     if (data[currentDate] && data[currentDate][name]) {
       timeSpent = data[currentDate][name];
     }
-    const secondsLeft = configuration[name].time * 60 - timeSpent;
+    const secondsToLimit = configuration[name].time * 60 - timeSpent;
+    const secondsToNextBlock = utils.getSecondsToNextBlock(configuration[name]);
+    let secondsLeft = secondsToLimit;
+    if (secondsToNextBlock && secondsToNextBlock < secondsToLimit) {
+      secondsLeft = secondsToNextBlock;
+    }
     delayHandler = setTimeout(() => {
-      utils.notify(`Time limit exceeded for ${name}`, true);
+      chrome.tabs.remove(tabId);
+      utils.notify(`Time limit exceeded for ${name}`);
     }, secondsLeft * 1000);
   }
 };
@@ -44,7 +50,7 @@ const setActive = async () => {
           timeStamp: Date.now()
         };
         clearTimeout(delayHandler);
-        setDelayedAction(name);
+        setDelayedAction(name, id);
       }
     }
   }

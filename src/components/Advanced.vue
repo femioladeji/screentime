@@ -111,7 +111,7 @@ export default {
   },
   computed: {
     isTimeframeInValid() {
-      return !(this.daysChoosen.length && this.from && this.to);
+      return !(this.daysChoosen.length && this.from && this.to && this.to > this.from);
     }
   }
 };

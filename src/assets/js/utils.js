@@ -6,6 +6,28 @@ storage.initialize();
 export const DATAKEY = 'timer';
 export const CONFIGKEY = 'sites';
 
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+function pad(number) {
+  if (number < 10) {
+    return `0${number}`;
+  }
+  return number;
+}
+
+/**
+ * intentionally did this to getISOstring that's not in UTC
+ */
+Date.prototype.toISOString = function() {
+  return this.getFullYear() +
+    '-' + pad(this.getMonth() + 1) +
+    '-' + pad(this.getDate()) +
+    'T' + pad(this.getHours()) +
+    ':' + pad(this.getMinutes()) +
+    ':' + pad(this.getSeconds()) +
+    '.' + (this.getMilliseconds() / 1000).toFixed(3).slice(2, 5)
+};
+
 export default {
 
   getData(key) {
@@ -82,15 +104,15 @@ export default {
 
   /**
    * @description post a notification
-   * @param {string} name site name
+   * @param {string} message message to show
    * @param {boolean} action if action buttons should be added
    */
-  notify(name, action) {
+  notify(message, action) {
     const notificationObject = {
       type: 'basic',
       iconUrl: 'images/icon_128.png',
       title: 'SCREENTIME',
-      message: `Time limit exceeded for ${name}`
+      message
     };
     if (action) {
       notificationObject.buttons = [
@@ -116,10 +138,70 @@ export default {
     // check if the control is on and time spent on the site is greater than allotted time
     const current = data[this.getCurrentDate()];
     if (configuration[name] && configuration[name].control
-      && current && current[name] > configuration[name].time * 60) {
-      this.notify(name);
+      && current && current[name] >= configuration[name].time * 60) {
+      this.notify(`Time limit exceeded for ${name}`);
       return true;
     }
     return false;
+  },
+
+  isTimeframeBlocked({ configuration }, name) {
+    const currentDate = new Date();
+    const day = days[currentDate.getDay()];
+    // load the days data if there's any
+    if (!configuration[name] || !configuration[name].control || !configuration[name].days ||!configuration[name].days[day]) {
+      return false;
+    }
+    const currentTime = this.getCurrentTime(currentDate);
+    for (let i = 0; i < configuration[name].days[day].length; i++) {
+      const { from, to } = configuration[name].days[day][i];
+      if (from <= currentTime && to >= currentTime) {
+          this.notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
+          return true;
+        }
+    }
+    return false;
+  },
+
+  getSecondsToNextBlock(config) {
+    const currentDate = new Date();
+    const day = days[currentDate.getDay()];
+    if (!config || !config.days || !config.days[day]) {
+      return null;
+    }
+    const frames = config.days[day];
+    const currentTime = this.getCurrentTime(currentDate);
+    let leastStart = null;
+    frames.forEach(each => {
+      if (currentTime < each.from) {
+        if (!leastStart) {
+          leastStart = each.from;
+        } else if (each.from < leastStart) {
+          leastStart = each.from;
+        }
+      }
+    });
+    if (leastStart) {
+      const leastStartDate = new Date();
+      const leastStartParts = leastStart.split(':');
+      leastStartDate.setHours(leastStartParts[0], leastStartParts[1]);
+      return (leastStartDate - currentDate) / 1000;
+    }
+    return null;
+  },
+
+  getCurrentTime(currentDate = null) {
+    if (!currentDate) {
+      currentDate = new Date();
+    }
+    let hours = currentDate.getHours();
+    let minutes = currentDate.getMinutes();
+    if (hours < 10) {
+      hours = `0${hours}`;
+    }
+    if (minutes < 10) {
+      minutes = `0${minutes}`;
+    }
+    return `${hours}:${minutes}`;
   }
 };

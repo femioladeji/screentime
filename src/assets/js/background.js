@@ -8,8 +8,8 @@ const cacheStorage = {
 
 let delayHandler;
 
-const setDelayedAction = async (name) => {
-  const configuration = await utils.getData(CONFIGKEY);
+const setDelayedAction = async (name, tabId) => {
+  const { configuration } = cacheStorage;
   if (configuration[name] && configuration[name].control) {
     const currentDate = utils.getCurrentDate();
     const { data } = cacheStorage;
@@ -17,9 +17,15 @@ const setDelayedAction = async (name) => {
     if (data[currentDate] && data[currentDate][name]) {
       timeSpent = data[currentDate][name];
     }
-    const secondsLeft = configuration[name].time * 60 - timeSpent;
+    const secondsToLimit = configuration[name].time * 60 - timeSpent;
+    const secondsToNextBlock = utils.getSecondsToNextBlock(configuration[name]);
+    let secondsLeft = secondsToLimit;
+    if (secondsToNextBlock && secondsToNextBlock < secondsToLimit) {
+      secondsLeft = secondsToNextBlock;
+    }
     delayHandler = setTimeout(() => {
-      utils.notify(name, true);
+      chrome.tabs.remove(tabId);
+      utils.notify(`You can no longer be on ${name}`);
     }, secondsLeft * 1000);
   }
 };
@@ -33,6 +39,9 @@ const setActive = async () => {
       if (utils.isTimeExceeded(cacheStorage, name)) {
         // eslint-disable-next-line
         chrome.tabs.remove(id);
+      } else if (utils.isTimeframeBlocked(cacheStorage, name)) {
+        // eslint-disable-next-line
+        chrome.tabs.remove(id);
       } else if (cacheStorage.active.name !== name) {
         // if a different site is active then end the existing site's session
         utils.end(cacheStorage);
@@ -41,7 +50,7 @@ const setActive = async () => {
           timeStamp: Date.now()
         };
         clearTimeout(delayHandler);
-        setDelayedAction(name);
+        setDelayedAction(name, id);
       }
     }
   }

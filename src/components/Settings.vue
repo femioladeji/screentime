@@ -4,8 +4,8 @@
       <thead>
         <tr>
           <th width="30%">Site</th>
-          <th>Control</th>
-          <th width="40%">Time allowed (mins)</th>
+          <th>Block</th>
+          <th>Advanced</th>
         </tr>
       </thead>
       <tbody>
@@ -13,11 +13,9 @@
           <td>{{key}}</td>
           <td><switch-button @change="update" v-model="each.control"></switch-button></td>
           <td>
-            <input
-              :disabled="!each.control"
-              type="number"
-              min="0"
-              v-model.number="each.time" />
+            <router-link :to="{ name: 'Advanced', params: { name: key }}">
+              <img src="images/settings.png" />
+            </router-link>
           </td>
         </tr>
       </tbody>

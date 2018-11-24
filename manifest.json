@@ -3,7 +3,7 @@
     "name": "Screentime",
     "description": "Control how much time you spend on social media",
     "short_name": "screentime",
-    "version": "2.0",
+    "version": "3.0",
     "browser_action": {
       "default_popup": "index.html",
       "default_icon" : "images/icon_128.png"

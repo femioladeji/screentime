@@ -4,7 +4,7 @@
     <form class="form">
       <div class="box middle">
         <label>Daily Limit (minutes)</label>
-        <input class="minute" @change="update" type="number" v-model="config.time" min="0" max="1440" />
+        <input @keyup.enter="update" class="minute" @change="update" type="number" v-model="config.time" min="0" max="1440" />
       </div>
       <h4 class="text-center">Set Time frames to block {{name}}</h4>
       <div class="box middle">

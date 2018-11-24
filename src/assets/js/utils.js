@@ -8,6 +8,26 @@ export const CONFIGKEY = 'sites';
 
 const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
+function pad(number) {
+  if (number < 10) {
+    return `0${number}`;
+  }
+  return number;
+}
+
+/**
+ * intentionally did this to getISOstring that's not in UTC
+ */
+Date.prototype.toISOString = function() {
+  return this.getFullYear() +
+    '-' + pad(this.getMonth() + 1) +
+    '-' + pad(this.getDate()) +
+    'T' + pad(this.getHours()) +
+    ':' + pad(this.getMinutes()) +
+    ':' + pad(this.getSeconds()) +
+    '.' + (this.getMilliseconds() / 1000).toFixed(3).slice(2, 5)
+};
+
 export default {
 
   getData(key) {
@@ -118,7 +138,7 @@ export default {
     // check if the control is on and time spent on the site is greater than allotted time
     const current = data[this.getCurrentDate()];
     if (configuration[name] && configuration[name].control
-      && current && current[name] > configuration[name].time * 60) {
+      && current && current[name] >= configuration[name].time * 60) {
       this.notify(`Time limit exceeded for ${name}`);
       return true;
     }

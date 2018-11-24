@@ -25,7 +25,7 @@ const setDelayedAction = async (name, tabId) => {
     }
     delayHandler = setTimeout(() => {
       chrome.tabs.remove(tabId);
-      utils.notify(`Time limit exceeded for ${name}`);
+      utils.notify(`You can no longer be on ${name}`);
     }, secondsLeft * 1000);
   }
 };

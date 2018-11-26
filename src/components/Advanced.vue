@@ -103,9 +103,7 @@ export default {
     },
 
     remove(day, index) {
-      console.log(this.config.days[day]);
       this.$delete(this.config.days[day], index);
-      console.log(this.config);
       this.update();
     }
   },

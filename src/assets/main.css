@@ -1,11 +1,73 @@
-#app {
-  max-width: 400px;
+@font-face {
+  font-family: 'CircularStd';
+  src: url('./font/CircularStd-Black.ttf') format('truetype'),
 }
 
-h3.title {
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'CircularStd';
   margin: 0;
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
+}
+
+#app {
+  width: 500px;
+}
+
+.nav {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 5%;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.title {
+  font-size: 14px;
+}
+
+.menu {
+  margin-left: 20%;
+}
+
+.icon {
+  display: inline-block;
+  height: 56px;
+  width: 50px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center center;
+  border-bottom: 2px solid #fff;
+}
+
+.icon:hover, .router-link-active {
+  border-bottom: 2px solid #649ef7;
+}
+
+.icon:nth-of-type(1) {
+  background-image: url("./images/pie_chart.png");
+}
+
+.icon:nth-of-type(1):hover, .icon:nth-of-type(1).router-link-active {
+  background-image: url("./images/pie_chart_hover.png");
+}
+
+.icon:nth-of-type(2) {
+  background-image: url("./images/app.png");
+}
+
+.icon:nth-of-type(2):hover, .icon:nth-of-type(2).router-link-active {
+  background-image: url("./images/app_hover.png");
+}
+
+.icon:nth-of-type(3) {
+  background-image: url("./images/settings.png");
+}
+
+.icon:nth-of-type(3):hover, .icon:nth-of-type(3).router-link-active {
+  background-image: url("./images/settings_hover.png");
 }
 
 .text-center {
@@ -13,7 +75,7 @@ h3.title {
 }
 
 .content {
-  padding: 10px;
+  padding: 5% 30px;
   min-height: 320px;
   max-height: 420px;
   overflow-y: auto;
@@ -41,18 +103,22 @@ h3.title {
   justify-content: space-around;
 }
 
-.table {
+.app-list {
+  margin-top: 40px;
   width: 100%;
-  border-spacing: 2px;
-  border-color: grey;
-  display: table;
-  border-collapse: separate;
-  border-spacing: 2px;
-  border-color: grey;
 }
 
-.table thead tr {
-  background: #cacaca;
+.row {
+  display: flex;
+  height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+}
+
+.row > div:first-of-type {
+  width: 30%;
+  text-transform: capitalize;
 }
 
 .table td, .table th {
@@ -65,29 +131,14 @@ h3.title {
   text-align: left;
 }
 
-.table tbody tr:nth-of-type(odd) {
-  background-color: rgba(0,0,0,.05);
+.row:hover {
+  background: #FAFAFA;
+  border: 1px solid #E0E0E0;
+  border-radius: 5px;
 }
 
 .table td img {
   vertical-align: middle;
-}
-
-.btn {
-  border: 1px solid #d5d5d5;
-  margin-top: 10px;
-  width: 100px;
-  height: 30px;
-  background: #50a2ac;
-  color: #fff;
-}
-
-.btn:focus {
-  outline: none;
-}
-
-button.btn:disabled, input[type="button"]:disabled {
-  background: #7eb6bd;
 }
 
 a {
@@ -96,19 +147,36 @@ a {
 }
 
 .form {
-  width: 80%;
-  margin: auto;
+  font-size: 14px;
 }
 
 .form > div {
   margin-bottom: 20px;
 }
 
-.form input, .form select {
+.form input[type="text"],
+.form input[type="number"],
+.form input[type="time"] {
   width: 100%;
-  height: 30px;
-  padding: 3px;
-  border: 1px solid #d5d5d5;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 5px;
+  border: 1px solid #E0E0E0;
+}
+
+
+.input-field label {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.input-field input {
+  width: 100%;
+}
+
+.form input:hover {
+  border: 1px solid #649EF7;
 }
 
 .form input:focus, .form select:focus {
@@ -128,7 +196,12 @@ a {
 }
 
 .form .minute {
-  width: 50%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form .minute input[type="number"] {
+  width: 213px;
 }
 
 .form input[type="time"] {
@@ -137,4 +210,123 @@ a {
 
 .action-icon {
   cursor: pointer;
+}
+
+.apps-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.apps-header .action {
+  display: flex;
+  align-items: center;
+}
+
+.btn {
+  cursor: pointer;
+  border: 1px solid #E0E0E0;
+  padding: 0 20px;
+  height: 36px;
+  border-radius: 5px;
+  background: none;
+}
+
+.btn:hover {
+  background: #F2F2F2;
+}
+
+.add {
+  width: 36px;
+  height: 36px;
+  background-image: url('./images/add.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  border-radius: 5px;
+  margin-left: 10px;
+  font-size: 30px;
+  border: 2px solid #649EF7;
+  color: #649EF7;
+}
+
+.add:hover {
+  color: #fff;
+  background-image: url('./images/add_hover.png');
+  background-color: #649EF7;
+  border: 2px solid #2F80ED;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 35%;
+}
+
+.save {
+  background: #649EF7;
+  border: 1px solid #2F80ED;
+  box-sizing: border-box;
+  border-radius: 5px;
+  color: #fff;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.save:hover {
+  background: #649EF7;
+}
+
+.box.day {
+  height: 40px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.day input[type="time"] {
+  width: 100px;
+}
+
+.day label {
+  width: 25%;
+  height: 20px;
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  position: absolute;
+  background: #fff;
+  border: 1px solid #E0E0E0;
+}
+
+.checkbox:hover input ~ .checkmark {
+  border-color: #2F80ED;
+}
+
+/* When the checkbox is checked, add a blue background */
+.checkbox input:checked ~ .checkmark {
+  background: #649EF7;
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <h4 class="text-center">Add Website<h4>
+    <h4 class="text-center">Add Website</h4>
     <form v-on:submit.prevent="add" class="form">
       <div>
         <input v-model="siteurl" type="url" placeholder="Site url (e.g http://google.com)" />

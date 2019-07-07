@@ -6,7 +6,7 @@ storage.initialize();
 export const DATAKEY = 'timer';
 export const CONFIGKEY = 'sites';
 
-const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+export const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 function pad(number) {
   if (number < 10) {
@@ -18,14 +18,14 @@ function pad(number) {
 /**
  * intentionally did this to getISOstring that's not in UTC
  */
-Date.prototype.toISOString = function() {
-  return this.getFullYear() +
-    '-' + pad(this.getMonth() + 1) +
-    '-' + pad(this.getDate()) +
-    'T' + pad(this.getHours()) +
-    ':' + pad(this.getMinutes()) +
-    ':' + pad(this.getSeconds()) +
-    '.' + (this.getMilliseconds() / 1000).toFixed(3).slice(2, 5)
+Date.prototype.toISOString = function () {
+  return `${this.getFullYear()
+  }-${pad(this.getMonth() + 1)
+  }-${pad(this.getDate())
+  }T${pad(this.getHours())
+  }:${pad(this.getMinutes())
+  }:${pad(this.getSeconds())
+  }.${(this.getMilliseconds() / 1000).toFixed(3).slice(2, 5)}`;
 };
 
 export default {
@@ -46,7 +46,7 @@ export default {
 
   getActiveTab() {
     return new Promise((resolve) => {
-    // eslint-disable-next-line
+      // eslint-disable-next-line
       chrome.tabs.query({
         active: true,
         currentWindow: true
@@ -149,16 +149,19 @@ export default {
     const currentDate = new Date();
     const day = days[currentDate.getDay()];
     // load the days data if there's any
-    if (!configuration[name] || !configuration[name].control || !configuration[name].days ||!configuration[name].days[day]) {
+    if (!configuration[name]
+        || !configuration[name].control
+        || !configuration[name].days
+        || !configuration[name].days[day]) {
       return false;
     }
     const currentTime = this.getCurrentTime(currentDate);
-    for (let i = 0; i < configuration[name].days[day].length; i++) {
+    for (let i = 0; i < configuration[name].days[day].length; i += 1) {
       const { from, to } = configuration[name].days[day][i];
       if (from <= currentTime && to >= currentTime) {
-          this.notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
-          return true;
-        }
+        this.notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
+        return true;
+      }
     }
     return false;
   },
@@ -172,7 +175,7 @@ export default {
     const frames = config.days[day];
     const currentTime = this.getCurrentTime(currentDate);
     let leastStart = null;
-    frames.forEach(each => {
+    frames.forEach((each) => {
       if (currentTime < each.from) {
         if (!leastStart) {
           leastStart = each.from;

@@ -1,18 +1,17 @@
 <template>
   <div id="app">
-    <h3 class="title text-center">SCREENTIME</h3>
+    <nav-bar />
     <router-view/>
-    <Footer />
   </div>
 </template>
 
 <script>
-import Footer from './components/Footer';
+import NavBar from './components/molecules/NavBar';
 
 export default {
   name: 'App',
   components: {
-    Footer
+    NavBar
   }
 };
 </script>

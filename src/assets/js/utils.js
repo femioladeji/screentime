@@ -5,6 +5,14 @@ storage.initialize();
 
 export const DATAKEY = 'timer';
 export const CONFIGKEY = 'sites';
+export const SETTINGSKEY = 'settings';
+
+const ALLGRADIENTS = [
+  { from: '#5CEAF3', to: '#ACABE0' },
+  { from: '#F3AE5C', to: '#D123E0' },
+  { from: '#D5F35C', to: '#ABE7FA' },
+  { from: '#B9AC3C', to: '#5771F9' }
+];
 
 export const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
@@ -206,5 +214,16 @@ export default {
       minutes = `0${minutes}`;
     }
     return `${hours}:${minutes}`;
+  },
+
+  getBarGradients(canvas, count) {
+    const backgrounds = [];
+    for (let i = 0; i < count; i += 1) {
+      const gradient = canvas.createLinearGradient(0, 0, 600, 0);
+      gradient.addColorStop(0, ALLGRADIENTS[i % count].from);
+      gradient.addColorStop(1, ALLGRADIENTS[i % count].to);
+      backgrounds.push(gradient);
+    }
+    return backgrounds;
   }
 };

@@ -95,14 +95,6 @@ body {
   justify-content: space-evenly;
 }
 
-.footer {
-  height: 35px;
-  background: #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-
 .app-list {
   margin-top: 40px;
   width: 100%;
@@ -156,6 +148,7 @@ a {
 
 .form input[type="text"],
 .form input[type="number"],
+.form input[type="url"],
 .form input[type="time"] {
   width: 100%;
   height: 40px;
@@ -175,7 +168,7 @@ a {
   width: 100%;
 }
 
-.form input:hover {
+.form input:hover, .form input:focus {
   border: 1px solid #649EF7;
 }
 
@@ -206,6 +199,10 @@ a {
 
 .form input[type="time"] {
   width: 150px;
+}
+
+.form input[type="time"]:invalid {
+  border-color: #d47272;
 }
 
 .action-icon {
@@ -276,6 +273,10 @@ a {
   background: #649EF7;
 }
 
+.save:disabled {
+  cursor: not-allowed;
+}
+
 .box.day {
   height: 40px;
   justify-content: space-between;
@@ -329,4 +330,30 @@ a {
 /* When the checkbox is checked, add a blue background */
 .checkbox input:checked ~ .checkmark {
   background: #649EF7;
+}
+
+.settings {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings .theme-buttons {
+  width: 284px;
+  border-radius: 5px;
+  border: 1px solid #E0E0E0;
+}
+
+.settings .theme-buttons .btn {
+  border: none;
+  width: 50%;
+  border-radius: 0;
+}
+
+.settings .theme-buttons .btn:first-of-type {
+  border-right: 1px solid #E0E0E0;;
+}
+
+.settings .theme-buttons .btn:disabled {
+  color: #BDBDBD;
+  cursor: not-allowed;
 }

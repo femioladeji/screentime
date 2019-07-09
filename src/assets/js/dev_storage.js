@@ -1,8 +1,10 @@
 const data = {
   timer: {
-    '2019-07-07': {
-      instagram: 393,
-      youtube: 2240
+    '2019-07-10': {
+      instagram: 2000,
+      youtube: 2240,
+      twitter: 2000,
+      facebook: 1800
     }
   },
   sites: {
@@ -127,6 +129,9 @@ const data = {
       time: '60',
       url: '*://*.youtube.com/'
     }
+  },
+  settings: {
+    theme: 'flash'
   }
 };
 

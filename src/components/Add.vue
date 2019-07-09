@@ -1,13 +1,12 @@
 <template>
   <div class="content">
-    <h4 class="text-center">Add Website</h4>
+    <h3>Add Website</h3>
     <form v-on:submit.prevent="add" class="form">
-      <div>
-        <input v-model="siteurl" type="url" placeholder="Site url (e.g http://google.com)" />
+      <div class="input-field">
+        <label>Site url (e.g http://google.com)</label>
+        <input v-model="siteurl" type="url" />
       </div>
-      <div class="box center">
-        <input type="submit" class="btn" value="Add" />
-      </div>
+      <input type="submit" class="btn save" value="Add" />
     </form>
   </div>
 </template>

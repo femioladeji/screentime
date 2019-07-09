@@ -18,11 +18,25 @@
             <input type="checkbox" v-model="daysChoosen[key].active" />
             <span class="checkmark"></span>
           </label>
-          <div>From&nbsp;&nbsp;<input type="time" v-model="daysChoosen[key].from" /></div>
-          <div>To&nbsp;&nbsp;<input type="time" v-model="daysChoosen[key].to" /></div>
+          <div>From&nbsp;&nbsp;
+            <input
+              type="time"
+              v-model="daysChoosen[key].from" />
+          </div>
+          <div>To&nbsp;&nbsp;
+            <input
+              type="time"
+              :min="daysChoosen[key].from"
+              v-model="daysChoosen[key].to" />
+          </div>
         </div>
       </div>
-      <input @click.prevent="addTimeFrame" type="submit" value="SAVE" class="btn save"/>
+      <input
+        :disabled="isTimeframeInvalid"
+        @click.prevent="addTimeFrame"
+        type="submit"
+        value="SAVE"
+        class="btn save"/>
     </form>
   </div>
 </template>
@@ -89,8 +103,8 @@ export default {
     }
   },
   computed: {
-    isTimeframeInValid() {
-      return !(this.daysChoosen.length && this.from && this.to && this.to > this.from);
+    isTimeframeInvalid() {
+      return this.daysChoosen.some(({ from, to }) => to < from);
     }
   }
 };

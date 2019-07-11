@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'CircularStd';
-  src: url('./font/CircularStd-Black.ttf') format('truetype'),
+  src: url('./font/CircularStd-Black.otf') format('opentype');
 }
 
 * {
@@ -25,6 +25,7 @@ body {
 }
 
 .title {
+  color: #333333;
   font-size: 14px;
 }
 
@@ -106,6 +107,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 5%;
+  color: #4F4F4F;
 }
 
 .row > div:first-of-type {
@@ -397,13 +399,16 @@ a {
   background: #649EF7;
 }
 
+.dark-mode .row {
+  color: #9599B4;
+}
+
 .dark-mode .app-list .row:hover {
   background: none;
   border: 1px solid #649EF7;
 }
 
 .dark-mode .site-actions .edit {
-  display: block;
   background: url('./images/edit_dark_mode.png');
 }
 

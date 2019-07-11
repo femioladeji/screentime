@@ -33,7 +33,7 @@ export default {
         };
         await utils.saveConfiguration(CONFIGKEY, allSites);
         this.siteurl = '';
-        this.$router.push('addremove');
+        this.$router.push('app');
       }
     }
   }

@@ -1,32 +1,24 @@
 <template>
   <div class="content">
     <div class="apps-header">
-      <stats active="2" idle="5" />
+      <stats :active="active" :idle="idle" />
       <div class="action">
-        <button class="btn">DISABLE ALL</button>
+        <button class="btn" @click="disableAll">DISABLE ALL</button>
         <router-link to="/add" class="add"></router-link>
       </div>
     </div>
     <div class="app-list">
       <div class="row" v-for="(each, key) in sites" :key="key">
         <div>{{key}}</div>
-        <div><img src="../assets/images/timer.png" />&nbsp; &nbsp; 00:10:21</div>
+        <div><img src="../assets/images/timer.png" />&nbsp; &nbsp; {{ formatTime(key) }}</div>
         <div class="actions">
-          <switch-button @change="update" v-model="each.control"></switch-button>
+          <switch-button @toggle="update" v-model="each.control"></switch-button>
           <router-link :to="{ name: 'Advanced', params: { name: key }}">
             <img src="../assets/images/edit.png" />
           </router-link>
-          <img src="../assets/images/trash.png" />
+          <img @click="remove(key)" src="../assets/images/trash.png" />
         </div>
       </div>
-    </div>
-    <div class="box center">
-      <button
-        :disabled="saveStatus !== 0"
-        type="button"
-        @click="update"
-        class="btn save">{{caption}}
-      </button>
     </div>
   </div>
 </template>
@@ -34,7 +26,7 @@
 <script>
 import Stats from './molecules/Stats';
 import Switch from './atoms/Switch';
-import utils, { CONFIGKEY } from '../assets/js/utils';
+import utils, { CONFIGKEY, DATAKEY } from '../assets/js/utils';
 
 export default {
   name: 'Settings',
@@ -45,32 +37,47 @@ export default {
   data() {
     return {
       sites: {},
+      time: {},
       saveStatus: 0
     };
   },
   async mounted() {
-    const allSites = await utils.getData(CONFIGKEY);
-    this.sites = allSites;
+    [this.sites, this.time] = await Promise.all([utils.getData(CONFIGKEY), utils.getData(DATAKEY)]);
+    const currentDate = utils.getCurrentDate();
+    this.time = this.time[currentDate] || {};
   },
   methods: {
-    async update() {
-      this.saveStatus = 1;
+    async update(type) {
       await utils.saveConfiguration(CONFIGKEY, this.sites);
-      this.saveStatus = 2;
-      setTimeout(() => {
-        this.saveStatus = 0;
-      }, 1000);
+    },
+    formatTime(site) {
+      if (!this.time[site]) {
+        return '00:00:00';
+      }
+      let hours = Math.floor(this.time[site] / 3600).toString();
+      let minutes = Math.floor((this.time[site] % 3600) / 60).toString();
+      let seconds = (this.time[site] % 60).toString();
+      return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+    },
+    disableAll() {
+      for (const each in this.sites) {
+        this.sites[each].control = false;
+      }
+      this.update();
+    },
+    remove(key) {
+      this.$delete(this.sites, key);
+      this.update();
     }
   },
   computed: {
-    caption() {
-      if (this.saveStatus) {
-        return this.saveStatus === 1 ? 'SAVING...' : 'SAVED';
-      }
-      return 'SAVE';
+    active() {
+      const keys = Object.keys(this.sites);
+      return keys.filter(each => this.sites[each].control).length;
     },
-    enableSave() {
-      return this.saveStatus !== 0;
+    idle() {
+      const keys = Object.keys(this.sites);
+      return keys.filter(each => !this.sites[each].control).length;
     }
   }
 };

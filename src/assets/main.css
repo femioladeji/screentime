@@ -172,7 +172,7 @@ a {
   border: 1px solid #649EF7;
 }
 
-.form input:focus, .form select:focus {
+.form input:focus, button:focus, .form select:focus {
   outline: none;
 }
 
@@ -257,6 +257,10 @@ a {
   align-items: center;
   justify-content: space-around;
   width: 35%;
+}
+
+.actions * {
+  cursor: pointer;
 }
 
 .save {

@@ -31,12 +31,13 @@
           </div>
         </div>
       </div>
-      <input
+      <button
         :disabled="isTimeframeInvalid"
         @click.prevent="addTimeFrame"
         type="submit"
-        value="SAVE"
-        class="btn save"/>
+        class="btn save">
+          SAVE
+      </button>
     </form>
   </div>
 </template>

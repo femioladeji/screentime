@@ -32,13 +32,19 @@ export default {
   },
   methods: {
     async setTheme(theme) {
+      const body = document.querySelector('body');
+      if (theme === 'batman') {
+        body.classList.add('dark-mode');
+      } else {
+        body.classList.remove('dark-mode');
+      }
       utils.saveConfiguration(SETTINGSKEY, { theme });
       this.theme = theme;
     }
   },
   async mounted() {
     const settings = await utils.getData(SETTINGSKEY);
-    this.theme = settings.theme;
+    this.theme = settings.theme || 'flash';
   }
 };
 </script>

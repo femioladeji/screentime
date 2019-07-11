@@ -11,10 +11,10 @@
       <div class="row" v-for="(each, key) in sites" :key="key">
         <div>{{key}}</div>
         <div><img src="../assets/images/timer.png" />&nbsp; &nbsp; {{ formatTime(key) }}</div>
-        <div class="actions">
+        <div class="site-actions">
           <switch-button @toggle="update" v-model="each.control"></switch-button>
-          <router-link :to="{ name: 'Advanced', params: { name: key }}">
-            <img src="../assets/images/edit.png" />
+          <router-link class="edit" :to="{ name: 'Advanced', params: { name: key }}">
+            <!-- <img src="../assets/images/edit.png" /> -->
           </router-link>
           <img @click="remove(key)" src="../assets/images/trash.png" />
         </div>
@@ -47,22 +47,22 @@ export default {
     this.time = this.time[currentDate] || {};
   },
   methods: {
-    async update(type) {
+    async update() {
       await utils.saveConfiguration(CONFIGKEY, this.sites);
     },
     formatTime(site) {
       if (!this.time[site]) {
         return '00:00:00';
       }
-      let hours = Math.floor(this.time[site] / 3600).toString();
-      let minutes = Math.floor((this.time[site] % 3600) / 60).toString();
-      let seconds = (this.time[site] % 60).toString();
+      const hours = Math.floor(this.time[site] / 3600).toString();
+      const minutes = Math.floor((this.time[site] % 3600) / 60).toString();
+      const seconds = (this.time[site] % 60).toString();
       return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
     },
     disableAll() {
-      for (const each in this.sites) {
+      Object.keys(this.sites).forEach((each) => {
         this.sites[each].control = false;
-      }
+      });
       this.update();
     },
     remove(key) {

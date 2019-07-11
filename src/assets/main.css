@@ -138,23 +138,18 @@ a {
   color: #1a7c89;
 }
 
-.form {
-  font-size: 14px;
-}
-
 .form > div {
   margin-bottom: 20px;
 }
 
-.form input[type="text"],
-.form input[type="number"],
-.form input[type="url"],
-.form input[type="time"] {
+.form input {
+  font-size: 14px;
   width: 100%;
   height: 40px;
   padding: 0 20px;
   border-radius: 5px;
   border: 1px solid #E0E0E0;
+  background: none;
 }
 
 
@@ -241,7 +236,7 @@ a {
   border-radius: 5px;
   margin-left: 10px;
   font-size: 30px;
-  border: 2px solid #649EF7;
+  border: 1px solid #649EF7;
   color: #649EF7;
 }
 
@@ -252,15 +247,22 @@ a {
   border: 2px solid #2F80ED;
 }
 
-.actions {
+.site-actions {
   display: flex;
   align-items: center;
   justify-content: space-around;
   width: 35%;
 }
 
-.actions * {
+.site-actions * {
   cursor: pointer;
+}
+
+.site-actions .edit {
+  display: block;
+  background: url('./images/edit.png');
+  width: 17.99px;
+  height: 17.99px;
 }
 
 .save {
@@ -288,7 +290,7 @@ a {
 }
 
 .day input[type="time"] {
-  width: 100px;
+  width: 115px;
 }
 
 .day label {
@@ -323,7 +325,7 @@ a {
   height: 20px;
   border-radius: 5px;
   position: absolute;
-  background: #fff;
+  background: none;
   border: 1px solid #E0E0E0;
 }
 
@@ -354,10 +356,87 @@ a {
 }
 
 .settings .theme-buttons .btn:first-of-type {
-  border-right: 1px solid #E0E0E0;;
+  border-right: 1px solid #E0E0E0;
 }
 
 .settings .theme-buttons .btn:disabled {
-  color: #BDBDBD;
   cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+/** dark mode specific styles **/
+.dark-mode {
+  background: #1F2024;
+  color: #9599B4;
+}
+
+.dark-mode .title {
+  color: #649EF7;
+}
+
+.dark-mode .nav {
+  border-color: #404751;
+}
+
+.dark-mode .nav .icon {
+  border-color: #1F2024;
+}
+
+.dark-mode .icon:hover, .dark-mode .icon.router-link-active {
+  border-color: #649ef7;
+}
+
+.dark-mode .action .btn {
+  border-color: #649EF7;
+  color: #9599B4;
+}
+
+.dark-mode .action .btn:hover {
+  color: #FFFFFF;
+  background: #649EF7;
+}
+
+.dark-mode .app-list .row:hover {
+  background: none;
+  border: 1px solid #649EF7;
+}
+
+.dark-mode .site-actions .edit {
+  display: block;
+  background: url('./images/edit_dark_mode.png');
+}
+
+.dark-mode .form input {
+  border: 1px solid #404751;
+  color: #9599B4;
+}
+
+.dark-mode .form input:hover, .dark-mode .form input:focus {
+  border: 1px solid #649EF7;
+}
+
+.dark-mode .checkmark {
+  border-color: #404751;
+}
+
+.dark-mode .settings {
+  color: #fff;
+}
+
+.dark-mode .theme-buttons {
+  border-color: #404751;
+}
+
+.dark-mode .theme-buttons .btn {
+  color: #fff;
+}
+
+.dark-mode .theme-buttons .btn:hover {
+  background: none;
+  border: 1px solid #649EF7;
+}
+
+.dark-mode .settings .theme-buttons .btn:first-of-type {
+  border-right: 1px solid #404751;
 }

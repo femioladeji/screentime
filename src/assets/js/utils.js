@@ -26,7 +26,8 @@ function pad(number) {
 /**
  * intentionally did this to getISOstring that's not in UTC
  */
-Date.prototype.toISOString = function () {
+// eslint-disable-next-line no-extend-native
+Date.prototype.toISOString = function iso() {
   return `${this.getFullYear()
   }-${pad(this.getMonth() + 1)
   }-${pad(this.getDate())
@@ -203,6 +204,7 @@ export default {
 
   getCurrentTime(currentDate = null) {
     if (!currentDate) {
+      // eslint-disable-next-line no-param-reassign
       currentDate = new Date();
     }
     let hours = currentDate.getHours();

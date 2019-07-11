@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <h3 class="">App Details {{name}}</h3>
+    <h3>App Details {{name}}</h3>
     <form class="form">
       <div class="input-field">
         <label>Title (Add an app title)</label>
@@ -11,7 +11,7 @@
         <input @keyup.enter="update" @change="update" type="number"
           v-model="config.time" min="0" max="1440" />
       </div>
-      <h3>Advanced Settings</h3>
+      <h3>Time Settings</h3>
       <div>
         <div class="box middle day" v-for="(each, key) in daysChoosen" :key="key">
           <label class="checkbox">{{ each.name }}

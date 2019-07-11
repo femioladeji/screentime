@@ -19,6 +19,7 @@ export default {
     if (settings.theme === 'batman') {
       document.querySelector('body').classList.add('dark-mode');
     }
+    // this.$router.push('home');
   }
 };
 </script>

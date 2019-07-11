@@ -13,7 +13,7 @@ body {
 }
 
 #app {
-  width: 500px;
+  width: 510px;
 }
 
 .nav {
@@ -81,6 +81,10 @@ body {
   max-height: 420px;
   overflow-y: auto;
   min-width: 350px;
+}
+
+.content h3 {
+  color: #333333;
 }
 
 .box {
@@ -154,11 +158,13 @@ a {
   background: none;
 }
 
+.input-field, .input-field label, .minute {
+  color: #4F4F4F;
+}
 
 .input-field label {
   display: block;
   width: 100%;
-  margin-bottom: 10px;
 }
 
 .input-field input {
@@ -289,6 +295,7 @@ a {
   height: 40px;
   justify-content: space-between;
   margin-bottom: 12px;
+  color: #4F4F4F;
 }
 
 .day input[type="time"] {
@@ -444,4 +451,12 @@ a {
 
 .dark-mode .settings .theme-buttons .btn:first-of-type {
   border-right: 1px solid #404751;
+}
+
+.dark-mode .content h3 {
+  color: #fff;
+}
+
+.dark-mode .input-field, .dark-mode .input-field label, .dark-mode .minute, .dark-mode .box.day {
+  color: #9599B4;
 }

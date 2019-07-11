@@ -6,7 +6,7 @@
         <label>Site url (e.g http://google.com)</label>
         <input v-model="siteurl" type="url" />
       </div>
-      <input type="submit" class="btn save" value="Add" />
+      <button type="submit" class="btn save">Add</button>
     </form>
   </div>
 </template>

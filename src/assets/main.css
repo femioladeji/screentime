@@ -35,12 +35,31 @@ body {
 
 .icon {
   display: inline-block;
+  position: relative;
   height: 56px;
   width: 50px;
   cursor: pointer;
   background-repeat: no-repeat;
   background-position: center center;
   border-bottom: 2px solid #fff;
+}
+
+.menu-drop {
+  display: none;
+  color: #fff;
+  width: 81px;
+  height: 30.11px;
+  text-align: center;
+  top: 60px;
+  left: -15px;
+  font-size: 12px;
+  line-height: 35px;
+  position: absolute;
+  background: url('../assets/images/tooltip.png') no-repeat;
+}
+
+.icon:hover .menu-drop {
+  display: block;
 }
 
 .icon:hover, .router-link-active {

@@ -21,11 +21,13 @@
           <div>From&nbsp;&nbsp;
             <input
               type="time"
+              @keyup="keypressed(key)"
               v-model="daysChoosen[key].from" />
           </div>
           <div>To&nbsp;&nbsp;
             <input
               type="time"
+              @keyup="keypressed(key)"
               :min="daysChoosen[key].from"
               v-model="daysChoosen[key].to" />
           </div>
@@ -101,6 +103,12 @@ export default {
         }
       });
       this.update();
+    },
+
+    keypressed(day) {
+      if (this.daysChoosen[day].to > this.daysChoosen[day].from) {
+        this.daysChoosen[day].active = true;
+      }
     }
   },
   computed: {

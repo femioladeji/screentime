@@ -14,7 +14,7 @@ const ALLGRADIENTS = [
   { from: '#B9AC3C', to: '#5771F9' }
 ];
 
-export const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+export const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 function pad(number) {
   if (number < 10) {

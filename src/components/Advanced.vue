@@ -11,7 +11,7 @@
         <input @keyup.enter="update" @change="update" type="number"
           v-model="config.time" min="0" max="1440" />
       </div>
-      <h3>Time Settings</h3>
+      <h3>Blocked Timeframes</h3>
       <div>
         <div class="box middle day" v-for="(each, key) in daysChoosen" :key="key">
           <label class="checkbox">{{ each.name }}
@@ -87,7 +87,7 @@ export default {
       utils.saveConfiguration(CONFIGKEY, this.sites);
     },
 
-    addTimeFrame() {
+    async addTimeFrame() {
       this.config.days = {};
       this.daysChoosen.forEach(({
         active, name, from, to
@@ -102,7 +102,8 @@ export default {
           });
         }
       });
-      this.update();
+      await this.update();
+      this.$router.push('/app');
     },
 
     keypressed(day) {

@@ -16,12 +16,16 @@ Go to `chrome://extensions` on your chrome browser. Click on `Load unpacked` and
 Packaged extension can be installed [here](https://chrome.google.com/webstore/detail/screentime/ofmanejijbcohgebmdfacglmhemiifca)
 
 ## Screenshots
-![](https://image.ibb.co/jJrNfV/Screen-Shot-2018-11-24-at-5-23-06-PM.png)
+![](https://i.ibb.co/BVcyZLb/Screenshot-2019-07-16-at-12-15-08.png)
 
-![](https://image.ibb.co/mLXTLV/Screen-Shot-2018-11-24-at-5-23-18-PM.png)
+![](https://i.ibb.co/Qjwkjwm/Screenshot-2019-07-16-at-12-15-18.png)
 
-![](https://image.ibb.co/cVgcEq/Screen-Shot-2018-11-24-at-5-23-43-PM.png)
+![](https://i.ibb.co/4Wx5vP4/Screenshot-2019-07-16-at-12-15-26.png)
 
-![](https://image.ibb.co/nHs67A/Screen-Shot-2018-11-24-at-5-23-56-PM.png)
+![](https://i.ibb.co/k8LCjLY/Screenshot-2019-07-16-at-12-15-46.png)
 
-![](https://image.ibb.co/h1Hv0V/Screen-Shot-2018-11-24-at-5-24-03-PM.png)
+![](https://i.ibb.co/ryLSZ7G/Screenshot-2019-07-16-at-12-15-55.png)
+
+![](https://i.ibb.co/4f7yd1K/Screenshot-2019-07-16-at-12-16-17.png)
+
+![](https://i.ibb.co/BwntkJH/Screenshot-2019-07-16-at-12-19-24.png)

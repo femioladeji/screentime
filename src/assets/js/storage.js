@@ -1,6 +1,7 @@
 import allSites from './data';
+import devStorage from './dev_storage';
 // eslint-disable-next-line
-const STORAGE = chrome.storage.local;
+const STORAGE = process.env.NODE_ENV === 'development' ? devStorage : chrome.storage.local;
 const DATAKEY = 'timer';
 
 export default {

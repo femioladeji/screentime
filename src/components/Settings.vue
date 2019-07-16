@@ -1,75 +1,50 @@
 <template>
   <div class="content">
-    <table class="table">
-      <thead>
-        <tr>
-          <th width="30%">Site</th>
-          <th>Block</th>
-          <th>Advanced</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(each, key) in sites" :key="key">
-          <td>{{key}}</td>
-          <td><switch-button @change="update" v-model="each.control"></switch-button></td>
-          <td>
-            <router-link :to="{ name: 'Advanced', params: { name: key }}">
-              <img src="images/settings.png" />
-            </router-link>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="box center">
-      <button
-        :disabled="saveStatus !== 0"
-        type="button"
-        @click="update"
-        class="btn">{{caption}}
-      </button>
+    <div class="box settings">
+        Theme settings
+        <div class="theme-buttons">
+            <button
+              @click="setTheme('flash')"
+              class="btn"
+              :disabled="theme == 'flash'">
+                Flash
+            </button>
+            <button
+              @click="setTheme('batman')"
+              class="btn"
+              :disabled="theme == 'batman'">
+                Batman
+            </button>
+        </div>
     </div>
   </div>
 </template>
 
 <script>
-import Switch from './switch';
-import utils, { CONFIGKEY } from '../assets/js/utils';
+import utils, { SETTINGSKEY } from '../assets/js/utils';
 
 export default {
   name: 'Settings',
-  components: {
-    'switch-button': Switch
-  },
   data() {
     return {
-      sites: {},
-      saveStatus: 0
+      theme: ''
     };
   },
-  async mounted() {
-    const allSites = await utils.getData(CONFIGKEY);
-    this.sites = allSites;
-  },
   methods: {
-    async update() {
-      this.saveStatus = 1;
-      await utils.saveConfiguration(CONFIGKEY, this.sites);
-      this.saveStatus = 2;
-      setTimeout(() => {
-        this.saveStatus = 0;
-      }, 1000);
+    async setTheme(theme) {
+      const body = document.querySelector('body');
+      if (theme === 'batman') {
+        body.classList.add('dark-mode');
+      } else {
+        body.classList.remove('dark-mode');
+      }
+      utils.saveConfiguration(SETTINGSKEY, { theme });
+      this.theme = theme;
     }
   },
-  computed: {
-    caption() {
-      if (this.saveStatus) {
-        return this.saveStatus === 1 ? 'Saving...' : 'Saved';
-      }
-      return 'Save';
-    },
-    enableSave() {
-      return this.saveStatus !== 0;
-    }
+  async mounted() {
+    const settings = await utils.getData(SETTINGSKEY);
+    this.theme = settings.theme || 'flash';
   }
 };
 </script>

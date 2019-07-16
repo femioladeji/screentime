@@ -1,18 +1,27 @@
 <template>
   <div id="app">
-    <h3 class="title text-center">SCREENTIME</h3>
+    <nav-bar />
     <router-view/>
-    <Footer />
   </div>
 </template>
 
 <script>
-import Footer from './components/Footer';
+import NavBar from './components/molecules/NavBar';
+import utils, { SETTINGSKEY } from './assets/js/utils';
 
 export default {
   name: 'App',
   components: {
-    Footer
+    NavBar
+  },
+  async mounted() {
+    const settings = await utils.getData(SETTINGSKEY);
+    if (settings.theme === 'batman') {
+      document.querySelector('body').classList.add('dark-mode');
+    }
+    if (this.$route.path === '/') {
+      this.$router.push('home');
+    }
   }
 };
 </script>

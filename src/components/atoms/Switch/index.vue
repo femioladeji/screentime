@@ -3,7 +3,7 @@
     <div
       class="switch-button"
       :class="{ enabled: isEnabled }"
-      @click="toggle" :style="{'--color': color}">
+      @click="toggle">
         <div class="button"></div>
     </div>
     <div class="switch-button-label">
@@ -19,12 +19,7 @@ export default {
     event: 'toggle'
   },
   props: {
-    isEnabled: Boolean,
-    color: {
-      type: String,
-      required: false,
-      default: '#4D4D4D'
-    }
+    isEnabled: Boolean
   },
   methods: {
     toggle() {
@@ -42,29 +37,28 @@ export default {
   align-items: center;
 }
 .switch-button-control .switch-button {
-  height: 1.6em;
-  width: calc(1.6em * 2);
-  border: 2px solid var(--color);
+  padding: 3px 5px;
+  width: 50px;
   box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.33);
-  border-radius: 1.6em;
+  background: #E0E0E0;
+  border-radius: 1.5em;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
 }
 .switch-button-control .switch-button .button {
-  height: calc(1.6em - (2 * 2px));
-  width: calc(1.6em - (2 * 2px));
-  border: 2px solid var(--color);
-  border-radius: calc(1.6em - (2 * 2px));
-  background: var(--color);
+  height: 19px;
+  width: 19px;
+  border-radius: 19px;
+  background: #828282;
   transition: all 0.3s ease-in-out;
 }
 .switch-button-control .switch-button.enabled {
-  background-color: var(--color);
+  background-color: #C9F9DD;
   box-shadow: none;
 }
 .switch-button-control .switch-button.enabled .button {
-  background: white;
-  transform: translateX(calc(calc(1.6em - (2 * 2px)) + (2 *2px)));
+  background: #27AE60;
+  transform: translateX(19px);
 }
 .switch-button-control .switch-button-label {
   margin-left: 10px;

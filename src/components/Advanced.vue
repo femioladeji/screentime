@@ -1,54 +1,51 @@
 <template>
   <div class="content">
-    <h4 class="text-center">Advanced settings for {{name}}</h4>
+    <h3>App Details {{name}}</h3>
     <form class="form">
-      <div class="box middle">
+      <div class="input-field">
+        <label>Title (Add an app title)</label>
+        <input type="text" disabled :value="name" />
+      </div>
+      <div class="box minute">
         <label>Daily Limit (minutes)</label>
-        <input @keyup.enter="update" class="minute" @change="update" type="number" v-model="config.time" min="0" max="1440" />
+        <input @keyup.enter="update" @change="update" type="number"
+          v-model="config.time" min="0" max="1440" />
       </div>
-      <h4 class="text-center">Set Time frames to block {{name}}</h4>
-      <div class="box middle">
-        <label>Day</label>
-        <select multiple v-model="daysChoosen" class="multiple">
-          <option v-for="(each, key) in days" :key="key" :value="each">{{each}}</option>
-        </select>
+      <h3>Blocked Timeframes</h3>
+      <div>
+        <div class="box middle day" v-for="(each, key) in daysChoosen" :key="key">
+          <label class="checkbox">{{ each.name }}
+            <input type="checkbox" v-model="daysChoosen[key].active" />
+            <span class="checkmark"></span>
+          </label>
+          <div>From&nbsp;&nbsp;
+            <input
+              type="time"
+              @keyup="keypressed(key)"
+              v-model="daysChoosen[key].from" />
+          </div>
+          <div>To&nbsp;&nbsp;
+            <input
+              type="time"
+              @keyup="keypressed(key)"
+              :min="daysChoosen[key].from"
+              v-model="daysChoosen[key].to" />
+          </div>
+        </div>
       </div>
-      <div class="box middle">
-        <label>From</label> <input v-model="from" type="time" />&nbsp;&nbsp;&nbsp;
-        <label>To</label> <input v-model="to" type="time" />
-      </div>
+      <button
+        :disabled="isTimeframeInvalid"
+        @click.prevent="addTimeFrame"
+        type="submit"
+        class="btn save">
+          SAVE
+      </button>
     </form>
-    <div class="box center">
-      <input type="button" class="btn" value="Add" :disabled="isTimeframeInValid" @click="addTimeFrame" />
-    </div>
-    <br/> <br />
-    <table v-if="config.days" class="table">
-      <thead>
-        <tr>
-          <th>Day</th>
-          <th>From</th>
-          <th>To</th>
-          <th>Remove</th>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-for="(value, day) in config.days">
-          <template v-for="(timeframe, index) in value">
-            <tr :key="index">
-              <td v-if="index == 0" :rowspan="value.length">{{ day }}</td>
-              <td>{{ timeframe.from }}</td>
-              <td>{{ timeframe.to }}</td>
-              <td class="action-icon" @click="remove(day, index)"><img src="images/remove-icon.png" /></td>
-            </tr>
-          </template>
-        </template>
-      </tbody>
-    </table>
   </div>
 </template>
 
 <script>
-import utils, { CONFIGKEY } from '../assets/js/utils';
+import utils, { CONFIGKEY, days } from '../assets/js/utils';
 
 export default {
   name: 'Settings',
@@ -57,18 +54,7 @@ export default {
       sites: {},
       name: '',
       config: {},
-      daysChoosen: [],
-      from: '',
-      to: '',
-      days: [
-        'monday',
-        'tuesday',
-        'wednesday',
-        'thursday',
-        'friday',
-        'saturday',
-        'sunday'
-      ]
+      daysChoosen: []
     };
   },
   async mounted() {
@@ -76,6 +62,23 @@ export default {
     const allSites = await utils.getData(CONFIGKEY);
     this.sites = allSites;
     this.config = this.sites[this.name];
+    days.forEach((eachDay) => {
+      if (this.config.days && eachDay in this.config.days) {
+        this.config.days[eachDay].forEach((timeFrame) => {
+          this.daysChoosen.push({
+            name: eachDay,
+            from: timeFrame.from,
+            to: timeFrame.to,
+            active: true
+          });
+        });
+      } else {
+        this.daysChoosen.push({
+          name: eachDay,
+          active: false
+        });
+      }
+    });
   },
   methods: {
     async update() {
@@ -84,32 +87,34 @@ export default {
       utils.saveConfiguration(CONFIGKEY, this.sites);
     },
 
-    addTimeFrame() {
-      if (this.daysChoosen.length && this.from && this.to) {
-        if (!this.config.days) {
-          this.config.days = {};
-        }
-        this.daysChoosen.forEach(each => {
-          if (!this.config.days[each]) {
-            this.config.days[each] = [];
+    async addTimeFrame() {
+      this.config.days = {};
+      this.daysChoosen.forEach(({
+        active, name, from, to
+      }) => {
+        if (active) {
+          if (!this.config.days[name]) {
+            this.config.days[name] = [];
           }
-          this.config.days[each].push({ from: this.from, to: this.to });
-        });
-        this.update();
-        this.daysChoosen = [];
-        this.from = '';
-        this.to = '';
-      }
+          this.config.days[name].push({
+            from,
+            to
+          });
+        }
+      });
+      await this.update();
+      this.$router.push('/app');
     },
 
-    remove(day, index) {
-      this.$delete(this.config.days[day], index);
-      this.update();
+    keypressed(day) {
+      if (this.daysChoosen[day].to > this.daysChoosen[day].from) {
+        this.daysChoosen[day].active = true;
+      }
     }
   },
   computed: {
-    isTimeframeInValid() {
-      return !(this.daysChoosen.length && this.from && this.to && this.to > this.from);
+    isTimeframeInvalid() {
+      return this.daysChoosen.some(({ from, to }) => to < from);
     }
   }
 };

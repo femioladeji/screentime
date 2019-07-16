@@ -5,8 +5,16 @@ storage.initialize();
 
 export const DATAKEY = 'timer';
 export const CONFIGKEY = 'sites';
+export const SETTINGSKEY = 'settings';
 
-const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+const ALLGRADIENTS = [
+  { from: '#5CEAF3', to: '#ACABE0' },
+  { from: '#F3AE5C', to: '#D123E0' },
+  { from: '#D5F35C', to: '#ABE7FA' },
+  { from: '#B9AC3C', to: '#5771F9' }
+];
+
+export const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 function pad(number) {
   if (number < 10) {
@@ -18,14 +26,15 @@ function pad(number) {
 /**
  * intentionally did this to getISOstring that's not in UTC
  */
-Date.prototype.toISOString = function() {
-  return this.getFullYear() +
-    '-' + pad(this.getMonth() + 1) +
-    '-' + pad(this.getDate()) +
-    'T' + pad(this.getHours()) +
-    ':' + pad(this.getMinutes()) +
-    ':' + pad(this.getSeconds()) +
-    '.' + (this.getMilliseconds() / 1000).toFixed(3).slice(2, 5)
+// eslint-disable-next-line no-extend-native
+Date.prototype.toISOString = function iso() {
+  return `${this.getFullYear()
+  }-${pad(this.getMonth() + 1)
+  }-${pad(this.getDate())
+  }T${pad(this.getHours())
+  }:${pad(this.getMinutes())
+  }:${pad(this.getSeconds())
+  }.${(this.getMilliseconds() / 1000).toFixed(3).slice(2, 5)}`;
 };
 
 export default {
@@ -46,7 +55,7 @@ export default {
 
   getActiveTab() {
     return new Promise((resolve) => {
-    // eslint-disable-next-line
+      // eslint-disable-next-line
       chrome.tabs.query({
         active: true,
         currentWindow: true
@@ -149,16 +158,19 @@ export default {
     const currentDate = new Date();
     const day = days[currentDate.getDay()];
     // load the days data if there's any
-    if (!configuration[name] || !configuration[name].control || !configuration[name].days ||!configuration[name].days[day]) {
+    if (!configuration[name]
+        || !configuration[name].control
+        || !configuration[name].days
+        || !configuration[name].days[day]) {
       return false;
     }
     const currentTime = this.getCurrentTime(currentDate);
-    for (let i = 0; i < configuration[name].days[day].length; i++) {
+    for (let i = 0; i < configuration[name].days[day].length; i += 1) {
       const { from, to } = configuration[name].days[day][i];
       if (from <= currentTime && to >= currentTime) {
-          this.notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
-          return true;
-        }
+        this.notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
+        return true;
+      }
     }
     return false;
   },
@@ -172,7 +184,7 @@ export default {
     const frames = config.days[day];
     const currentTime = this.getCurrentTime(currentDate);
     let leastStart = null;
-    frames.forEach(each => {
+    frames.forEach((each) => {
       if (currentTime < each.from) {
         if (!leastStart) {
           leastStart = each.from;
@@ -192,6 +204,7 @@ export default {
 
   getCurrentTime(currentDate = null) {
     if (!currentDate) {
+      // eslint-disable-next-line no-param-reassign
       currentDate = new Date();
     }
     let hours = currentDate.getHours();
@@ -203,5 +216,16 @@ export default {
       minutes = `0${minutes}`;
     }
     return `${hours}:${minutes}`;
+  },
+
+  getBarGradients(canvas, count) {
+    const backgrounds = [];
+    for (let i = 0; i < count; i += 1) {
+      const gradient = canvas.createLinearGradient(0, 0, 600, 0);
+      gradient.addColorStop(0, ALLGRADIENTS[i % count].from);
+      gradient.addColorStop(1, ALLGRADIENTS[i % count].to);
+      backgrounds.push(gradient);
+    }
+    return backgrounds;
   }
 };

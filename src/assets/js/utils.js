@@ -222,8 +222,8 @@ export default {
     const backgrounds = [];
     for (let i = 0; i < count; i += 1) {
       const gradient = canvas.createLinearGradient(0, 0, 600, 0);
-      gradient.addColorStop(0, ALLGRADIENTS[i % count].from);
-      gradient.addColorStop(1, ALLGRADIENTS[i % count].to);
+      gradient.addColorStop(0, ALLGRADIENTS[i % ALLGRADIENTS.length].from);
+      gradient.addColorStop(1, ALLGRADIENTS[i % ALLGRADIENTS.length].to);
       backgrounds.push(gradient);
     }
     return backgrounds;

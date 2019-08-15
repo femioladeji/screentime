@@ -1,10 +1,12 @@
 const data = {
   timer: {
-    '2019-07-12': {
+    '2019-08-15': {
       instagram: 2000,
       youtube: 2240,
       twitter: 2000,
-      facebook: 1800
+      facebook: 1800,
+      github: 1800,
+      google: 1000
     }
   },
   sites: {

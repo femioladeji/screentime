@@ -1,5 +1,8 @@
 <template>
   <div class="content">
+    <router-link to="/app" class="breadcrumb">
+      <span>&laquo; Back</span>
+    </router-link>
     <h3>App Details {{name}}</h3>
     <form class="form">
       <div class="input-field">

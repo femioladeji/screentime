@@ -1,5 +1,8 @@
 <template>
   <div class="content">
+    <router-link to="/app" class="breadcrumb">
+      <span>&laquo; Back</span>
+    </router-link>
     <h3>Add Website</h3>
     <form v-on:submit.prevent="add" class="form">
       <div class="input-field">

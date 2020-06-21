@@ -1,5 +1,6 @@
 <template>
   <div class="content">
+    <BackButton route="/app" />
     <h3>App Details {{name}}</h3>
     <form class="form">
       <div class="input-field">
@@ -46,8 +47,10 @@
 
 <script>
 import utils, { CONFIGKEY, days } from '../assets/js/utils';
+import BackButton from './molecules/BackButton';
 
 export default {
+  components: { BackButton },
   name: 'Settings',
   data() {
     return {

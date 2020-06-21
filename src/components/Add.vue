@@ -1,5 +1,6 @@
 <template>
   <div class="content">
+    <BackButton route="/app" />
     <h3>Add Website</h3>
     <form v-on:submit.prevent="add" class="form">
       <div class="input-field">
@@ -13,8 +14,10 @@
 
 <script>
 import utils, { CONFIGKEY } from '../assets/js/utils';
+import BackButton from './molecules/BackButton';
 
 export default {
+  components: { BackButton },
   name: 'Add',
   data() {
     return {

@@ -104,6 +104,12 @@ body {
   color: #333333;
 }
 
+.breadcrumb {
+  color: #717171;
+  text-decoration: none;
+  border: 0;
+}
+
 .box {
   display: flex;
 }
@@ -486,6 +492,10 @@ body::-webkit-scrollbar-thumb {
 
 .dark-mode .content h3 {
   color: #fff;
+}
+
+.dark-mode .breadcrumb {
+  color: #e8e8e8;
 }
 
 .dark-mode .input-field, .dark-mode .input-field label, .dark-mode .minute, .dark-mode .box.day {

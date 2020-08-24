@@ -94,6 +94,10 @@ body {
   text-align: center;
 }
 
+.text-error {
+  color: #d34f4f;
+}
+
 .content {
   padding: 5% 30px;
   min-height: 320px;
@@ -371,15 +375,20 @@ a {
   background: #649EF7;
 }
 
-.settings {
+.settings .box {
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .settings .theme-buttons {
   width: 284px;
   border-radius: 5px;
   border: 1px solid #E0E0E0;
+}
+
+.settings .form input {
+  width: 284px;
 }
 
 .settings .theme-buttons .btn {

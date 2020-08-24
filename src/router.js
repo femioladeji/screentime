@@ -5,6 +5,7 @@ import Apps from '@/components/Apps';
 import Index from '@/components/Index';
 import Settings from '@/components/Settings';
 import Advanced from '@/components/Advanced';
+import AppsConfiguration from '@/components/AppsConfiguration';
 
 Vue.use(Router);
 
@@ -16,23 +17,29 @@ export default new Router({
       component: Index
     },
     {
-      path: '/app',
-      name: 'apps',
-      component: Apps
-    },
-    {
       path: '/add',
       name: 'Add',
       component: Add
     },
     {
-      path: '/app/:name',
-      name: 'Advanced',
-      component: Advanced
-    },
-    {
       path: '/settings',
       component: Settings
+    },
+    {
+      path: '/app',
+      component: AppsConfiguration,
+      children: [
+        {
+          path: '/',
+          name: 'apps',
+          component: Apps
+        },
+        {
+          path: '/:name',
+          name: 'Advanced',
+          component: Advanced
+        }
+      ]
     }
   ]
 });

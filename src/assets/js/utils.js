@@ -6,6 +6,7 @@ storage.initialize();
 export const DATAKEY = 'timer';
 export const CONFIGKEY = 'sites';
 export const SETTINGSKEY = 'settings';
+export const PASSWORDKEY = 'password';
 
 const ALLGRADIENTS = [
   { from: '#5CEAF3', to: '#ACABE0' },
@@ -228,4 +229,6 @@ export default {
     }
     return backgrounds;
   }
+
+
 };

@@ -1,6 +1,6 @@
 const data = {
   timer: {
-    '2019-08-15': {
+    '2020-08-24': {
       instagram: 2000,
       youtube: 2240,
       twitter: 2000,

@@ -14,7 +14,6 @@
         <div class="site-actions">
           <switch-button @toggle="update" v-model="each.control"></switch-button>
           <router-link class="edit" :to="{ name: 'Advanced', params: { name: key }}">
-            <!-- <img src="../assets/images/edit.png" /> -->
           </router-link>
           <img @click="remove(key)" src="../assets/images/trash.png" />
         </div>

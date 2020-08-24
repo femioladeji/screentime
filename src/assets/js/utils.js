@@ -229,6 +229,4 @@ export default {
     }
     return backgrounds;
   }
-
-
 };

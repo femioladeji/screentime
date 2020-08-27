@@ -16,7 +16,7 @@
 
 <script>
 import bcrypt from 'bcryptjs';
-import utils, { SETTINGSKEY } from '../assets/js/utils';
+import utils, { PASSWORDKEY } from '../assets/js/utils';
 
 export default {
   name: 'AppsConfiguration',
@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     async getPassword() {
-      const password = await utils.getData(SETTINGSKEY);
+      const password = await utils.getData(PASSWORDKEY);
       this.currentPassword = password.password;
     },
     unlockPage() {

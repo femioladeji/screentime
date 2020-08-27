@@ -72,7 +72,7 @@ export default {
       this.theme = settings.theme || 'flash';
     },
     async getPassword() {
-      const password = await utils.getData(SETTINGSKEY);
+      const password = await utils.getData(PASSWORDKEY);
       this.isCurrentPassword = password.password;
     },
     async savePassword() {
@@ -82,7 +82,7 @@ export default {
           this.errorMessage = 'Invalid old password';
         } else {
           const hashedPassword = bcrypt.hashSync(this.newPassword, 10);
-          await utils.saveConfiguration(SETTINGSKEY, {
+          await utils.saveConfiguration(PASSWORDKEY, {
             [PASSWORDKEY]: hashedPassword
           });
           this.buttonCaption = 'Saving...';

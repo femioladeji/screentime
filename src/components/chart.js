@@ -15,7 +15,8 @@ export default {
         label: '',
         hoverBackgroundColor: backgrounds,
         backgroundColor: backgrounds,
-        data: values
+        data: values,
+        barThickness: 'flex',
       }]
     }, {
       scales: {
@@ -29,7 +30,6 @@ export default {
           }
         }],
         yAxes: [{
-          barThickness: 'flex',
           scaleLabel: {
             display: true,
             labelString: 'SITES'

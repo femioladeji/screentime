@@ -16,7 +16,7 @@ export default {
         hoverBackgroundColor: backgrounds,
         backgroundColor: backgrounds,
         data: values,
-        barThickness: 'flex',
+        barThickness: 'flex'
       }]
     }, {
       scales: {

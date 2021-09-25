@@ -9,7 +9,7 @@
     </div>
     <div class="app-list">
       <div class="row" v-for="(each, key) in sites" :key="key">
-        <div>{{key}}</div>
+        <div class="app-title">{{key}}</div>
         <div><img src="../assets/images/timer.png" />&nbsp; &nbsp; {{ formatTime(key) }}</div>
         <div class="site-actions">
           <switch-button @toggle="update" v-model="each.control"></switch-button>
@@ -81,3 +81,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.app-title {
+  font-size: 16px;
+}
+</style>

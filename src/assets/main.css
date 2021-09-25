@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'CircularStd';
-  src: url('./font/CircularStd-Black.otf') format('opentype');
+  src: url('./font/CircularStd-Book.ttf') format('truetype');
 }
 
 * {
@@ -12,25 +12,9 @@ body {
   margin: 0;
 }
 
-#app {
-  width: 510px;
-}
-
-.nav {
-  height: 56px;
-  display: flex;
-  align-items: center;
-  padding: 0 5%;
-  border-bottom: 1px solid #f3f3f3;
-}
-
 .title {
   color: #333333;
   font-size: 14px;
-}
-
-.menu {
-  margin-left: 20%;
 }
 
 .icon {
@@ -44,37 +28,23 @@ body {
   border-bottom: 2px solid #fff;
 }
 
-.menu-drop {
-  display: none;
-  color: #fff;
-  width: 81px;
-  height: 30.11px;
-  text-align: center;
-  top: 60px;
-  left: -15px;
-  font-size: 12px;
-  line-height: 35px;
-  position: absolute;
-  background: url('../assets/images/tooltip.png') no-repeat;
-}
-
-.icon:hover .menu-drop {
+/* .icon:hover .menu-drop {
   display: block;
-}
+} */
 
-.icon:hover, .router-link-active {
+/* .icon:hover, .router-link-active {
   border-bottom: 2px solid #649ef7;
-}
+} */
 
-.icon:nth-of-type(1) {
+/* .icon:nth-of-type(1) {
   background-image: url("./images/pie_chart.png");
 }
 
 .icon:nth-of-type(1):hover, .icon:nth-of-type(1).router-link-active {
   background-image: url("./images/pie_chart_hover.png");
-}
+} */
 
-.icon:nth-of-type(2) {
+/* .icon:nth-of-type(2) {
   background-image: url("./images/app.png");
 }
 
@@ -88,7 +58,7 @@ body {
 
 .icon:nth-of-type(3):hover, .icon:nth-of-type(3).router-link-active {
   background-image: url("./images/settings_hover.png");
-}
+} */
 
 .text-center {
   text-align: center;
@@ -99,7 +69,7 @@ body {
 }
 
 .content {
-  padding: 5% 30px;
+  padding: 5% 0;
   min-height: 320px;
   overflow-y: auto;
 }
@@ -125,6 +95,11 @@ body {
 .box.middle {
   align-items: center;
   justify-content: space-evenly;
+}
+
+.box.between {
+  align-items: center;
+  justify-content: space-between;
 }
 
 .app-list {
@@ -187,6 +162,10 @@ a {
 
 .input-field, .input-field label, .minute {
   color: #4F4F4F;
+}
+
+.minute label {
+  font-size: 14px;
 }
 
 .input-field label {
@@ -421,7 +400,7 @@ body::-webkit-scrollbar-thumb {
 
 
 /** dark mode specific styles **/
-.dark-mode {
+/* .dark-mode {
   background: #1F2024;
   color: #9599B4;
 }
@@ -521,4 +500,4 @@ body.dark-mode::-webkit-scrollbar-track {
 
 body.dark-mode::-webkit-scrollbar-thumb {
   background-color: #fff;
-}
+} */

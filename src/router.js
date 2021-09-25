@@ -4,7 +4,7 @@ import Add from '@/components/Add';
 import Apps from '@/components/Apps';
 import Index from '@/components/Index';
 import Settings from '@/components/Settings';
-import Advanced from '@/components/Advanced';
+import Advanced from '@/components/Advanced/index';
 import AppsConfiguration from '@/components/AppsConfiguration';
 
 Vue.use(Router);

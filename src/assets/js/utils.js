@@ -83,16 +83,17 @@ export default {
     const moment = Date.now();
     const { active } = cacheStorage;
     if (active.name) {
-      const seconds = parseInt((moment - active.timeStamp) / 1000, 10);
       const currentDate = this.getCurrentDate();
+      const startOfDayTimestamp = new Date(currentDate);
+      const start = Math.max(startOfDayTimestamp, active.timeStamp);
+      const seconds = parseInt((moment - start) / 1000, 10);
       if (!cacheStorage.data[currentDate]) {
         cacheStorage.data = {};
         cacheStorage.data[currentDate] = {};
       }
       // intentionally manipulating cache storage to keep it updated real time
-      cacheStorage.data[currentDate][active.name] = cacheStorage.data[currentDate][active.name]
-        ? cacheStorage.data[currentDate][active.name] + seconds
-        : seconds;
+      const currentlyUsedTime = cacheStorage.data[currentDate][active.name] || 0;
+      cacheStorage.data[currentDate][active.name] = currentlyUsedTime + seconds;
       cacheStorage.active = {};
       storage.update(active.name, seconds);
     }

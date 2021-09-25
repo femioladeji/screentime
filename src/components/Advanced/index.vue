@@ -1,10 +1,16 @@
 <template>
   <div class="content">
-    <BackButton route="/app" />
-    <h3>App Details {{name}}</h3>
+    <div class="box between advanced-header">
+      <h3 class="app-details-title">App Details</h3>
+      <BackButton route="/app" />
+    </div>
     <form class="form">
       <div class="input-field">
-        <label>Title (Add an app title)</label>
+        <label>Title <span class="italize">(A name or description of the app)</span></label>
+        <input type="text" :value="name" />
+      </div>
+      <div class="input-field">
+        <label>URL <span class="italize">(example: https://www.some-app-title.com)</span></label>
         <input type="text" disabled :value="name" />
       </div>
       <div class="box minute">
@@ -12,7 +18,7 @@
         <input @keyup.enter="update" @change="update" type="number"
           v-model="config.time" min="0" max="1440" />
       </div>
-      <h3>Blocked Timeframes</h3>
+      <h3>Advanced Settings</h3>
       <div>
         <div class="box middle day" v-for="(each, key) in daysChoosen" :key="key">
           <label class="checkbox">{{ each.name }}
@@ -46,8 +52,8 @@
 </template>
 
 <script>
-import utils, { CONFIGKEY, days } from '../assets/js/utils';
-import BackButton from './molecules/BackButton';
+import utils, { CONFIGKEY, days } from '../../assets/js/utils';
+import BackButton from '../molecules/BackButton';
 
 export default {
   components: { BackButton },
@@ -122,3 +128,39 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.advanced-header {
+  margin-bottom: 8px;
+}
+
+.app-details-title {
+  font-size: 14px;
+  color: #649EF7;
+}
+
+.input-field {
+  margin-top: 24px;
+}
+
+.input-field label {
+  font-size: 12px;
+}
+
+.input-field input[type="text"] {
+  font-size: 16px;
+  padding: 12px 0;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #E0E0E0;
+  outline: none;
+}
+
+.input-field input[type="text"]:focus {
+  border-bottom-color: #828282;
+}
+
+.italize {
+  font-style: italic;
+}
+</style>

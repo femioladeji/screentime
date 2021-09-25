@@ -1,67 +1,124 @@
-<template id="switch-button">
-  <div class="switch-button-control">
-    <div
-      class="switch-button"
-      :class="{ enabled: isEnabled }"
-      @click="toggle">
-        <div class="button"></div>
-    </div>
-    <div class="switch-button-label">
-      <slot></slot>
-    </div>
-  </div>
+<template>
+  <label
+    class="switch__wrapper"
+    :class="{ 'cursor-not-allowed' : disabled }"
+    role="switch"
+  >
+    <input
+        type="checkbox"
+        :disabled="disabled"
+        :checked="toggled"
+        v-bind="$attrs"
+        @change="onChange"
+    >
+    <span class="switch" />
+    <slot />
+  </label>
 </template>
 
 <script>
+const MODEL_EVENT = 'toggle';
+
 export default {
+  name: 'SwitchButton',
   model: {
-    prop: 'isEnabled',
-    event: 'toggle'
+    prop: 'toggled',
+    event: MODEL_EVENT
   },
   props: {
-    isEnabled: Boolean
+    toggled: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
-    toggle() {
-      this.$emit('toggle', !this.isEnabled);
+    onChange(event) {
+      if (!this.disabled) {
+        this.$emit(MODEL_EVENT, event.target.checked, event);
+      }
     }
   }
 };
 </script>
 
-<style>
-/** switch button style **/
-.switch-button-control {
+<style scoped>
+.switch__wrapper {
   display: flex;
-  flex-direction: row;
   align-items: center;
-}
-.switch-button-control .switch-button {
-  padding: 3px 5px;
-  width: 50px;
-  box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.33);
-  background: #E0E0E0;
-  border-radius: 1.5em;
-  transition: all 0.3s ease-in-out;
   cursor: pointer;
 }
-.switch-button-control .switch-button .button {
-  height: 19px;
-  width: 19px;
-  border-radius: 19px;
-  background: #828282;
-  transition: all 0.3s ease-in-out;
+
+.cursor-not-allowed {
+  cursor: not-allowed;
 }
-.switch-button-control .switch-button.enabled {
-  background-color: #C9F9DD;
-  box-shadow: none;
+
+.switch__wrapper input {
+  position: absolute;
+  width: 0px;
+  height: 0px;
+  opacity: 0;
 }
-.switch-button-control .switch-button.enabled .button {
-  background: #27AE60;
-  transform: translateX(19px);
+
+.switch__wrapper .switch {
+  position: relative;
+  background: var(--switch-bg-color);
+  transition: all 150ms ease-in-out;
+  width: 25.6px;
+  height: 16px;
+  border-radius: 16px;
+  margin-right: 8px;
 }
-.switch-button-control .switch-button-label {
-  margin-left: 10px;
+
+.switch__wrapper .switch::before {
+  position: absolute;
+  left: 0;
+  display: inline-block;
+  background: var(--switch-fore-color);
+  border-radius: 100%;
+  content: "";
+  transition: inherit;
+  height: 12.8px;
+  width: 12.8px;
+  margin: 1.6px;
+  box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.1);
 }
-/** end of switch button style **/
+
+input:checked ~ .switch::before {
+  transform: translateX(9.6px);
+}
+
+/* input:focus ~ .switch::before {
+            @apply border border-current;
+} */
+
+/* .switch__wrapper {
+
+    &:hover {
+        .switch::before {
+            @apply border border-current;
+        }
+    }
+
+    input:focus ~ .switch {
+        &::before {
+            @apply border border-current;
+        }
+    }
+
+    input[disabled] ~ .switch {
+        @apply bg-gray-50 #{!important};
+
+        &::before {
+            @apply border-none;
+        }
+    }
+
+    input[disabled]:checked ~ .switch {
+        @apply bg-current opacity-10 #{!important};
+    }
+} */
 </style>

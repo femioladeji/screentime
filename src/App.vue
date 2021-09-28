@@ -31,8 +31,9 @@ export default {
 
   --icon_default: #BDBDBD;
   --switch-bg-color: #BDBDBD;
+  --switch-checked-color: #333333;
   --switch-fore-color: #FFFFFF;
-  --text-color: ##333333;
+  --text-color: #333333;
 }
 
 body.dark-mode {
@@ -42,6 +43,7 @@ body.dark-mode {
 
   --icon_default: #828282;
   --switch-bg-color: #828282;
+  --switch-checked-color: #BDBDBD;
   --switch-fore-color: #FFFFFF;
   --text-color: #F2F2F2;
 }

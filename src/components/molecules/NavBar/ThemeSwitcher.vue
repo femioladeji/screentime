@@ -3,22 +3,28 @@
     <switch-button @toggle="update" :toggled="!isLightTheme">
       <span class="theme-title">{{ themeText }}</span>
     </switch-button>
-    <img v-if="isLightTheme" class="theme-image" src="../../../assets/images/light.svg">
-    <img v-else class="theme-image" src="../../../assets/images/dark.svg">
+    <light v-if="isLightTheme" class="theme-image" />
+    <dark v-else class="theme-image" />
     <button class="close" @click="close">
-      <img src="../../../assets/images/close.svg">
+      <close />
     </button>
   </div>
 </template>
 
 <script>
 import SwitchButton from '../../atoms/Switch';
+import Close from '../../atoms/Icons/Close';
+import Dark from '../../atoms/Icons/Dark';
+import Light from '../../atoms/Icons/Light';
 import utils, { SETTINGSKEY } from '../../../assets/js/utils';
 
 export default {
   name: 'ThemeSwitcher',
   components: {
-    SwitchButton
+    SwitchButton,
+    Close,
+    Light,
+    Dark
   },
   data() {
     return {

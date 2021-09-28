@@ -91,34 +91,8 @@ input:checked ~ .switch::before {
   transform: translateX(9.6px);
 }
 
-/* input:focus ~ .switch::before {
-            @apply border border-current;
-} */
+input:checked ~ .switch {
+  background: var(--switch-checked-color);
+}
 
-/* .switch__wrapper {
-
-    &:hover {
-        .switch::before {
-            @apply border border-current;
-        }
-    }
-
-    input:focus ~ .switch {
-        &::before {
-            @apply border border-current;
-        }
-    }
-
-    input[disabled] ~ .switch {
-        @apply bg-gray-50 #{!important};
-
-        &::before {
-            @apply border-none;
-        }
-    }
-
-    input[disabled]:checked ~ .switch {
-        @apply bg-current opacity-10 #{!important};
-    }
-} */
 </style>

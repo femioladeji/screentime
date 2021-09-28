@@ -1,9 +1,7 @@
 <template>
   <div class="nav">
     <Links />
-    <div class="action">
-        <theme-switcher />
-    </div>
+    <theme-switcher />
   </div>
 </template>
 
@@ -27,9 +25,5 @@ export default {
   justify-content: space-between;
   height: 48px;
   border-bottom: 1px solid var(--nav_border);
-}
-
-.action {
-  display: flex;
 }
 </style>

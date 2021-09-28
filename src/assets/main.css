@@ -102,25 +102,6 @@ body {
   justify-content: space-between;
 }
 
-.app-list {
-  margin-top: 40px;
-  width: 100%;
-}
-
-.row {
-  display: flex;
-  height: 50px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 5%;
-  color: #4F4F4F;
-}
-
-.row > div:first-of-type {
-  width: 30%;
-  text-transform: capitalize;
-}
-
 .table td, .table th {
   padding-left: 10px;
   text-transform: capitalize;
@@ -129,12 +110,6 @@ body {
 .table tr {
   line-height: 40px;
   text-align: left;
-}
-
-.row:hover {
-  background: #FAFAFA;
-  border: 1px solid #E0E0E0;
-  border-radius: 5px;
 }
 
 .table td img {
@@ -218,16 +193,6 @@ a {
   cursor: pointer;
 }
 
-.apps-header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.apps-header .action {
-  display: flex;
-  align-items: center;
-}
-
 .btn {
   cursor: pointer;
   border: 1px solid #E0E0E0;
@@ -244,7 +209,6 @@ a {
 .add {
   width: 36px;
   height: 36px;
-  background-image: url('./images/add.png');
   background-repeat: no-repeat;
   background-position: center center;
   border-radius: 5px;
@@ -256,27 +220,8 @@ a {
 
 .add:hover {
   color: #fff;
-  background-image: url('./images/add_hover.png');
   background-color: #649EF7;
   border: 2px solid #2F80ED;
-}
-
-.site-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  width: 35%;
-}
-
-.site-actions * {
-  cursor: pointer;
-}
-
-.site-actions .edit {
-  display: block;
-  background: url('./images/edit.png');
-  width: 17.99px;
-  height: 17.99px;
 }
 
 .save {

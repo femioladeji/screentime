@@ -1,63 +1,76 @@
 <template>
   <div class="content">
-    <div class="box between advanced-header">
-      <h3 class="app-details-title">App Details</h3>
-      <BackButton route="/app" />
-    </div>
-    <form class="form">
-      <div class="input-field">
-        <label>Title <span class="italize">(A name or description of the app)</span></label>
-        <input type="text" :value="name" />
-      </div>
-      <div class="input-field">
-        <label>URL <span class="italize">(example: https://www.some-app-title.com)</span></label>
-        <input type="text" disabled :value="name" />
-      </div>
-      <div class="box minute">
-        <label>Daily Limit (minutes)</label>
-        <input @keyup.enter="update" @change="update" type="number"
-          v-model="config.time" min="0" max="1440" />
-      </div>
-      <h3>Advanced Settings</h3>
-      <div>
-        <div class="box middle day" v-for="(each, key) in daysChoosen" :key="key">
-          <label class="checkbox">{{ each.name }}
-            <input type="checkbox" v-model="daysChoosen[key].active" />
-            <span class="checkmark"></span>
-          </label>
-          <div>From&nbsp;&nbsp;
-            <input
-              type="time"
-              @keyup="keypressed(key)"
-              v-model="daysChoosen[key].from" />
-          </div>
-          <div>To&nbsp;&nbsp;
-            <input
-              type="time"
-              @keyup="keypressed(key)"
-              :min="daysChoosen[key].from"
-              v-model="daysChoosen[key].to" />
-          </div>
+    <collapsible :open="true">
+      <template #title>
+        <h3 class="collapsible-title">Basic</h3>
+      </template>
+      <form class="form">
+        <div class="input-field">
+          <label>Title <span class="italize">(A name or description of the app)</span></label>
+          <input type="text" :value="name" />
         </div>
+        <div class="input-field">
+          <label>URL <span class="italize">(example: https://www.some-app-title.com)</span></label>
+          <input type="text" disabled :value="config.url" />
+        </div>
+        <div class="input-field">
+          <label>Daily Limit <span class="italize">(in minutes)</span></label>
+          <input
+            v-model="config.time"
+            type="number"
+            min="0"
+            max="1440"
+            @keyup.enter="update"
+            @change="update" />
+        </div>
+        <div class="save-section box between">
+          <div class="box between colorpicker">
+            <div class="app-color"></div>
+            Choose Color
+          </div>
+          <button class="btn dark save-btn">
+            <save-icon class="save-icon" />Save
+          </button>
+        </div>
+      </form>
+    </collapsible>
+    <collapsible :open="true" class="advanced-section">
+      <template #title>
+        <h3 class="collapsible-title">Advanced</h3>
+      </template>
+      <div>
+        <p class="advanced-more">
+          Advanced setting lets you choose and add
+           custom time blocks to days of the week
+        </p>
+        <time-blocks :config-days="config.days || {}" />
+        <button class="btn dark advanced-save-btn">
+          <save-icon class="save-icon" />Save
+        </button>
       </div>
-      <button
-        :disabled="isTimeframeInvalid"
-        @click.prevent="addTimeFrame"
-        type="submit"
-        class="btn save">
-          SAVE
-      </button>
-    </form>
+    </collapsible>
   </div>
 </template>
 
 <script>
 import utils, { CONFIGKEY, days } from '../../assets/js/utils';
-import BackButton from '../molecules/BackButton';
+import SaveIcon from '../atoms/Icons/Save';
+import Collapsible from '../atoms/Collapsible';
+import TimeBlocks from './TimeBlocks';
 
 export default {
-  components: { BackButton },
   name: 'Settings',
+  components: {
+    SaveIcon,
+    Collapsible,
+    TimeBlocks
+  },
+  props: {
+    appKey: {
+      type: String,
+      required: false
+    }
+  },
   data() {
     return {
       sites: {},
@@ -134,9 +147,8 @@ export default {
   margin-bottom: 8px;
 }
 
-.app-details-title {
-  font-size: 14px;
-  color: #649EF7;
+.collapsible-title {
+  font-size: 16px;
 }
 
 .input-field {
@@ -147,7 +159,7 @@ export default {
   font-size: 12px;
 }
 
-.input-field input[type="text"] {
+.input-field input {
   font-size: 16px;
   padding: 12px 0;
   border-radius: 0;
@@ -156,11 +168,48 @@ export default {
   outline: none;
 }
 
-.input-field input[type="text"]:focus {
+.input-field input:focus {
   border-bottom-color: #828282;
 }
 
 .italize {
   font-style: italic;
+}
+
+.save-section {
+  margin-top: 24px;
+}
+
+.save-section .save-btn {
+  padding: 7px 20px;
+}
+
+.colorpicker {
+  font-size: 12px;
+}
+
+.colorpicker .app-color {
+  width: 20px;
+  height: 20px;
+  background-color: #E3AA39;
+  border-radius: 4px;
+  margin-right: 12px;
+  cursor: pointer;
+}
+
+.advanced-section {
+  margin-top: 32px;
+}
+
+.advanced-more {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #828282;
+}
+
+.advanced-save-btn {
+  width: 100%;
+  margin-top: 32px;
+  justify-content: center;
 }
 </style>

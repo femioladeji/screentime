@@ -1,6 +1,6 @@
 const data = {
   timer: {
-    '2021-09-28': {
+    '2021-10-01': {
       instagram: 2000,
       youtube: 2240,
       twitter: 2000,
@@ -11,7 +11,7 @@ const data = {
   },
   sites: {
     facebook: {
-      control: false,
+      control: true,
       days: {
         friday: [
           {

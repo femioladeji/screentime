@@ -119,8 +119,13 @@ export default {
 }
 
 .site-actions {
+  visibility: hidden;
   display: flex;
   align-items: center;
+}
+
+.row:hover .site-actions {
+  visibility: visible;
 }
 
 .site-actions img {

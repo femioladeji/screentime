@@ -121,10 +121,6 @@ a {
   color: #1a7c89;
 }
 
-.form > div {
-  margin-bottom: 20px;
-}
-
 .form input {
   font-size: 14px;
   width: 100%;
@@ -195,15 +191,30 @@ a {
 
 .btn {
   cursor: pointer;
+  display: flex;
+  align-items: center;
   border: 1px solid #E0E0E0;
   padding: 0 20px;
   height: 36px;
-  border-radius: 5px;
+  border-radius: 4px;
   background: none;
 }
 
-.btn:hover {
+/* .btn:hover {
   background: #F2F2F2;
+} */
+
+.btn.dark {
+  background: var(--text-color);
+  color: var(--bg);
+}
+
+.btn svg {
+  margin-right: 8px;
+}
+
+.btn.dark svg path {
+  fill: var(--bg);
 }
 
 .add {
@@ -287,16 +298,29 @@ a {
   border-radius: 5px;
   position: absolute;
   background: none;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #828282;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
 }
 
 .checkbox:hover input ~ .checkmark {
-  border-color: #2F80ED;
+  /* border-color: #4F4F4F; */
 }
 
 /* When the checkbox is checked, add a blue background */
-.checkbox input:checked ~ .checkmark {
-  background: #649EF7;
+.checkbox input:checked ~ .checkmark:after {
+  display: block;
+  background: #4F4F4F;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
 }
 
 .settings .box {

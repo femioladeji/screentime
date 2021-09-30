@@ -13,7 +13,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "chart.js": "^2.9.4",
-    "vue": "^2.5.17",
+    "vue": "^2.6.11",
     "vue-chartjs": "^3.4.0",
     "vue-router": "^3.0.1",
     "vue-select": "^3.13.0"
@@ -31,7 +31,7 @@
     "copyfiles": "^2.4.0",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0-0",
-    "vue-template-compiler": "^2.5.17",
+    "vue-template-compiler": "^2.6.11",
     "webpack-cli": "^3.3.12"
   }
 }

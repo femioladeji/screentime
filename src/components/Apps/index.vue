@@ -1,5 +1,8 @@
 <template>
   <div class="content">
+    <!-- <div v-if="appToEdit"  class="modal">
+      <advanced :app-key="appToEdit" class="edit-modal" />
+    </div> -->
     <div class="apps-header">
       <div class="stats">
         <span class="timers-caption">Timers</span>
@@ -18,21 +21,23 @@
       </v-select>
     </div>
     <div class="app-list">
-      <each-app
-        v-for="(each, key) in filteredSites"
-        :key="key"
-        :siteKey="key"
-        :details="each"
-        :time="time[key]"
-        @remove="remove"
-        @update="update" />
+      <!-- <transition-group name="list" tag="p"> -->
+        <each-app
+          v-for="(each, key) in filteredSites"
+          :key="key"
+          :siteKey="key"
+          :details="each"
+          :time="time[key]"
+          @remove="remove"
+          @update="update" />
+      <!-- </transition-group> -->
     </div>
     <div class="apps-footer">
       <button class="btn disable-all" @click="disableAll">
         Disable All
         <div class="shortcut">Ctrl / ⌘  + D</div>
       </button>
-      <router-link to="/add" class="add-timer">
+      <router-link to="/add" class="btn dark add-timer">
         <timer />
         Add timer
       </router-link>
@@ -69,7 +74,7 @@ export default {
       return ['All', 'Active', 'Idle'];
     },
     count() {
-      const keys = Object.keys(this.sites);
+      const keys = Object.keys(this.filteredSites);
       return keys.length;
     },
     attributes() {
@@ -108,16 +113,12 @@ export default {
     },
     disableAll() {
       Object.keys(this.sites).forEach((each) => {
-        this.sites[each].control = false;
+        this.update(each, false);
       });
-      this.update();
     },
-    remove(key) {
+    async remove(key) {
       this.$delete(this.sites, key);
-      this.update();
-    },
-    changeFilter() {
-      console.log('sfasdf');
+      await utils.saveConfiguration(CONFIGKEY, this.sites);
     }
   }
 };
@@ -192,19 +193,16 @@ body.dark-mode .count {
   border-radius: 4px;
 }
 
-.apps-footer .add-timer {
-  background: var(--text-color);
-  color: var(--bg);
+.apps-footer .btn.add-timer {
   padding: 8px;
-  border-radius: 4px;
 }
 
-.apps-footer .add-timer svg {
-  margin-right: 8px;
+.filter {
+  color: var(--text-color);
 }
 
-.add-timer svg path {
-  fill: var(--bg);
+.filter .vs__selected {
+  color: var(--text-color);
 }
 
 .filter .vs__dropdown-toggle {
@@ -221,9 +219,36 @@ body.dark-mode .count {
 .filter .vs__dropdown-menu {
   right: 0;
   left: auto;
+  padding: 0px;
 }
 
 .filter .vs__open-indicator {
   fill: var(--icon_default);
+}
+
+/* .list-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+.list-enter-active, .list-leave-active {
+  transition: all 0.3s;
+}
+.list-enter, .list-leave-to {
+  opacity: 0;
+} */
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.edit-modal {
+  margin: 71px 21px;
+  border-radius: 8px;
+  background: var(--bg);
 }
 </style>

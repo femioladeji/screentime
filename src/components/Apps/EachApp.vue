@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="app-title">
-      <div class="app-name">{{siteKey}}</div>
+      <div class="app-name">{{appTitle}}</div>
       <div class="app-url">{{details.url}}</div>
     </div>
     <div class="app-timings">
@@ -56,6 +56,9 @@ export default {
       const minutes = Math.floor((this.time % 3600) / 60).toString();
       const seconds = (this.time % 60).toString();
       return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+    },
+    appTitle() {
+      return this.details.title || this.siteKey;
     }
   },
   methods: {

@@ -1,13 +1,13 @@
 <template>
-  <div class="content">
+  <div v-if="config.title" class="content">
     <collapsible :open="true">
       <template #title>
         <h3 class="collapsible-title">Basic</h3>
       </template>
-      <form class="form">
+      <form class="form" @submit.prevent="update">
         <div class="input-field">
           <label>Title <span class="italize">(A name or description of the app)</span></label>
-          <input type="text" :value="name" />
+          <input v-model="config.title" type="text" />
         </div>
         <div class="input-field">
           <label>URL <span class="italize">(example: https://www.some-app-title.com)</span></label>
@@ -19,17 +19,15 @@
             v-model="config.time"
             type="number"
             min="0"
-            max="1440"
-            @keyup.enter="update"
-            @change="update" />
+            max="1440" />
         </div>
         <div class="save-section box between">
           <div class="box between colorpicker">
             <div class="app-color"></div>
             Choose Color
           </div>
-          <button class="btn dark save-btn">
-            <save-icon class="save-icon" />Save
+          <button type="submit" class="btn dark save-btn">
+            <save-icon class="save-icon" />{{ buttonCaption }}
           </button>
         </div>
       </form>
@@ -45,7 +43,7 @@
         </p>
         <time-blocks :config-days="config.days || {}" />
         <button class="btn dark advanced-save-btn">
-          <save-icon class="save-icon" />Save
+          <save-icon class="save-icon" />{{ buttonCaption }}
         </button>
       </div>
     </collapsible>
@@ -76,14 +74,26 @@ export default {
       sites: {},
       name: '',
       config: {},
-      daysChoosen: []
+      daysChoosen: [],
+      isSaving: false
     };
+  },
+  computed: {
+    isTimeframeInvalid() {
+      return this.daysChoosen.some(({ from, to }) => to < from);
+    },
+    buttonCaption() {
+      return this.isSaving ? 'Saving...' : 'Save';
+    }
   },
   async mounted() {
     this.name = this.$route.params.name;
     const allSites = await utils.getData(CONFIGKEY);
     this.sites = allSites;
-    this.config = this.sites[this.name];
+    this.config = {
+      ...this.sites[this.name],
+      title: this.sites[this.name].title || this.name
+    };
     days.forEach((eachDay) => {
       if (this.config.days && eachDay in this.config.days) {
         this.config.days[eachDay].forEach((timeFrame) => {
@@ -104,11 +114,17 @@ export default {
   },
   methods: {
     async update() {
+      this.isSaving = true;
       this.config.control = true;
       this.sites[this.name] = this.config;
-      utils.saveConfiguration(CONFIGKEY, this.sites);
+      await utils.saveConfiguration(CONFIGKEY, this.sites);
+      this.endSave();
     },
-
+    endSave() {
+      setTimeout(() => {
+        this.isSaving = false;
+      }, 1500);
+    },
     async addTimeFrame() {
       this.config.days = {};
       this.daysChoosen.forEach(({
@@ -127,16 +143,10 @@ export default {
       await this.update();
       this.$router.push('/app');
     },
-
     keypressed(day) {
       if (this.daysChoosen[day].to > this.daysChoosen[day].from) {
         this.daysChoosen[day].active = true;
       }
-    }
-  },
-  computed: {
-    isTimeframeInvalid() {
-      return this.daysChoosen.some(({ from, to }) => to < from);
     }
   }
 };

@@ -1,8 +1,5 @@
 <template>
   <div class="content">
-    <!-- <div v-if="appToEdit"  class="modal">
-      <advanced :app-key="appToEdit" class="edit-modal" />
-    </div> -->
     <div class="apps-header">
       <div class="stats">
         <span class="timers-caption">Timers</span>
@@ -16,12 +13,10 @@
       >
         <template #open-indicator="{ attributes }">
           <span v-bind="attributes"><filter-icon /></span>
-          <!-- <span v-bind="attributes"><filter-icon /></span> -->
         </template>
       </v-select>
     </div>
     <div class="app-list">
-      <!-- <transition-group name="list" tag="p"> -->
         <each-app
           v-for="(each, key) in filteredSites"
           :key="key"
@@ -30,7 +25,6 @@
           :time="time[key]"
           @remove="remove"
           @update="update" />
-      <!-- </transition-group> -->
     </div>
     <div class="apps-footer">
       <button class="btn disable-all" @click="disableAll">

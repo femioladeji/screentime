@@ -54,7 +54,6 @@ svg path {
 
 #app {
   width: 522px;
-  padding: 0 24px;
   background: var(--bg);
   color: var(--text-color);
 }

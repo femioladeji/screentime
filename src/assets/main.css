@@ -69,7 +69,7 @@ body {
 }
 
 .content {
-  padding: 5% 0;
+  padding: 24px;
   min-height: 320px;
   overflow-y: auto;
 }

@@ -172,6 +172,9 @@ export default {
   position: relative;
   padding: 50px 40px;
   border-radius: 8px;
+  margin: 0 20px;
+  overflow-y: auto;
+  max-height: calc(100% - 40px);
 }
 
 .close-advanced {

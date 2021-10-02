@@ -72,7 +72,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .row {
   display: flex;
   height: 48px;
@@ -122,13 +122,17 @@ export default {
 }
 
 .site-actions {
-  visibility: hidden;
+  /* visibility: hidden; */
   display: flex;
   align-items: center;
 }
 
+.row:hover .app-timings svg path {
+  fill: #333333;
+}
+
 .row:hover .site-actions {
-  visibility: visible;
+  /* visibility: visible; */
 }
 
 .site-actions img {

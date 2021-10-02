@@ -121,6 +121,10 @@ a {
   color: #1a7c89;
 }
 
+input {
+  font-family: 'CircularStd';
+}
+
 .form input {
   font-size: 14px;
   width: 100%;
@@ -148,11 +152,7 @@ a {
   width: 100%;
 }
 
-.form input:hover, .form input:focus {
-  border: 1px solid #649EF7;
-}
-
-.form input:focus, button:focus, .form select:focus {
+input:focus, button:focus, .form select:focus {
   outline: none;
 }
 

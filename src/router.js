@@ -6,6 +6,7 @@ import Index from '@/components/Index';
 import Settings from '@/components/Settings';
 import Advanced from '@/components/Advanced/index';
 import AppsConfiguration from '@/components/AppsConfiguration';
+import Info from '@/components/Info/Index';
 
 Vue.use(Router);
 
@@ -24,6 +25,10 @@ export default new Router({
     {
       path: '/settings',
       component: Settings
+    },
+    {
+      path: '/info',
+      component: Info
     },
     {
       path: '/app',

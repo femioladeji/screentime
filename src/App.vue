@@ -49,7 +49,7 @@ body.dark-mode {
 }
 
 svg path {
-  fill: var(--icon_default)
+  fill: var(--icon_default);
 }
 
 #app {

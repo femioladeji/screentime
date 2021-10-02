@@ -7,7 +7,10 @@
       <icon-apps />
     </router-link>
     <router-link to="/settings" class="menu-link">
-      <icon-settings />
+      <icon-edit />
+    </router-link>
+    <router-link to="/info" class="menu-link">
+      <icon-info />
     </router-link>
   </div>
 </template>
@@ -15,14 +18,16 @@
 <script>
 import IconOverview from '../../atoms/Icons/Overview';
 import IconApps from '../../atoms/Icons/Apps';
-import IconSettings from '../../atoms/Icons/Settings';
+import IconInfo from '../../atoms/Icons/Info';
+import IconEdit from '../../atoms/Icons/Edit';
 
 export default {
   name: 'Links',
   components: {
     IconOverview,
     IconApps,
-    IconSettings
+    IconInfo,
+    IconEdit
   }
 };
 </script>

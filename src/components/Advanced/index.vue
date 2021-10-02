@@ -1,67 +1,73 @@
 <template>
-  <div v-if="config.title" class="content">
-    <collapsible :open="true">
-      <template #title>
-        <h3 class="collapsible-title">Basic</h3>
-      </template>
-      <form class="form" @submit.prevent="update">
-        <div class="input-field">
-          <label>Title <span class="italize">(A name or description of the app)</span></label>
-          <input v-model="config.title" type="text" />
-        </div>
-        <div class="input-field">
-          <label>URL <span class="italize">(example: https://www.some-app-title.com)</span></label>
-          <input type="text" disabled :value="config.url" />
-        </div>
-        <div class="input-field">
-          <label>Daily Limit <span class="italize">(in minutes)</span></label>
-          <input
-            v-model="config.time"
-            type="number"
-            min="0"
-            max="1440" />
-        </div>
-        <div class="save-section box between">
-          <div class="box between colorpicker">
-            <div class="app-color"></div>
-            Choose Color
+  <div>
+    <div class="modal-bg" />
+    <div v-if="config.title" class="content advanced-app-settings">
+      <router-link to="/app"><close-icon class="close-advanced" /></router-link>
+      <collapsible :open="true">
+        <template #title>
+          <h3 class="collapsible-title">Basic</h3>
+        </template>
+        <form class="form" @submit.prevent="update">
+          <div class="input-field">
+            <label>Title <span class="italize">(A name or description of the app)</span></label>
+            <input v-model="config.title" type="text" />
           </div>
-          <button type="submit" class="btn dark save-btn">
-            <save-icon class="save-icon" />{{ buttonCaption }}
-          </button>
+          <div class="input-field">
+            <label>URL <span class="italize">(example: https://www.some-app-title.com)</span></label>
+            <input type="text" disabled :value="config.url" />
+          </div>
+          <div class="input-field">
+            <label>Daily Limit <span class="italize">(in minutes)</span></label>
+            <input
+              v-model="config.time"
+              type="number"
+              min="0"
+              max="1440" />
+          </div>
+          <div class="save-section box between">
+            <color-picker v-model="config.color" />
+            <button type="submit" class="btn dark save-btn" :disabled="isSaving">
+              <save-icon class="save-icon" />{{ buttonCaption }}
+            </button>
+          </div>
+        </form>
+      </collapsible>
+      <collapsible :open="true" class="advanced-section">
+        <template #title>
+          <h3 class="collapsible-title">Advanced</h3>
+        </template>
+        <div>
+          <p class="advanced-more">
+            Advanced setting lets you choose and add
+            custom time blocks to days of the week
+          </p>
+          <time-blocks
+            :config-days="config.days || {}"
+            :is-saving="isSaving"
+            @update-days-blocks="updateDaysBlocks"
+          />
         </div>
-      </form>
-    </collapsible>
-    <collapsible :open="true" class="advanced-section">
-      <template #title>
-        <h3 class="collapsible-title">Advanced</h3>
-      </template>
-      <div>
-        <p class="advanced-more">
-          Advanced setting lets you choose and add
-           custom time blocks to days of the week
-        </p>
-        <time-blocks :config-days="config.days || {}" />
-        <button class="btn dark advanced-save-btn">
-          <save-icon class="save-icon" />{{ buttonCaption }}
-        </button>
-      </div>
-    </collapsible>
+      </collapsible>
+    </div>
   </div>
 </template>
 
 <script>
 import utils, { CONFIGKEY, days } from '../../assets/js/utils';
-import SaveIcon from '../atoms/Icons/Save';
 import Collapsible from '../atoms/Collapsible';
 import TimeBlocks from './TimeBlocks';
+import ColorPicker from '../atoms/ColorPicker';
+import SaveIcon from '../atoms/Icons/Save';
+import CloseIcon from '../atoms/Icons/Close';
 
 export default {
   name: 'Settings',
   components: {
     SaveIcon,
     Collapsible,
-    TimeBlocks
+    TimeBlocks,
+    ColorPicker,
+    CloseIcon
   },
   props: {
     appKey: {
@@ -120,6 +126,13 @@ export default {
       await utils.saveConfiguration(CONFIGKEY, this.sites);
       this.endSave();
     },
+    updateDaysBlocks(daysBlocks) {
+      this.config = {
+        ...this.config,
+        days: daysBlocks
+      };
+      this.update();
+    },
     endSave() {
       setTimeout(() => {
         this.isSaving = false;
@@ -152,7 +165,27 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+.advanced-app-settings {
+  background: #fff;
+  z-index: 1;
+  position: relative;
+  padding: 50px 40px;
+  border-radius: 8px;
+}
+
+.close-advanced {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.close-advanced path {
+  fill: #333;
+}
+
 .advanced-header {
   margin-bottom: 8px;
 }
@@ -194,19 +227,6 @@ export default {
   padding: 7px 20px;
 }
 
-.colorpicker {
-  font-size: 12px;
-}
-
-.colorpicker .app-color {
-  width: 20px;
-  height: 20px;
-  background-color: #E3AA39;
-  border-radius: 4px;
-  margin-right: 12px;
-  cursor: pointer;
-}
-
 .advanced-section {
   margin-top: 32px;
 }
@@ -217,9 +237,12 @@ export default {
   color: #828282;
 }
 
-.advanced-save-btn {
+.modal-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 100%;
-  margin-top: 32px;
-  justify-content: center;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
 }
 </style>

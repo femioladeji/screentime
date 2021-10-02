@@ -15,7 +15,7 @@
         :key="chosenDay"
         class="each-day-block"
       >
-        <collapsible :open="true">
+        <collapsible>
           <template #title>
             <p class="day-title">{{chosenDay}}</p>
           </template>
@@ -46,6 +46,10 @@
         </collapsible>
       </div>
     </div>
+
+    <button class="btn dark advanced-save-btn" @click="saveTimeBlocks">
+      <save-icon class="save-icon" />{{ buttonCaption }}
+    </button>
   </div>
 </template>
 
@@ -53,18 +57,24 @@
 import Collapsible from '../atoms/Collapsible';
 import AddIcon from '../atoms/Icons/Add';
 import CloseIcon from '../atoms/Icons/Close';
+import SaveIcon from '../atoms/Icons/Save';
 
 export default {
   name: 'TimeBlocks',
   components: {
     Collapsible,
     AddIcon,
-    CloseIcon
+    CloseIcon,
+    SaveIcon
   },
   props: {
     configDays: {
       type: Object,
       default: () => {}
+    },
+    isSaving: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -81,17 +91,10 @@ export default {
       }
     };
   },
-  // watch: {
-  //   daysChoosen: {
-  //     handler(newValue) {
-  //       newValue.forEach(each => {
-  //         this.$set('timeBlocks', each, [])
-  //       })
-  //     },
-  //     immediate: true
-  //   }
-  // },
   computed: {
+    buttonCaption() {
+      return this.isSaving ? 'Saving...' : 'Save';
+    },
     days() {
       return [
         'monday', 'tuesday', 'wednesday', 'thursday',
@@ -117,6 +120,19 @@ export default {
     },
     deleteBlock(day, index) {
       this.timeBlocks[day].splice(index, 1);
+    },
+    saveTimeBlocks() {
+      const preparedTimeBlocks = {};
+      this.daysChoosen.forEach((eachDay) => {
+        const timeFrames = this.timeBlocks[eachDay];
+        const validTimeFrames = timeFrames.filter(eachTimeFrame => eachTimeFrame.to
+          && eachTimeFrame.from
+          && eachTimeFrame.to > eachTimeFrame.from);
+        if (validTimeFrames.length) {
+          preparedTimeBlocks[eachDay] = validTimeFrames;
+        }
+      });
+      this.$emit('update-days-blocks', preparedTimeBlocks);
     }
   },
   mounted() {
@@ -202,5 +218,11 @@ export default {
   border: 0;
   padding: 0;
   margin: 0;
+}
+
+.advanced-save-btn {
+  width: 100%;
+  margin-top: 32px;
+  justify-content: center;
 }
 </style>

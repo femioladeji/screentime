@@ -60,9 +60,9 @@ export default {
    * @param {string} tabUrl
    * @returns {boolean}
    */
-  isTabAMatch(tabUrlRegex, configuration) {
+  isTabAMatch(tabUrl, configuration) {
     const allSites = Object.values(configuration).map(each => each.url);
-    return allSites.some(each => each.match(tabUrlRegex));
+    return allSites.some(each => each.includes(tabUrl));
   },
 
   getActiveTab() {

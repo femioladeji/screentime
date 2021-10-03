@@ -85,9 +85,13 @@ export default {
   left: 0;
   top: 30px;
   z-index: 1;
-  background: #fff;
+  background: var(--bg);
   grid-template-columns: repeat(5, 18px);
   row-gap: 14px;
+}
+
+.dark-mode .color-list {
+  border-color: #828282;
 }
 
 .color-list button {

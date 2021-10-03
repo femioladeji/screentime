@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     isLightTheme() {
-      return this.theme === 'flash';
+      return this.theme !== 'batman';
     },
     themeText() {
       return this.isLightTheme ? 'Sunny Bunny' : 'Night owl';

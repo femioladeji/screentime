@@ -1,7 +1,7 @@
 <!--eslint-disable import/no-dynamic-require-->
 <template>
   <div class="box between">
-    <img :src="image" />
+    <slot />
     <div class="contributor-details">
       <div>{{ details.name }}</div>
       <a target="_blank" :href="details.twitter"><twitter-icon /></a>
@@ -30,12 +30,6 @@ export default {
       type: Object,
       required: true
     }
-  },
-  computed: {
-    image() {
-      // eslint-disable-next-line global-require
-      return require(`../../assets/images/${this.details.image}.png`); // eslint-disable-line import/no-dynamic-require
-    }
   }
 };
 </script>
@@ -55,5 +49,9 @@ export default {
 
 .contributor-details svg path {
   fill: #4F4F4F;
+}
+
+body.dark-mode .contributor-details svg path {
+  fill: #BDBDBD;
 }
 </style>

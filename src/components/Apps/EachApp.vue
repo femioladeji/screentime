@@ -13,7 +13,7 @@
       <router-link :to="{ name: 'Advanced', params: { name: siteKey }}" class="edit">
         <edit />
       </router-link>
-      <close @click="remove" />
+      <button class="remove-btn" @click="remove"><close class="remove" /></button>
     </div>
     <div class="active-border" />
   </div>
@@ -131,6 +131,10 @@ export default {
   fill: #333333;
 }
 
+body.dark-mode .row:hover .app-timings svg path {
+  fill: #E0E0E0;
+}
+
 .row:hover .site-actions {
   /* visibility: visible; */
 }
@@ -142,5 +146,14 @@ export default {
 .site-actions .edit {
   margin: 0 16px 0 8px;
   display: inline-flex;
+}
+
+.remove {
+  cursor: pointer;
+}
+
+.remove-btn {
+  border: 0;
+  background: none;
 }
 </style>

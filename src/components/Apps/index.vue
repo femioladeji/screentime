@@ -169,6 +169,7 @@ body.dark-mode .count {
 
 .apps-footer .disable-all {
   color: var(--active_link);
+  border-color: #E0E0E0;
 }
 
 .apps-footer .btn {

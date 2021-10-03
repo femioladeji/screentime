@@ -25,11 +25,11 @@
               :key="index"
               class="time-row box between"
             >
-              <div>
+              <div class="input-field">
                 <label>Time from</label>
                 <input v-model="eachTimeBlock.from" type="time" />
               </div>
-              <div>
+              <div class="input-field">
                 <label>Time to</label>
                 <input v-model="eachTimeBlock.to" type="time"  />
               </div>
@@ -164,6 +164,10 @@ export default {
   border-radius: 4px;
 }
 
+body.dark-mode .each-day-block {
+  border-color: #828282;
+}
+
 .day-title {
   font-size: 14px;
   padding: 12px 16px;
@@ -176,22 +180,23 @@ export default {
   padding: 18px 16px;
 }
 
+body.dark-mode .time-slots {
+  border-color: #828282;
+}
+
 .time-row {
   margin-top: 16px;
 }
 
-.time-row > div {
+.time-row > .input-field {
   width: 40%;
+  margin-top: 0;
 }
 
-.time-row > div input {
-  /* width: 100%; */
+.time-row > .input-field input {
   border: none;
   font-size: 16px;
-}
-
-.time-row > div input:focus {
-  outline: none;
+  padding: 0;
 }
 
 .time-row label {
@@ -204,10 +209,6 @@ export default {
   display: flex;
   margin-top: 48px;
   justify-content: flex-end;
-}
-
-.add-time-block .btn {
-  border: 1px solid #333333
 }
 
 .add-time-block .btn svg path {
@@ -224,5 +225,9 @@ export default {
   width: 100%;
   margin-top: 32px;
   justify-content: center;
+}
+
+body.dark-mode input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(100%);
 }
 </style>

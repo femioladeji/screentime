@@ -12,11 +12,6 @@ body {
   margin: 0;
 }
 
-.title {
-  color: #333333;
-  font-size: 14px;
-}
-
 .icon {
   display: inline-block;
   position: relative;
@@ -43,6 +38,7 @@ body {
   border: none;
   border-bottom: 1px solid #E0E0E0;
   outline: none;
+  background: none;
 }
 
 .input-field input:focus {
@@ -118,10 +114,6 @@ input {
   font-family: 'CircularStd';
 }
 
-.input-field, .input-field label, .minute {
-  color: #4F4F4F;
-}
-
 .minute label {
   font-size: 14px;
 }
@@ -131,8 +123,13 @@ input {
   width: 100%;
 }
 
+body.dark-mode .input-field label, body.dark-mode .days-list label {
+  color: #BDBDBD;
+}
+
 .input-field input {
   width: 100%;
+  color: var(--text-color);
 }
 
 input:focus, button:focus, .form select:focus {
@@ -176,11 +173,16 @@ input:focus, button:focus, .form select:focus {
   cursor: pointer;
   display: flex;
   align-items: center;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #333333;
+  color: var(--text-color);
   padding: 0 20px;
   height: 36px;
   border-radius: 4px;
   background: none;
+}
+
+body.dark-mode .btn {
+  border-color: #E0E0E0;
 }
 
 /* .btn:hover {
@@ -271,6 +273,7 @@ input:focus, button:focus, .form select:focus {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #fff;
 }
 
 .checkmark:after {

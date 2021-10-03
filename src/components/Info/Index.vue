@@ -1,7 +1,7 @@
 <template>
   <div class="info-content">
     <div class="info-header">
-      <img src="../../assets/images/logo.svg" />
+      <div class="logo"/>
       <div>
         <div class="info-app-title">ScreenTime</div>
         <div class="info-app-version">Version 5.0.0</div>
@@ -19,8 +19,12 @@
     <div class="contributors">
       <p>Contributors</p>
       <div class="box">
-        <contributor :details="contributors[0]" />
-        <contributor class="second-contributor" :details="contributors[1]" />
+        <contributor :details="contributors[0]">
+          <img src="../../assets/images/femioladeji.png" />
+        </contributor>
+        <contributor class="second-contributor" :details="contributors[1]">
+          <img src="../../assets/images/femiabolaji.png" />
+        </contributor>
       </div>
     </div>
     <p class="acknowledgment">Special thanks to Remix Icons. Your icons made this pop</p>
@@ -40,13 +44,11 @@ export default {
       return [
         {
           name: 'Femi Oladeji',
-          image: 'femioladeji',
           twitter: 'https://twitter.com/femiodtexe',
           github: 'https://github.com/femioladeji'
         },
         {
           name: 'Femi Oladeji',
-          image: 'femiabolaji',
           twitter: 'https://twitter.com/3eyedpixel',
           github: 'https://github.com/fabolaji',
           dribble: '#'
@@ -66,8 +68,20 @@ export default {
   display: flex;
 }
 
-.info-header img {
+
+.info-header .logo {
+  background: url("../../assets/images/logo.svg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 37px;
+  height: 35px;
   margin-right: 15px;
+}
+
+.dark-mode .info-header .logo {
+  background: url("../../assets/images/logo_dark_mode.svg");
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 
 .info-app-title {
@@ -93,6 +107,10 @@ export default {
   font-size: 12px;
   line-height: 20px;
   color: #4F4F4F;
+}
+
+.dark-mode .about div, .dark-mode .acknowledgment, .dark-mode .info-app-version {
+  color: #BDBDBD;
 }
 
 .contributors {

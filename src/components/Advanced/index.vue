@@ -166,7 +166,8 @@ export default {
 
 <style>
 .advanced-app-settings {
-  background: #fff;
+  background: var(--bg);
+  color: var(--text-color);
   z-index: 1;
   position: relative;
   border-radius: 8px;
@@ -193,7 +194,7 @@ export default {
 }
 
 .close-advanced path {
-  fill: #333;
+  fill: var(--text-color);
 }
 
 .advanced-header {

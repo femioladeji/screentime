@@ -8,13 +8,6 @@ export const CONFIGKEY = 'sites';
 export const SETTINGSKEY = 'settings';
 export const PASSWORDKEY = 'password';
 
-const ALLGRADIENTS = [
-  { from: '#5CEAF3', to: '#ACABE0' },
-  { from: '#F3AE5C', to: '#D123E0' },
-  { from: '#D5F35C', to: '#ABE7FA' },
-  { from: '#B9AC3C', to: '#5771F9' }
-];
-
 export const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 export const ALLCOLORS = [
@@ -238,14 +231,14 @@ export default {
     return `${hours}:${minutes}`;
   },
 
-  getBarGradients(canvas, count) {
-    const backgrounds = [];
-    for (let i = 0; i < count; i += 1) {
-      const gradient = canvas.createLinearGradient(0, 0, 600, 0);
-      gradient.addColorStop(0, ALLGRADIENTS[i % ALLGRADIENTS.length].from);
-      gradient.addColorStop(1, ALLGRADIENTS[i % ALLGRADIENTS.length].to);
-      backgrounds.push(gradient);
-    }
-    return backgrounds;
+  getBarBackgroundColors(siteKeys, allSitesConfig) {
+    let index = -1;
+    return siteKeys.map((each) => {
+      if (!allSitesConfig[each] || !allSitesConfig[each].color) {
+        index = (index + 1) % ALLCOLORS.length;
+        return ALLCOLORS[index];
+      }
+      return allSitesConfig[each].color;
+    });
   }
 };

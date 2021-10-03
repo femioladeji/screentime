@@ -6,7 +6,23 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import NavBar from './components/molecules/NavBar/index';
+
+Vue.directive('click-outside', {
+  bind: (el, binding, vnode) => {
+    el.clickOutsideEvent = (event) => { // eslint-disable-line no-param-reassign
+      if (!(el === event.target || el.contains(event.target))
+        && !event.target.classList.contains('app-color')) {
+        vnode.context[binding.expression](event);
+      }
+    };
+    document.body.addEventListener('click', el.clickOutsideEvent);
+  },
+  unbind: (el) => {
+    document.body.removeEventListener('click', el.clickOutsideEvent);
+  }
+});
 
 export default {
   name: 'App',

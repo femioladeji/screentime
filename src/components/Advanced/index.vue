@@ -1,53 +1,57 @@
 <template>
   <div>
     <div class="modal-bg" />
-    <div v-if="config.title" class="content advanced-app-settings">
-      <router-link to="/app"><close-icon class="close-advanced" /></router-link>
-      <collapsible :open="true">
-        <template #title>
-          <h3 class="collapsible-title">Basic</h3>
-        </template>
-        <form class="form" @submit.prevent="update">
-          <div class="input-field">
-            <label>Title <span class="italize">(A name or description of the app)</span></label>
-            <input v-model="config.title" type="text" />
+    <div v-if="config.title" class="advanced-app-settings">
+      <div class="modal-header">
+        <router-link to="/app"><close-icon class="close-advanced" /></router-link>
+      </div>
+      <div class="modal-content">
+        <collapsible :open="true">
+          <template #title>
+            <h3 class="collapsible-title">Basic</h3>
+          </template>
+          <form class="form" @submit.prevent="update">
+            <div class="input-field">
+              <label>Title <span class="italize">(A name or description of the app)</span></label>
+              <input v-model="config.title" type="text" />
+            </div>
+            <div class="input-field">
+              <label>URL <span class="italize">(example: https://www.some-app-title.com)</span></label>
+              <input type="text" disabled :value="config.url" />
+            </div>
+            <div class="input-field">
+              <label>Daily Limit <span class="italize">(in minutes)</span></label>
+              <input
+                v-model="config.time"
+                type="number"
+                min="0"
+                max="1440" />
+            </div>
+            <div class="save-section box between">
+              <color-picker v-model="config.color" />
+              <button type="submit" class="btn dark save-btn" :disabled="isSaving">
+                <save-icon class="save-icon" />{{ buttonCaption }}
+              </button>
+            </div>
+          </form>
+        </collapsible>
+        <collapsible :open="true" class="advanced-section">
+          <template #title>
+            <h3 class="collapsible-title">Advanced</h3>
+          </template>
+          <div>
+            <p class="advanced-more">
+              Advanced setting lets you choose and add
+              custom time blocks to days of the week
+            </p>
+            <time-blocks
+              :config-days="config.days || {}"
+              :is-saving="isSaving"
+              @update-days-blocks="updateDaysBlocks"
+            />
           </div>
-          <div class="input-field">
-            <label>URL <span class="italize">(example: https://www.some-app-title.com)</span></label>
-            <input type="text" disabled :value="config.url" />
-          </div>
-          <div class="input-field">
-            <label>Daily Limit <span class="italize">(in minutes)</span></label>
-            <input
-              v-model="config.time"
-              type="number"
-              min="0"
-              max="1440" />
-          </div>
-          <div class="save-section box between">
-            <color-picker v-model="config.color" />
-            <button type="submit" class="btn dark save-btn" :disabled="isSaving">
-              <save-icon class="save-icon" />{{ buttonCaption }}
-            </button>
-          </div>
-        </form>
-      </collapsible>
-      <collapsible :open="true" class="advanced-section">
-        <template #title>
-          <h3 class="collapsible-title">Advanced</h3>
-        </template>
-        <div>
-          <p class="advanced-more">
-            Advanced setting lets you choose and add
-            custom time blocks to days of the week
-          </p>
-          <time-blocks
-            :config-days="config.days || {}"
-            :is-saving="isSaving"
-            @update-days-blocks="updateDaysBlocks"
-          />
-        </div>
-      </collapsible>
+        </collapsible>
+      </div>
     </div>
   </div>
 </template>
@@ -155,11 +159,6 @@ export default {
       });
       await this.update();
       this.$router.push('/app');
-    },
-    keypressed(day) {
-      if (this.daysChoosen[day].to > this.daysChoosen[day].from) {
-        this.daysChoosen[day].active = true;
-      }
     }
   }
 };
@@ -170,19 +169,27 @@ export default {
   background: #fff;
   z-index: 1;
   position: relative;
-  padding: 50px 40px;
   border-radius: 8px;
-  margin: 0 20px;
-  overflow-y: auto;
-  max-height: calc(100% - 40px);
+  margin: 0 20px 20px 20px;
 }
 
-.close-advanced {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  height: 20px;
-  width: 20px;
+.modal-header {
+  display: flex;
+  justify-content: flex-end;
+  height: 50px;
+  align-items: center;
+}
+
+.modal-content {
+  max-height: 482px;
+  overflow-y: auto;
+  padding: 0px 40px 50px;
+}
+
+.modal-header .close-advanced {
+  height: 16px;
+  width: 16px;
+  margin-right: 20px;
 }
 
 .close-advanced path {
@@ -195,31 +202,6 @@ export default {
 
 .collapsible-title {
   font-size: 16px;
-}
-
-.input-field {
-  margin-top: 24px;
-}
-
-.input-field label {
-  font-size: 12px;
-}
-
-.input-field input {
-  font-size: 16px;
-  padding: 12px 0;
-  border-radius: 0;
-  border: none;
-  border-bottom: 1px solid #E0E0E0;
-  outline: none;
-}
-
-.input-field input:focus {
-  border-bottom-color: #828282;
-}
-
-.italize {
-  font-style: italic;
 }
 
 .save-section {
@@ -245,7 +227,7 @@ export default {
   left: 0;
   top: 0;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: rgba(0, 0, 0, 0.3);
 }
 </style>

@@ -2,21 +2,19 @@
   <div class="content">
     <div class="settings">
       <form class="form" @submit.prevent="savePassword">
-        <div v-if="isCurrentPassword" class="box">
-          Current Password
-          <div>
-            <input v-model="oldPassword" type="password" />
-          </div>
+        <div v-if="isCurrentPassword" class="input-field">
+          <label>Current Password</label>
+          <input v-model="oldPassword" type="password" />
         </div>
-        <div class="box">
-          New Password
-          <div>
-            <input v-model="newPassword" type="password" />
-          </div>
+         <div class="input-field">
+          <label>New Password</label>
+          <input v-model="newPassword" type="password" />
         </div>
         <div v-if="errorMessage" class="text-center text-error">{{ errorMessage }}</div>
         <div>
-          <button type="submit" class="btn save">{{ buttonCaption }}</button>
+          <button type="submit" class="btn dark save">
+            <save-icon class="save-icon" />{{ buttonCaption }}
+          </button>
         </div>
       </form>
     </div>
@@ -26,9 +24,13 @@
 <script>
 import bcrypt from 'bcryptjs';
 import utils, { PASSWORDKEY } from '../assets/js/utils';
+import SaveIcon from './atoms/Icons/Save';
 
 export default {
   name: 'Settings',
+  components: {
+    SaveIcon
+  },
   data() {
     return {
       theme: '',

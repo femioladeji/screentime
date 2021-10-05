@@ -9,10 +9,10 @@
       @change="change"
     />
     <div>
-      <button type="btn" @click="up">
+      <button type="btn" tabindex="-1" @click="up">
         <up-icon />
       </button>
-      <button type="btn" @click="down">
+      <button type="btn" tabindex="-1" @click="down">
         <down-icon />
       </button>
     </div>

@@ -95,7 +95,7 @@ export default {
     const { active } = cacheStorage;
     if (active.name) {
       const currentDate = this.getCurrentDate();
-      const startOfDayTimestamp = new Date(currentDate);
+      const startOfDayTimestamp = new Date(`${currentDate}T00:00:00`).getTime();
       const start = Math.max(startOfDayTimestamp, active.timeStamp);
       const seconds = parseInt((moment - start) / 1000, 10);
       if (!cacheStorage.data[currentDate]) {

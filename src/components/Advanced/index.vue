@@ -73,12 +73,6 @@ export default {
     ColorPicker,
     CloseIcon
   },
-  props: {
-    appKey: {
-      type: String,
-      required: false
-    }
-  },
   data() {
     return {
       sites: {},

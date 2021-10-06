@@ -8,7 +8,7 @@
           <input v-model="password" type="password" />
         </div>
         <p v-if="errorMessage" class="text-center text-error">{{ errorMessage }}</p>
-        <button type="submit" class="btn save">Continue</button>
+        <button type="submit" class="btn dark save">Continue</button>
       </form>
     </div>
   </div>

@@ -8,14 +8,25 @@ export const CONFIGKEY = 'sites';
 export const SETTINGSKEY = 'settings';
 export const PASSWORDKEY = 'password';
 
-const ALLGRADIENTS = [
-  { from: '#5CEAF3', to: '#ACABE0' },
-  { from: '#F3AE5C', to: '#D123E0' },
-  { from: '#D5F35C', to: '#ABE7FA' },
-  { from: '#B9AC3C', to: '#5771F9' }
-];
-
 export const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+export const ALLCOLORS = [
+  '#CC1515',
+  '#F23C3C',
+  '#F28A8A',
+  '#E64AD6',
+  '#B31EAD',
+  '#BAE29B',
+  '#89E540',
+  '#6DE733',
+  '#2ABA86',
+  '#15A862',
+  '#A6C6E3',
+  '#58B3E7',
+  '#1780E1',
+  '#9080F2',
+  '#6525ED'
+];
 
 function pad(number) {
   if (number < 10) {
@@ -49,9 +60,9 @@ export default {
    * @param {string} tabUrl
    * @returns {boolean}
    */
-  isTabAMatch(tabUrlRegex, configuration) {
+  isTabAMatch(tabUrl, configuration) {
     const allSites = Object.values(configuration).map(each => each.url);
-    return allSites.some(each => each.match(tabUrlRegex));
+    return allSites.some(each => each.includes(tabUrl));
   },
 
   getActiveTab() {
@@ -83,16 +94,17 @@ export default {
     const moment = Date.now();
     const { active } = cacheStorage;
     if (active.name) {
-      const seconds = parseInt((moment - active.timeStamp) / 1000, 10);
       const currentDate = this.getCurrentDate();
+      const startOfDayTimestamp = new Date(`${currentDate}T00:00:00`).getTime();
+      const start = Math.max(startOfDayTimestamp, active.timeStamp);
+      const seconds = parseInt((moment - start) / 1000, 10);
       if (!cacheStorage.data[currentDate]) {
         cacheStorage.data = {};
         cacheStorage.data[currentDate] = {};
       }
       // intentionally manipulating cache storage to keep it updated real time
-      cacheStorage.data[currentDate][active.name] = cacheStorage.data[currentDate][active.name]
-        ? cacheStorage.data[currentDate][active.name] + seconds
-        : seconds;
+      const currentlyUsedTime = cacheStorage.data[currentDate][active.name] || 0;
+      cacheStorage.data[currentDate][active.name] = currentlyUsedTime + seconds;
       cacheStorage.active = {};
       storage.update(active.name, seconds);
     }
@@ -219,14 +231,14 @@ export default {
     return `${hours}:${minutes}`;
   },
 
-  getBarGradients(canvas, count) {
-    const backgrounds = [];
-    for (let i = 0; i < count; i += 1) {
-      const gradient = canvas.createLinearGradient(0, 0, 600, 0);
-      gradient.addColorStop(0, ALLGRADIENTS[i % ALLGRADIENTS.length].from);
-      gradient.addColorStop(1, ALLGRADIENTS[i % ALLGRADIENTS.length].to);
-      backgrounds.push(gradient);
-    }
-    return backgrounds;
+  getBarBackgroundColors(siteKeys, allSitesConfig) {
+    let index = -1;
+    return siteKeys.map((each) => {
+      if (!allSitesConfig[each] || !allSitesConfig[each].color) {
+        index = (index + 1) % ALLCOLORS.length;
+        return ALLCOLORS[index];
+      }
+      return allSitesConfig[each].color;
+    });
   }
 };

@@ -5,9 +5,9 @@
     <form v-on:submit.prevent="add" class="form">
       <div class="input-field">
         <label>Site url (e.g http://google.com)</label>
-        <input v-model="siteurl" type="text" />
+        <input v-model="siteurl" type="url" />
       </div>
-      <button type="submit" class="btn save">Add</button>
+      <button type="submit" class="btn dark save">Add</button>
     </form>
   </div>
 </template>

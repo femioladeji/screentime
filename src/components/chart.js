@@ -1,22 +1,22 @@
 import { HorizontalBar } from 'vue-chartjs';
-import utils, { DATAKEY } from '../assets/js/utils';
+import utils, { DATAKEY, CONFIGKEY } from '../assets/js/utils';
 
 export default {
   extends: HorizontalBar,
   async mounted() {
     const currentDate = utils.getCurrentDate();
     let data = await utils.getData(DATAKEY);
+    const allSites = await utils.getData(CONFIGKEY);
     data = data[currentDate] || {};
     const values = Object.values(data).map(each => (each / 60).toFixed(2));
-    const backgrounds = utils.getBarGradients(this.$refs.canvas.getContext('2d'), values.length);
+    const backgrounds = utils.getBarBackgroundColors(Object.keys(data), allSites);
     this.renderChart({
       labels: Object.keys(data),
       datasets: [{
         label: '',
-        hoverBackgroundColor: backgrounds,
         backgroundColor: backgrounds,
         data: values,
-        barThickness: 'flex',
+        barThickness: 'flex'
       }]
     }, {
       scales: {

@@ -51,7 +51,7 @@ export default {
           name: 'Femi Oladeji',
           twitter: 'https://twitter.com/3eyedpixel',
           github: 'https://github.com/fabolaji',
-          dribble: '#'
+          dribble: 'https://dribbble.com/femipixels'
         }
       ];
     }

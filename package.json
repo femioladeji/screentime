@@ -20,10 +20,8 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.1.1",
-    "@vue/cli-plugin-eslint": "^4.5.15",
     "@vue/cli-plugin-unit-jest": "^3.12.1",
     "@vue/cli-service": "^4.5.13",
-    "@vue/eslint-config-airbnb": "^5.3.0",
     "@vue/test-utils": "^1.0.0-beta.20",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",

@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build && npm run build2 && npm run move",
-    "build2": "webpack src/assets/js/background.js --mode=production --output-filename ./js/background.js",
+    "build2": "webpack --entry /src/assets/js/background.js --mode=production --output-path ./dist/js/background",
     "move": "copyfiles manifest.json dist && copyfiles -f \"src/assets/images/*.png\" \"dist/images\"",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit"

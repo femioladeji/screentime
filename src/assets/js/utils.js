@@ -62,7 +62,10 @@ export default {
    */
   isTabAMatch(tabUrl, configuration) {
     const allSites = Object.values(configuration).map(each => each.url);
-    return allSites.some(each => each.includes(tabUrl));
+    const tabUrlParts = tabUrl.split(".")
+    return allSites.some(each => {
+      return tabUrlParts.every(eachPart => each.includes(eachPart))
+    });
   },
 
   getActiveTab() {

@@ -15,7 +15,7 @@
     },
     "background": {
       "scripts": [
-        "js/background.js"
+        "js/background/main.js"
       ]
     },
     "permissions": [

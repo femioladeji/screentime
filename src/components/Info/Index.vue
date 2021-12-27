@@ -48,7 +48,7 @@ export default {
           github: 'https://github.com/femioladeji'
         },
         {
-          name: 'Femi Oladeji',
+          name: 'Femi Abolaji',
           twitter: 'https://twitter.com/3eyedpixel',
           github: 'https://github.com/fabolaji',
           dribble: 'https://dribbble.com/femipixels'

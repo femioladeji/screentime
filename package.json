@@ -3,7 +3,7 @@
   "version": "5.0.2",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --port 8081",
+    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build && npm run build2 && npm run move",
     "build2": "webpack --entry /src/assets/js/background.js --mode=production --output-path ./dist/js/background",
     "move": "copyfiles manifest.json dist && copyfiles -f \"src/assets/images/*.png\" \"dist/images\"",

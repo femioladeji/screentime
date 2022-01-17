@@ -28,7 +28,7 @@
     </div>
     <div class="apps-footer">
       <button class="btn toggle-all" @click="toggleAll">
-        {{ toggleAllCaption.text }}
+        {{ toggleAllCaption }}
         <div class="shortcut">Alt  + T</div>
       </button>
       <router-link to="/add" class="btn dark add-timer">
@@ -98,13 +98,9 @@ export default {
     },
     toggleAllCaption() {
       if (this.isMostSitesOn) {
-        return {
-          text: "Disable All"
-        }
+        return "Disable All"
       }
-      return {
-        text: "Enable All"
-      }
+      return "Enable All"
     }
   },
   async mounted() {

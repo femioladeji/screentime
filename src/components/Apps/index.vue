@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content" @keyup.alt.84="toggleAll" tabindex="0">
     <div class="apps-header">
       <div class="stats">
         <span class="timers-caption">Timers</span>
@@ -27,9 +27,9 @@
           @update="update" />
     </div>
     <div class="apps-footer">
-      <button class="btn disable-all" @click="disableAll">
-        Disable All
-        <div class="shortcut">Ctrl / ⌘  + D</div>
+      <button class="btn toggle-all" @click="toggleAll">
+        {{ toggleAllCaption.text }}
+        <div class="shortcut">Alt  + T</div>
       </button>
       <router-link to="/add" class="btn dark add-timer">
         <timer />
@@ -90,6 +90,21 @@ export default {
         }
       });
       return sites;
+    },
+    isMostSitesOn() {
+      const keys = Object.keys(this.sites);
+      const sitesOn = keys.filter(each => this.sites[each].control)
+      return sitesOn.length > keys.length / 2
+    },
+    toggleAllCaption() {
+      if (this.isMostSitesOn) {
+        return {
+          text: "Disable All"
+        }
+      }
+      return {
+        text: "Enable All"
+      }
     }
   },
   async mounted() {
@@ -105,14 +120,15 @@ export default {
       });
       await utils.saveConfiguration(CONFIGKEY, this.sites);
     },
-    disableAll() {
-      Object.keys(this.sites).forEach((each) => {
-        this.update(each, false);
-      });
-    },
     async remove(key) {
       this.$delete(this.sites, key);
       await utils.saveConfiguration(CONFIGKEY, this.sites);
+    },
+    toggleAll() {
+      const isMostSitesOn = this.isMostSitesOn;
+      Object.keys(this.sites).forEach((each) => {
+        this.update(each, !isMostSitesOn);
+      });
     }
   }
 };
@@ -167,7 +183,7 @@ body.dark-mode .count {
   justify-content: space-between;
 }
 
-.apps-footer .disable-all {
+.apps-footer .toggle-all {
   color: var(--active_link);
   border-color: #E0E0E0;
 }

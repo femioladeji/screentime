@@ -23,8 +23,8 @@ const setDelayedAction = async (name, tabId) => {
     if (secondsToNextBlock && secondsToNextBlock < secondsToLimit) {
       secondsLeft = secondsToNextBlock;
     }
-    delayHandler = setTimeout(() => {
-      chrome.tabs.remove(tabId);
+    delayHandler = setTimeout(async () => {
+      await chrome.tabs.remove(tabId);
       utils.notify(`You can no longer be on ${name}`);
     }, secondsLeft * 1000);
   }
@@ -38,10 +38,10 @@ const setActive = async () => {
     if (utils.isTabAMatch(name, cacheStorage.configuration)) {
       if (utils.isTimeExceeded(cacheStorage, name)) {
         // eslint-disable-next-line
-        chrome.tabs.remove(id);
+        await chrome.tabs.remove(id);
       } else if (utils.isTimeframeBlocked(cacheStorage, name)) {
         // eslint-disable-next-line
-        chrome.tabs.remove(id);
+        await chrome.tabs.remove(id);
       } else if (cacheStorage.active.name !== name) {
         // if a different site is active then end the existing site's session
         utils.end(cacheStorage);
@@ -79,10 +79,12 @@ const synchronize = async (fetchData = false) => {
 
   // eslint-disable-next-line
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    const { url } = tab;
-    const name = utils.getName(url);
-    if (cacheStorage.active.name !== name) {
-      setActive();
+    if (tab) {
+      const { url } = tab;
+      const name = utils.getName(url);
+      if (cacheStorage.active.name !== name) {
+        setActive();
+      }
     }
   });
 
@@ -106,17 +108,17 @@ const synchronize = async (fetchData = false) => {
   });
 
   // eslint-disable-next-line
-  chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
+  chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIndex) => {
     if (buttonIndex === 0) {
       // close the tab
       // eslint-disable-next-line
-      chrome.tabs.query({
+      const activeTab = await chrome.tabs.query({
         active: true,
         currentWindow: true
-      }, (activeTab) => {
-        // eslint-disable-next-line
-        chrome.tabs.remove(activeTab[0].id);
       });
+      if (activeTab[0]) {
+        await chrome.tabs.remove(activeTab[0].id);
+      }
     }
   });
 

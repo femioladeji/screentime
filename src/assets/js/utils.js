@@ -132,7 +132,7 @@ export default {
    * @param {string} message message to show
    * @param {boolean} action if action buttons should be added
    */
-  notify(message, action) {
+  async notify(message, action) {
     const notificationObject = {
       type: 'basic',
       iconUrl: 'images/icon_128.png',
@@ -145,9 +145,7 @@ export default {
       ];
       notificationObject.requireInteraction = true;
     }
-    // eslint-disable-next-line
-    chrome.notifications.create(notificationObject, () => {
-    });
+    await chrome.notifications.create(null, notificationObject);
   },
 
   saveConfiguration(key, data) {

@@ -135,7 +135,7 @@ export default {
   notify(message, action) {
     const notificationObject = {
       type: 'basic',
-      iconUrl: 'images/icon_128.png',
+      iconUrl: chrome.runtime.getURL('images/icon_128.png'),
       title: 'SCREENTIME',
       message
     };
@@ -146,8 +146,7 @@ export default {
       notificationObject.requireInteraction = true;
     }
     // eslint-disable-next-line
-    chrome.notifications.create(notificationObject, () => {
-    });
+    chrome.notifications.create(notificationObject);
   },
 
   saveConfiguration(key, data) {

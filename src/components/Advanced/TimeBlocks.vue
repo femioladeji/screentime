@@ -22,33 +22,41 @@
             <div
               v-for="(eachTimeBlock, index) in timeBlocks[chosenDay]"
               :key="index"
-              class="time-row box between"
             >
-              <div class="input-field">
-                <label>Time from</label>
-                <div class="box between">
-                  <number-input v-model="eachTimeBlock.from.hour" :max="23" class="number-input" />
-                  <number-input
-                    v-model="eachTimeBlock.from.minute"
-                    :max="59"
-                    class="number-input"
-                  />
+              <div class="time-row box between">
+                <div class="input-field">
+                  <label>Time from</label>
+                  <div class="box between">
+                    <number-input v-model="eachTimeBlock.from.hour" :max="23" class="number-input" />
+                    <number-input
+                      v-model="eachTimeBlock.from.minute"
+                      :max="59"
+                      class="number-input"
+                    />
+                  </div>
                 </div>
-              </div>
-              <div class="input-field">
-                <label>Time to</label>
-                <div class="box between">
-                  <number-input v-model="eachTimeBlock.to.hour" :max="23" class="number-input" />
-                  <number-input
-                    v-model="eachTimeBlock.to.minute"
-                    :max="59"
-                    class="number-input"
-                  />
+                <div class="input-field">
+                  <label>Time to</label>
+                  <div class="box between">
+                    <number-input v-model="eachTimeBlock.to.hour" :max="23" class="number-input" />
+                    <number-input
+                      v-model="eachTimeBlock.to.minute"
+                      :max="59"
+                      class="number-input"
+                    />
+                  </div>
                 </div>
+                <button class="btn delete-block" @click="deleteBlock(chosenDay, index)">
+                  <close-icon />
+                </button>
               </div>
-              <button class="btn delete-block" @click="deleteBlock(chosenDay, index)">
-                <close-icon />
-              </button>
+              <span
+                v-if="!isTimeFrameValid({
+                  from: `${eachTimeBlock.from.hour}:${eachTimeBlock.from.minute}`,
+                  to: `${eachTimeBlock.to.hour}:${eachTimeBlock.to.minute}`
+                })"
+                class="text-error time-frame-error"
+              >*Invalid time frame</span>
             </div>
             <div class="add-time-block">
               <button class="btn" @click="addTimeBlock(chosenDay)">
@@ -155,12 +163,20 @@ export default {
     deleteBlock(day, index) {
       this.timeBlocks[day].splice(index, 1);
     },
+    formatTime(timeString) {
+      let [hour, minute] = timeString.split(':');
+      hour = hour.length === 1 ? `0${hour}` : hour;
+      minute = minute.length === 1 ? `0${minute}` : minute;
+      return `${hour}:${minute}`;
+    },
     isTimeFrameValid(timeframe) {
-      return timeframe.to
-        && timeframe.from
-        && timeframe.from >= '00:00'
-        && timeframe.to <= '23:59'
-        && timeframe.to > timeframe.from;
+      const to = this.formatTime(timeframe.to);
+      const from = this.formatTime(timeframe.from);
+      return to
+        && from
+        && from >= '00:00'
+        && to <= '23:59'
+        && to > from;
     },
     saveTimeBlocks() {
       const preparedTimeBlocks = {};
@@ -277,5 +293,9 @@ body.dark-mode .time-slots {
 
 body.dark-mode input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(100%);
+}
+
+.time-frame-error {
+  font-size: 12px;
 }
 </style>

@@ -29,8 +29,9 @@ export const ALLCOLORS = [
 ];
 
 function pad(number) {
-  if (number < 10) {
-    return `0${number}`;
+  let numberInt = Number(number);
+  if (numberInt < 10) {
+    return `0${numberInt}`;
   }
   return number;
 }
@@ -53,6 +54,11 @@ export default {
 
   getData(key) {
     return storage.getData(key);
+  },
+
+  formatTime(timeString) {
+    const [hour, minute] = timeString.split(':');
+    return `${pad(hour)}:${pad(minute)}`;
   },
 
   /**
@@ -169,6 +175,10 @@ export default {
     return false;
   },
 
+  capitalize(text) {
+    return `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
+  },
+
   isTimeframeBlocked({ configuration }, name) {
     const currentDate = new Date();
     const day = days[currentDate.getDay()];
@@ -181,9 +191,11 @@ export default {
     }
     const currentTime = this.getCurrentTime(currentDate);
     for (let i = 0; i < configuration[name].days[day].length; i += 1) {
-      const { from, to } = configuration[name].days[day][i];
+      let { from, to } = configuration[name].days[day][i];
+      from = this.formatTime(from);
+      to = this.formatTime(to);
       if (from <= currentTime && to >= currentTime) {
-        this.notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
+        this.notify(`You can't use ${name} between ${from} and ${to} on ${this.capitalize(day)}`);
         return true;
       }
     }
@@ -200,11 +212,12 @@ export default {
     const currentTime = this.getCurrentTime(currentDate);
     let leastStart = null;
     frames.forEach((each) => {
-      if (currentTime < each.from) {
+      const from = this.formatTime(each.from);
+      if (currentTime < from) {
         if (!leastStart) {
-          leastStart = each.from;
-        } else if (each.from < leastStart) {
-          leastStart = each.from;
+          leastStart = from;
+        } else if (from < leastStart) {
+          leastStart = from;
         }
       }
     });
@@ -224,12 +237,8 @@ export default {
     }
     let hours = currentDate.getHours();
     let minutes = currentDate.getMinutes();
-    if (hours < 10) {
-      hours = `0${hours}`;
-    }
-    if (minutes < 10) {
-      minutes = `0${minutes}`;
-    }
+    hours = pad(hours);
+    minutes = pad(minutes);
     return `${hours}:${minutes}`;
   },
 

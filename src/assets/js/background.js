@@ -1,18 +1,11 @@
 import utils, { CONFIGKEY, DATAKEY } from './utils';
+import storage from './storage';
 
-const cacheStorage = {
-  active: {},
-  configuration: {},
-  data: {}
-};
-
-let delayHandler;
-
-const setDelayedAction = async (name, tabId) => {
-  const { configuration } = cacheStorage;
+const setDelayedAction = async (name) => {
+  const configuration = await utils.getData(CONFIGKEY);
   if (configuration[name] && configuration[name].control) {
     const currentDate = utils.getCurrentDate();
-    const { data } = cacheStorage;
+    const data = await utils.getData(DATAKEY);
     let timeSpent = 0;
     if (data[currentDate] && data[currentDate][name]) {
       timeSpent = data[currentDate][name];
@@ -23,10 +16,9 @@ const setDelayedAction = async (name, tabId) => {
     if (secondsToNextBlock && secondsToNextBlock < secondsToLimit) {
       secondsLeft = secondsToNextBlock;
     }
-    delayHandler = setTimeout(() => {
-      chrome.tabs.remove(tabId);
-      utils.notify(`You can no longer be on ${name}`);
-    }, secondsLeft * 1000);
+    await chrome.alarms.create(name, {
+      delayInMinutes: secondsLeft / 60,
+    });
   }
 };
 
@@ -35,95 +27,84 @@ const setActive = async () => {
   if (activeTab) {
     const { url, id } = activeTab;
     const name = utils.getName(url);
-    if (utils.isTabAMatch(name, cacheStorage.configuration)) {
-      if (utils.isTimeExceeded(cacheStorage, name)) {
+    const cacheStorage = await storage.getCacheStorage();
+    const data = await utils.getData(DATAKEY);
+    const configuration = await utils.getData(CONFIGKEY);
+    if (utils.isTabAMatch(name, configuration)) {
+      if (utils.isTimeExceeded(data, configuration, name)) {
         // eslint-disable-next-line
         chrome.tabs.remove(id);
-      } else if (utils.isTimeframeBlocked(cacheStorage, name)) {
+      } else if (utils.isTimeframeBlocked(configuration, name)) {
         // eslint-disable-next-line
         chrome.tabs.remove(id);
       } else if (cacheStorage.active.name !== name) {
         // if a different site is active then end the existing site's session
-        utils.end(cacheStorage);
-        cacheStorage.active = {
+        let updatedCacheStorage = await utils.end();
+        updatedCacheStorage.active = {
           name,
           timeStamp: Date.now()
         };
-        clearTimeout(delayHandler);
+        await storage.save('cache', updatedCacheStorage);
+        await chrome.alarms.clearAll();
         setDelayedAction(name, id);
       }
     }
   }
 };
 
-const synchronize = async (fetchData = false) => {
-  const promises = [utils.getData(CONFIGKEY)];
-  let currentDate;
-  if (fetchData) {
-    currentDate = utils.getCurrentDate();
-    promises.push(utils.getData(DATAKEY));
+// eslint-disable-next-line
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  const { url } = tab;
+  const name = utils.getName(url);
+  const cacheStorage = await storage.getCacheStorage();
+  if (cacheStorage.active.name !== name) {
+    setActive();
   }
-  const details = await Promise.all(promises);
-  [cacheStorage.configuration] = details;
-  if (fetchData) {
-    if (!cacheStorage.data[currentDate]) {
-      cacheStorage.data = {};
-      cacheStorage.data[currentDate] = details[1][currentDate];
-    }
-  }
-};
+});
 
 // eslint-disable-next-line
-(function () {
-  synchronize(true);
+chrome.tabs.onActivated.addListener(async () => {
+  await chrome.alarms.clearAll();
+  const cacheStorage = await storage.getCacheStorage();
+  if (cacheStorage.active.name) {
+    const updatedCacheStorage = await utils.end();
+    await storage.save('cache', updatedCacheStorage);
+  }
+  await setActive();
+});
 
-  // eslint-disable-next-line
-  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    const { url } = tab;
-    const name = utils.getName(url);
-    if (cacheStorage.active.name !== name) {
-      setActive();
-    }
-  });
+// eslint-disable-next-line
+chrome.windows.onFocusChanged.addListener(async (window) => {
+  await chrome.alarms.clearAll();
+  if (window === -1) {
+    const updatedCacheStorage = await utils.end();
+    await storage.save('cache', updatedCacheStorage);
+  } else {
+    await setActive();
+  }
+});
 
-  // eslint-disable-next-line
-  chrome.tabs.onActivated.addListener(() => {
-    clearTimeout(delayHandler);
-    if (cacheStorage.active.name) {
-      utils.end(cacheStorage);
-    }
-    setActive();
-  });
-
-  // eslint-disable-next-line
-  chrome.windows.onFocusChanged.addListener((window) => {
-    clearTimeout(delayHandler);
-    if (window === -1) {
-      utils.end(cacheStorage);
-    } else {
-      setActive();
-    }
-  });
-
-  // eslint-disable-next-line
-  chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
-    if (buttonIndex === 0) {
-      // close the tab
+// eslint-disable-next-line
+chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
+  if (buttonIndex === 0) {
+    // close the tab
+    // eslint-disable-next-line
+    chrome.tabs.query({
+      active: true,
+      currentWindow: true
+    }, (activeTab) => {
       // eslint-disable-next-line
-      chrome.tabs.query({
-        active: true,
-        currentWindow: true
-      }, (activeTab) => {
-        // eslint-disable-next-line
-        chrome.tabs.remove(activeTab[0].id);
-      });
-    }
-  });
+      chrome.tabs.remove(activeTab[0].id);
+    });
+  }
+});
 
-  // eslint-disable-next-line
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (changes.sites && area === 'local') {
-      synchronize();
-    }
+chrome.alarms.onAlarm.addListener(({ name }) => {
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, (activeTab) => {
+    utils.notify(`You can no longer be on ${name}`);
+    chrome.tabs.remove(activeTab[0].id);
   });
-}());
+});

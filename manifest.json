@@ -15,7 +15,8 @@
   "permissions": [
     "storage",
     "notifications",
-    "tabs"
+    "tabs",
+    "alarms"
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"

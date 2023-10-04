@@ -3,17 +3,19 @@ import devStorage from './dev_storage';
 // eslint-disable-next-line
 const STORAGE = process.env.NODE_ENV === 'development' ? devStorage : chrome.storage.local;
 const DATAKEY = 'timer';
+const DEFAULT_CACHE = {
+  active: {},
+};
 
 export default {
   async update(host, seconds) {
     const currentDate = this.getCurrentDate();
     let data = await this.getData(DATAKEY);
     data = data[currentDate] || {};
-    if (data[host]) {
-      data[host] += seconds;
-    } else {
-      data[host] = seconds;
+    if (!data[host]) {
+      data[host] = 0;
     }
+    data[host] += seconds;
     this.save(DATAKEY, { [currentDate]: data });
   },
 
@@ -52,5 +54,13 @@ export default {
 
   getCurrentDate() {
     return new Date().toISOString().substr(0, 10);
+  },
+
+  async getCacheStorage() {
+    const cache = await this.getData('cache');
+    return {
+      ...DEFAULT_CACHE,
+      ...cache,
+    }
   }
 };

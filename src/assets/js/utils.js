@@ -96,10 +96,9 @@ export default {
 
   /**
    * @description close out all currently active sites being tracked
-   * @param {Array<string>} all array of sites currently being tracked (this should
-   * typically be an array of length 1)
    */
-  end(cacheStorage) {
+  async end() {
+    const cacheStorage = await storage.getCacheStorage();
     const moment = Date.now();
     const { active } = cacheStorage;
     if (active.name) {
@@ -107,16 +106,11 @@ export default {
       const startOfDayTimestamp = new Date(`${currentDate}T00:00:00`).getTime();
       const start = Math.max(startOfDayTimestamp, active.timeStamp);
       const seconds = parseInt((moment - start) / 1000, 10);
-      if (!cacheStorage.data[currentDate]) {
-        cacheStorage.data = {};
-        cacheStorage.data[currentDate] = {};
-      }
-      // intentionally manipulating cache storage to keep it updated real time
-      const currentlyUsedTime = cacheStorage.data[currentDate][active.name] || 0;
-      cacheStorage.data[currentDate][active.name] = currentlyUsedTime + seconds;
       cacheStorage.active = {};
       storage.update(active.name, seconds);
+      return cacheStorage;
     }
+    return cacheStorage;
   },
 
   /**
@@ -164,11 +158,11 @@ export default {
    * @param {string} name the site name
    * @returns {boolean} if the site should be blocked
    */
-  isTimeExceeded({ configuration, data }, name) {
+  isTimeExceeded(data, configuration, name) {
     // check if the control is on and time spent on the site is greater than allotted time
-    const current = data[this.getCurrentDate()];
+    const current = data[this.getCurrentDate()] || {};
     if (configuration[name] && configuration[name].control
-      && current && current[name] >= configuration[name].time * 60) {
+      && (current[name] || 0) >= configuration[name].time * 60) {
       this.notify(`Time limit exceeded for ${name}`);
       return true;
     }
@@ -179,7 +173,7 @@ export default {
     return `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
   },
 
-  isTimeframeBlocked({ configuration }, name) {
+  isTimeframeBlocked(configuration, name) {
     const currentDate = new Date();
     const day = days[currentDate.getDay()];
     // load the days data if there's any

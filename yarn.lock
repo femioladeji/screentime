@@ -754,9 +754,9 @@
     "@babel/types" "^7.22.15"
 
 "@babel/traverse@^7.23.0", "@babel/traverse@^7.7.0":
-  version "7.23.0"
-  resolved "https://registry.yarnpkg.com/@babel/traverse/-/traverse-7.23.0.tgz#18196ddfbcf4ccea324b7f6d3ada00d8c5a99c53"
-  integrity sha512-t/QaEvyIoIkwzpiZ7aoSKK8kObQYeF7T2v+dazAYCb8SXtp58zEVkWW7zAnju8FNKNdr4ScAOEDmMItbyOmEYw==
+  version "7.23.2"
+  resolved "https://registry.yarnpkg.com/@babel/traverse/-/traverse-7.23.2.tgz#329c7a06735e144a506bdb2cad0268b7f46f4ad8"
+  integrity sha512-azpe59SQ48qG6nu2CzcMLbxUudtN+dOM9kDbUqGq3HXUJRlo7i8fvPoxQUzYgLZ4cMVmuZgm8vvBpNeRhd6XSw==
   dependencies:
     "@babel/code-frame" "^7.22.13"
     "@babel/generator" "^7.23.0"
@@ -10676,7 +10676,6 @@ vue-jest@^3.0.4:
     vue-template-es2015-compiler "^1.6.0"
 
 "vue-loader-v16@npm:vue-loader@^16.1.0":
-  name vue-loader
   version "16.8.3"
   resolved "https://registry.yarnpkg.com/vue-loader/-/vue-loader-16.8.3.tgz#d43e675def5ba9345d6c7f05914c13d861997087"
   integrity sha512-7vKN45IxsKxe5GcVCbc2qFU5aWzyiLrYJyUuMz4BQLKctCj/fmCa0w6fGiiQ2cLFetNcek1ppGJQDCup0c1hpA==

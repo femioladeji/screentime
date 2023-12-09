@@ -99,12 +99,12 @@ export default {
    */
   async end() {
     const cacheStorage = await storage.getCacheStorage();
-    const moment = Date.now();
     const { active } = cacheStorage;
     if (active.name) {
       const currentDate = this.getCurrentDate();
       const startOfDayTimestamp = new Date(`${currentDate}T00:00:00`).getTime();
       const start = Math.max(startOfDayTimestamp, active.timeStamp);
+      const moment = Date.now();
       const seconds = parseInt((moment - start) / 1000, 10);
       cacheStorage.active = {};
       storage.update(active.name, seconds);

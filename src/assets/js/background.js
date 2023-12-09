@@ -27,10 +27,10 @@ const setActive = async () => {
   if (activeTab) {
     const { url, id } = activeTab;
     const name = utils.getName(url);
-    const cacheStorage = await storage.getCacheStorage();
-    const data = await utils.getData(DATAKEY);
     const configuration = await utils.getData(CONFIGKEY);
     if (utils.isTabAMatch(name, configuration)) {
+      const cacheStorage = await storage.getCacheStorage();
+      const data = await utils.getData(DATAKEY);
       if (utils.isTimeExceeded(data, configuration, name)) {
         // eslint-disable-next-line
         chrome.tabs.remove(id);
@@ -38,13 +38,12 @@ const setActive = async () => {
         // eslint-disable-next-line
         chrome.tabs.remove(id);
       } else if (cacheStorage.active.name !== name) {
-        // if a different site is active then end the existing site's session
-        let updatedCacheStorage = await utils.end();
-        updatedCacheStorage.active = {
-          name,
-          timeStamp: Date.now()
-        };
-        await storage.save('cache', updatedCacheStorage);
+        await storage.save('cache', {
+          active: {
+            name,
+            timeStamp: Date.now()
+          }
+        });
         await chrome.alarms.clearAll();
         setDelayedAction(name, id);
       }
@@ -57,6 +56,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   const { url } = tab;
   const name = utils.getName(url);
   const cacheStorage = await storage.getCacheStorage();
+  if (cacheStorage.active.name !== name) {
+    const updatedCacheStorage = await utils.end();
+    await storage.save('cache', updatedCacheStorage);
+  }
   if (cacheStorage.active.name !== name) {
     setActive();
   }

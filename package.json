@@ -13,7 +13,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "chart.js": "^2.9.4",
-    "vue": "^2.6.11",
+    "vue": "^3.0.0",
     "vue-chartjs": "^3.4.0",
     "vue-router": "^3.0.1",
     "vue-select": "^3.13.0"

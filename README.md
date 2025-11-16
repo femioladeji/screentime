@@ -1,29 +1,48 @@
-# Screentime
+# .
 
-<a href="https://www.producthunt.com/posts/screentime-2?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-screentime-2" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=163138&theme=light" alt="Screentime - An extension to track and manage your time on websites | Product Hunt Embed" style="width: 250px; height: 54px;" width="250px" height="54px" /></a>
+This template should help get you started developing with Vue 3 in Vite.
 
-> A chrome extension for keeping track and managing your time on sites that distract. You can set the maximum number of minutes you want to spend on each site daily. You can also set time frames when those sites should be inaccessible. Four sites are set by default `Youtube, Facebook, Twitter and Instagram` but you can go ahead and add or remove sites.
+## Recommended IDE Setup
+
+[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+
+## Recommended Browser Setup
+
+- Chromium-based browsers (Chrome, Edge, Brave, etc.):
+  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
+  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
+- Firefox:
+  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
+  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+
+## Type Support for `.vue` Imports in TS
+
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+
+## Customize configuration
+
+See [Vite Configuration Reference](https://vite.dev/config/).
 
 ## Project Setup
-```
+
+```sh
 npm install
 ```
 
-## Package extension
+### Compile and Hot-Reload for Development
+
+```sh
+npm run dev
 ```
+
+### Type-Check, Compile and Minify for Production
+
+```sh
 npm run build
 ```
-Go to `chrome://extensions` on your chrome browser. Click on `Load unpacked` and select the dist folder
 
-Packaged extension can be installed [here](https://chrome.google.com/webstore/detail/screentime/ofmanejijbcohgebmdfacglmhemiifca)
+### Lint with [ESLint](https://eslint.org/)
 
-## Screenshots
-![](https://i.ibb.co/ZzVCnMy/Screenshot-2021-10-06-at-23-40-46.png)
-
-![](https://i.ibb.co/SxzVhKn/01.png)
-
-![](https://i.ibb.co/CKWX6sp/03.png)
-
-![](https://i.ibb.co/sRKZcmZ/03.png)
-
-![](https://i.ibb.co/myMRTyJ/Screenshot-2021-10-06-at-23-49-39.png)
+```sh
+npm run lint
+```

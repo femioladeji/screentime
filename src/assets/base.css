@@ -1,0 +1,360 @@
+@font-face {
+  font-family: 'CircularStd';
+  src: url('./font/CircularStd-Book.ttf') format('truetype');
+}
+
+
+:root {
+  --bg: #FFFFFF;
+  --nav_border: #F2F2F2;
+  --active_link: #333333;
+
+  --icon_default: #BDBDBD;
+  --switch-bg-color: #BDBDBD;
+  --switch-checked-color: #333333;
+  --switch-fore-color: #FFFFFF;
+  --text-color: #333333;
+}
+
+body.dark-mode {
+  --bg: #333333;
+  --nav_border: #4F4F4F;
+  --active_link: #E0E0E0;
+
+  --icon_default: #828282;
+  --switch-bg-color: #828282;
+  --switch-checked-color: #BDBDBD;
+  --switch-fore-color: #FFFFFF;
+  --text-color: #F2F2F2;
+}
+
+svg path {
+  fill: var(--icon_default);
+}
+
+#app {
+  width: 522px;
+  background: var(--bg);
+  color: var(--text-color);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'CircularStd';
+  margin: 0;
+}
+
+.icon {
+  display: inline-block;
+  position: relative;
+  height: 56px;
+  width: 50px;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-position: center center;
+  border-bottom: 2px solid #fff;
+}
+
+.input-field {
+  margin-top: 24px;
+}
+
+.input-field label {
+  font-size: 12px;
+}
+
+.input-field input {
+  font-size: 16px;
+  padding: 12px 0;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #E0E0E0;
+  outline: none;
+  background: none;
+}
+
+.input-field input:focus {
+  border-bottom-color: #828282;
+}
+
+.italize {
+  font-style: italic;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-error {
+  color: #d34f4f;
+}
+
+.content {
+  padding: 24px;
+  min-height: 320px;
+  overflow-y: auto;
+}
+
+.content h3 {
+  color: #333333;
+}
+
+.breadcrumb {
+  color: #717171;
+  text-decoration: none;
+  border: 0;
+}
+
+.box {
+  display: flex;
+}
+
+.box.center {
+  justify-content: center;
+}
+
+.box.middle {
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.box.between {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table td, .table th {
+  padding-left: 10px;
+  text-transform: capitalize;
+}
+
+.table tr {
+  line-height: 40px;
+  text-align: left;
+}
+
+.table td img {
+  vertical-align: middle;
+}
+
+a {
+  text-decoration: none;
+  color: #1a7c89;
+}
+
+input {
+  font-family: 'CircularStd';
+}
+
+.minute label {
+  font-size: 14px;
+}
+
+.input-field label {
+  display: block;
+  width: 100%;
+}
+
+body.dark-mode .input-field label, body.dark-mode .days-list label {
+  color: #BDBDBD;
+}
+
+.input-field input {
+  width: 100%;
+  color: var(--text-color);
+}
+
+input:focus, button:focus, .form select:focus {
+  outline: none;
+}
+
+.form select {
+  text-transform: capitalize;
+}
+
+.form .multiple {
+  height: 100px;
+}
+
+.form label {
+  margin-right: 20px;
+}
+
+.form .minute {
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form .minute input[type="number"] {
+  width: 213px;
+}
+
+.form input[type="time"] {
+  width: 150px;
+}
+
+.form input[type="time"]:invalid {
+  border-color: #d47272;
+}
+
+.action-icon {
+  cursor: pointer;
+}
+
+.btn {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border: 1px solid #333333;
+  color: var(--text-color);
+  padding: 0 20px;
+  height: 36px;
+  border-radius: 4px;
+  background: none;
+}
+
+body.dark-mode .btn {
+  border-color: #E0E0E0;
+}
+
+/* .btn:hover {
+  background: #F2F2F2;
+} */
+
+.btn.dark {
+  background: var(--text-color);
+  color: var(--bg);
+}
+
+.btn svg {
+  margin-right: 8px;
+}
+
+.btn.dark svg path {
+  fill: var(--bg);
+}
+
+.add {
+  width: 36px;
+  height: 36px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  border-radius: 5px;
+  margin-left: 10px;
+  font-size: 30px;
+  border: 1px solid #649EF7;
+  color: #649EF7;
+}
+
+.add:hover {
+  color: #fff;
+  background-color: #649EF7;
+  border: 2px solid #2F80ED;
+}
+
+.save:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.box.day {
+  height: 40px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: #4F4F4F;
+}
+
+.day input[type="time"] {
+  width: 115px;
+}
+
+.day label {
+  width: 25%;
+  height: 20px;
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  position: absolute;
+  background: none;
+  border: 1px solid #828282;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkbox:hover input ~ .checkmark {
+  /* border-color: #4F4F4F; */
+}
+
+/* When the checkbox is checked, add a blue background */
+.checkbox input:checked ~ .checkmark:after {
+  display: block;
+  background: #4F4F4F;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.settings .box {
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+body::-webkit-scrollbar, .advanced-app-settings::-webkit-scrollbar {
+  width: 5px;
+}
+
+body::-webkit-scrollbar-track, .advanced-app-settings::-webkit-scrollbar-track {
+  background-color: #333;
+}
+
+body::-webkit-scrollbar-thumb, .advanced-app-settings::-webkit-scrollbar-thumb {
+  background: #F2F2F2;;
+  /* outline: 1px solid slategrey; */
+}
+
+.btn.save {
+  margin-top: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.text-error {
+  margin-top: 20px;
+}

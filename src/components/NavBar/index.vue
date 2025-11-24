@@ -1,7 +1,16 @@
-<script setup lang="ts">
+<script setup lang="ts"></script>
 
-
-</script>
+<template>
+  <div class="nav">
+    <div class="menu">
+      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/app">Apps</RouterLink>
+      <RouterLink to="/settings">Settings</RouterLink>
+      <RouterLink to="/info">About</RouterLink>
+    </div>
+    <!-- <theme-switcher /> -->
+  </div>
+</template>
 
 <style scoped>
 .nav {
@@ -34,23 +43,3 @@
   }
 }
 </style>
-
-<template>
-  <div class="nav">
-    <div class="menu">
-      <RouterLink to="/">
-        Home
-      </RouterLink>
-      <RouterLink to="/app">
-        Apps
-      </RouterLink>
-      <RouterLink to="/settings">
-        Settings
-      </RouterLink>
-      <RouterLink to="/info">
-        Info
-      </RouterLink>
-    </div>
-    <!-- <theme-switcher /> -->
-  </div>
-</template>

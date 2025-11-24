@@ -1,55 +1,56 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-
-import EachAppRow from '../components/EachAppRow.vue';
-import utils, { CONFIGKEY, DATAKEY } from '@/assets/js/utils';
-import { dayOfTheWeekMap, type ConfigType, type TimerType } from '@/assets/js/types';
+import EachAppRow from '@/Components/EachAppRow.vue'
+import { CONFIG_KEY, DATA_KEY, daysOfTheWeek, type SiteConfigMap, type Timer } from '@/Lib'
+import * as utils from '@/Lib/Utils'
+import { computed, onMounted, ref } from 'vue'
 
 const options = [
   { label: 'All', value: 'all' },
   { label: 'Active', value: 'active' },
-  { label: 'Idle', value: 'idle' },
-];
-const selectedFilter = ref('all');
-const timerDataForCurrentDay = ref<Record<string, number>>({});
-const sitesConfiguration = ref<ConfigType>({});
+  { label: 'Idle', value: 'idle' }
+]
+const selectedFilter = ref('all')
+const timerDataForCurrentDay = ref<Record<string, number>>({})
+const sitesConfiguration = ref<SiteConfigMap>({})
 
-onMounted(async () => {
-  const timerData = await utils.getData<TimerType>(DATAKEY);
-  const configData = await utils.getData<ConfigType>(CONFIGKEY);
-  const currentDayOfWeek = dayOfTheWeekMap[new Date().getDay()];
-  timerDataForCurrentDay.value = timerData?.[currentDayOfWeek!] || {};
-  sitesConfiguration.value = configData || {};
+onMounted(async (): Promise<void> => {
+  const timerData = await utils.getData<Timer>(DATA_KEY)
+  const configData = await utils.getData<SiteConfigMap>(CONFIG_KEY)
+  const currentDayOfWeek = daysOfTheWeek[new Date().getDay()]
+  timerDataForCurrentDay.value = timerData?.[currentDayOfWeek!] || {}
+  sitesConfiguration.value = configData || {}
 })
 
-const filteredApps = computed(() => {
+const filteredApps = computed((): SiteConfigMap => {
   if (selectedFilter.value === 'all') {
-    return sitesConfiguration.value;
+    return sitesConfiguration.value
   }
-  const configurationClone = { ...sitesConfiguration.value };
-  const siteNameKeys = Object.keys(configurationClone);
+  const configurationClone = { ...sitesConfiguration.value }
+  const siteNameKeys = Object.keys(configurationClone)
   siteNameKeys.forEach((key) => {
-    if ((selectedFilter.value === 'active' && !configurationClone?.[key]?.control)
-      || (selectedFilter.value === 'idle' && configurationClone?.[key]?.control)) {
-      delete configurationClone[key];
+    if (
+      (selectedFilter.value === 'active' && !configurationClone?.[key]?.control) ||
+      (selectedFilter.value === 'idle' && configurationClone?.[key]?.control)
+    ) {
+      delete configurationClone[key]
     }
-  });
-  return configurationClone;
-});
+  })
+  return configurationClone
+})
 
-const updateAppControl = async (appKey: string, value: boolean) => {
+const updateAppControl = async (appKey: string, value: boolean): Promise<void> => {
   if (sitesConfiguration.value[appKey]) {
-    sitesConfiguration.value[appKey].control = value;
-    await utils.saveConfiguration<ConfigType>(CONFIGKEY, sitesConfiguration.value);
+    sitesConfiguration.value[appKey].control = value
+    await utils.saveConfiguration<SiteConfigMap>(CONFIG_KEY, sitesConfiguration.value)
   }
-};
+}
 
-const removeAppControl = async (appKey: string) => {
+const removeAppControl = async (appKey: string): Promise<void> => {
   if (sitesConfiguration.value[appKey]) {
-    delete sitesConfiguration.value[appKey];
-    await utils.saveConfiguration<ConfigType>(CONFIGKEY, sitesConfiguration.value);
+    delete sitesConfiguration.value[appKey]
+    await utils.saveConfiguration<SiteConfigMap>(CONFIG_KEY, sitesConfiguration.value)
   }
-};
+}
 </script>
 
 <template>
@@ -68,8 +69,15 @@ const removeAppControl = async (appKey: string) => {
         </select>
       </div>
       <div class="app-list">
-        <EachAppRow v-for="(value, key) in filteredApps" :key="key" :siteKey="key" :details="value"
-          :time="timerDataForCurrentDay[key] || 0" @update="updateAppControl" @remove="removeAppControl" />
+        <EachAppRow
+          v-for="(value, key) in filteredApps"
+          :key="key"
+          :siteKey="key"
+          :details="value"
+          :time="timerDataForCurrentDay[key] || 0"
+          @update="updateAppControl"
+          @remove="removeAppControl"
+        />
       </div>
     </div>
   </main>
@@ -103,7 +111,7 @@ const removeAppControl = async (appKey: string) => {
 .count {
   padding: 0 5px;
   border-radius: 4px;
-  background: #F2F2F2;
+  background: #f2f2f2;
   margin-left: 8px;
 }
 
@@ -114,7 +122,7 @@ body.dark-mode .count {
 .app-list {
   margin-top: 32px;
   width: 100%;
-  border-top: 1px solid #E0E0E0;
+  border-top: 1px solid #e0e0e0;
 }
 
 .apps-footer {
@@ -126,7 +134,7 @@ body.dark-mode .count {
 
 .apps-footer .toggle-all {
   color: var(--active_link);
-  border-color: #E0E0E0;
+  border-color: #e0e0e0;
 }
 
 .apps-footer .btn {
@@ -139,8 +147,8 @@ body.dark-mode .count {
 
 .apps-footer .btn .shortcut {
   padding: 2px 6px;
-  color: #EB5757;
-  background: #FCE8E8;
+  color: #eb5757;
+  background: #fce8e8;
   margin-left: 12px;
   border-radius: 4px;
 }
@@ -177,17 +185,6 @@ body.dark-mode .count {
 .filter .vs__open-indicator {
   fill: var(--icon_default);
 }
-
-/* .list-item {
-  display: inline-block;
-  margin-right: 10px;
-}
-.list-enter-active, .list-leave-active {
-  transition: all 0.3s;
-}
-.list-enter, .list-leave-to {
-  opacity: 0;
-} */
 
 .modal {
   position: absolute;

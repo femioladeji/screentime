@@ -58,8 +58,8 @@ const removeAppControl = async (appKey: string): Promise<void> => {
     <div class="content">
       <div class="apps-header">
         <div class="stats">
-          <span class="timers-caption">Timers</span>
-          <div class="count">5</div>
+          <span class="timers-caption">Time Sheet ⏱️</span>
+          <span>You have {{ Object.keys(sitesConfiguration).length }} time-blocked websites</span>
         </div>
 
         <select class="filter" v-model="selectedFilter" placeholder="Filter">
@@ -68,17 +68,26 @@ const removeAppControl = async (appKey: string): Promise<void> => {
           </option>
         </select>
       </div>
-      <div class="app-list">
-        <EachAppRow
-          v-for="(value, key) in filteredApps"
-          :key="key"
-          :siteKey="key"
-          :details="value"
-          :time="timerDataForCurrentDay[key] || 0"
-          @update="updateAppControl"
-          @remove="removeAppControl"
-        />
-      </div>
+      <table border="1">
+        <thead>
+          <tr>
+            <th width="35%">Site</th>
+            <th style="text-align: center;">Time Scheduled</th>
+            <th style="text-align: center;">Time Spent</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(value, key) in filteredApps" :key="key">
+            <EachAppRow :siteKey="key" :details="value" :time="timerDataForCurrentDay[key] || 0"
+              @update="updateAppControl" @remove="removeAppControl" />
+          </tr>
+        </tbody>
+      </table>
+      <!-- <div class="app-list">
+        <EachAppRow v-for="(value, key) in filteredApps" :key="key" :siteKey="key" :details="value"
+          :time="timerDataForCurrentDay[key] || 0" @update="updateAppControl" @remove="removeAppControl" />
+      </div> -->
     </div>
   </main>
 </template>
@@ -89,7 +98,9 @@ const removeAppControl = async (appKey: string): Promise<void> => {
 }
 
 .timers-caption {
-  font-weight: bold;
+  font-weight: 500;
+  font-size: 14px;
+  color: #767DE8;
 }
 
 .apps-header {
@@ -105,14 +116,8 @@ const removeAppControl = async (appKey: string): Promise<void> => {
 
 .stats {
   display: flex;
-  align-items: center;
-}
-
-.count {
-  padding: 0 5px;
-  border-radius: 4px;
-  background: #f2f2f2;
-  margin-left: 8px;
+  flex-direction: column;
+  font-size: 10px;
 }
 
 body.dark-mode .count {
@@ -199,5 +204,28 @@ body.dark-mode .count {
   margin: 71px 21px;
   border-radius: 8px;
   background: var(--bg);
+}
+
+table {
+  margin-top: 24px;
+  border-collapse: collapse;
+  border-color: #E2E2E2;
+  width: 100%;
+  font-size: 12px;
+  text-align: left;
+}
+
+table thead th {
+  font-weight: normal;
+}
+
+table th {
+  padding: 10px 14px;
+  border: 1px solid #e0e0e0;
+}
+
+table th {
+  background: #f5f5f5;
+  font-weight: bold;
 }
 </style>

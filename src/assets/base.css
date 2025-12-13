@@ -1,31 +1,37 @@
-@font-face {
-  font-family: 'CircularStd';
-  src: url('./font/CircularStd-Book.ttf') format('truetype');
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+/* @font-face {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  src: url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap') format('truetype');
+} */
 
 
 :root {
   --bg: #FFFFFF;
-  --nav_border: #F2F2F2;
-  --active_link: #333333;
+  --nav_border: #E8E8E8;
+  --active_link: #C7C8CD;
 
   --icon_default: #BDBDBD;
-  --switch-bg-color: #BDBDBD;
+  --switch-border-color: #E8E8E8;
   --switch-checked-color: #333333;
   --switch-fore-color: #FFFFFF;
   --text-color: #333333;
+  --nav_color: #828390;
+  --nav_active_color: #272633;
 }
 
 body.dark-mode {
   --bg: #333333;
-  --nav_border: #4F4F4F;
-  --active_link: #E0E0E0;
+  --nav_border: #E8E8E8;
+  --active_link: #C7C8CD;
 
   --icon_default: #828282;
-  --switch-bg-color: #828282;
-  --switch-checked-color: #BDBDBD;
+  --switch-border-color: #828282;
+  --switch-checked-color: #E8E8E8;
   --switch-fore-color: #FFFFFF;
   --text-color: #F2F2F2;
+  --nav_color: #828390;
+  --nav_active_color: #272633;
 }
 
 svg path {
@@ -33,7 +39,7 @@ svg path {
 }
 
 #app {
-  width: 522px;
+  width: 600px;
   background: var(--bg);
   color: var(--text-color);
 }
@@ -43,7 +49,7 @@ svg path {
 }
 
 body {
-  font-family: 'CircularStd';
+  font-family: 'Inter';
   margin: 0;
 }
 

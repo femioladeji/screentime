@@ -1,7 +1,0 @@
-@import './base.css';
-
-#app {
-  width: 522px;
-  background: var(--bg);
-  color: var(--text-color);
-}

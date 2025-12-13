@@ -29,55 +29,30 @@ const formattedTime = computed((): string => {
 </script>
 
 <template>
-  <div class="row">
-    <div class="app-title">
-      <div class="app-name">{{ appTitle }}</div>
-      <div class="app-url">{{ details.url }}</div>
-    </div>
-    <div class="app-timings">
-      <!-- <timer class="timer-icon" /> -->
-      {{ formattedTime }}
-    </div>
-    <div class="site-actions">
-      <Switch :toggled="details.control" @toggle="update"></Switch>
-      <RouterLink :to="`/advanced/${siteKey}`" class="edit"> Edit </RouterLink>
-      <button class="remove-btn" @click="remove">Delete</button>
-    </div>
-    <div class="active-border"></div>
-  </div>
+  <td>
+    <div class="app-name">{{ appTitle }}</div>
+    <div class="app-url">{{ details.url }}</div>
+  </td>
+  <td style="text-align: center;">
+    40
+  </td>
+  <td style="text-align: center;">
+    {{ formattedTime }}
+  </td>
+  <td>
+    <Switch :toggled="details.control" @toggle="update"></Switch>
+    <!-- <RouterLink :to="`/advanced/${siteKey}`" class="edit"> Edit </RouterLink>
+    <button class="remove-btn" @click="remove">Delete</button> -->
+  </td>
+  <div class="active-border"></div>
 </template>
 
 <style scoped>
-.row {
-  display: flex;
-  height: 48px;
-  border-bottom: 1px solid #e0e0e0;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  position: relative;
-}
-
-.row > div:first-of-type {
-  width: 35%;
-}
-
-.active-border {
-  width: 4px;
-  height: 48px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  background: #8ba3f8;
-  display: none;
-}
-
-.row:hover .active-border {
-  display: block;
+td {
+  padding: 8px 16px;
 }
 
 .app-name {
-  font-size: 12px;
   text-transform: capitalize;
 }
 
@@ -87,31 +62,13 @@ const formattedTime = computed((): string => {
   text-transform: lowercase;
 }
 
-.app-timings {
-  display: flex;
-  align-items: center;
-}
-
-.app-timings .timer-icon {
-  margin-right: 6px;
-}
-
 .site-actions {
-  /* visibility: hidden; */
   display: flex;
   align-items: center;
-}
-
-.row:hover .app-timings svg path {
-  fill: #333333;
 }
 
 body.dark-mode .row:hover .app-timings svg path {
   fill: #e0e0e0;
-}
-
-.row:hover .site-actions {
-  /* visibility: visible; */
 }
 
 .site-actions img {

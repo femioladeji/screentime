@@ -1,15 +1,27 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import HouseIcon from '../../assets/icons/house.svg';
+import ClockIcon from '../../assets/icons/folder-clock.svg';
+import SettingsIcon from '../../assets/icons/settings-2.svg';
+</script>
 
 <template>
-  <div class="nav">
+  <nav class="nav">
     <div class="menu">
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/app">Apps</RouterLink>
-      <RouterLink to="/settings">Settings</RouterLink>
-      <RouterLink to="/info">About</RouterLink>
+      <RouterLink to="/" v-slot="{ isActive }">
+        <img :src="HouseIcon" :class="['menu-icon', { active: isActive }]" />
+        Overview
+      </RouterLink>
+      <RouterLink to="/app" v-slot="{ isActive }">
+        <img :src="ClockIcon" :class="['menu-icon', { active: isActive }]" />
+        Manage Time
+      </RouterLink>
+      <RouterLink to="/settings" v-slot="{ isActive }">
+        <img :src="SettingsIcon" :class="['menu-icon', { active: isActive }]" />
+        Settings
+      </RouterLink>
     </div>
     <!-- <theme-switcher /> -->
-  </div>
+  </nav>
 </template>
 
 <style scoped>
@@ -17,24 +29,38 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 48px;
+  height: 52px;
   border-bottom: 1px solid var(--nav_border);
   padding: 0 24px;
 }
 
 .menu {
   display: flex;
-  height: 48px;
+  height: 52px;
 
   a {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
-    width: 64px;
+    padding: 0 8px;
+    color: var(--nav_color);
+
+    .menu-icon {
+      margin-right: 10px;
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    .menu-icon.active path {
+      stroke: #767DE8;
+    }
   }
 
   a.router-link-active {
+    color: var(--nav_active_color);
     border-bottom: 1px solid var(--active_link);
   }
 

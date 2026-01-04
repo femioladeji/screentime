@@ -132,7 +132,8 @@ body {
   justify-content: space-between;
 }
 
-.table td, .table th {
+.table td,
+.table th {
   padding-left: 10px;
   text-transform: capitalize;
 }
@@ -164,7 +165,8 @@ input {
   width: 100%;
 }
 
-body.dark-mode .input-field label, body.dark-mode .days-list label {
+body.dark-mode .input-field label,
+body.dark-mode .days-list label {
   color: #BDBDBD;
 }
 
@@ -173,7 +175,9 @@ body.dark-mode .input-field label, body.dark-mode .days-list label {
   color: var(--text-color);
 }
 
-input:focus, button:focus, .form select:focus {
+input:focus,
+button:focus,
+.form select:focus {
   outline: none;
 }
 
@@ -323,12 +327,12 @@ body.dark-mode .btn {
   display: none;
 }
 
-.checkbox:hover input ~ .checkmark {
+.checkbox:hover input~.checkmark {
   /* border-color: #4F4F4F; */
 }
 
 /* When the checkbox is checked, add a blue background */
-.checkbox input:checked ~ .checkmark:after {
+.checkbox input:checked~.checkmark:after {
   display: block;
   background: #4F4F4F;
   width: 12px;
@@ -342,16 +346,20 @@ body.dark-mode .btn {
   margin-bottom: 20px;
 }
 
-body::-webkit-scrollbar, .advanced-app-settings::-webkit-scrollbar {
+body::-webkit-scrollbar,
+.advanced-app-settings::-webkit-scrollbar {
   width: 5px;
 }
 
-body::-webkit-scrollbar-track, .advanced-app-settings::-webkit-scrollbar-track {
+body::-webkit-scrollbar-track,
+.advanced-app-settings::-webkit-scrollbar-track {
   background-color: #333;
 }
 
-body::-webkit-scrollbar-thumb, .advanced-app-settings::-webkit-scrollbar-thumb {
-  background: #F2F2F2;;
+body::-webkit-scrollbar-thumb,
+.advanced-app-settings::-webkit-scrollbar-thumb {
+  background: #F2F2F2;
+  ;
   /* outline: 1px solid slategrey; */
 }
 
@@ -363,4 +371,16 @@ body::-webkit-scrollbar-thumb, .advanced-app-settings::-webkit-scrollbar-thumb {
 
 .text-error {
   margin-top: 20px;
+}
+
+.page-title {
+  display: flex;
+  flex-direction: column;
+  font-size: 10px;
+}
+
+.page-title-caption {
+  font-weight: 500;
+  font-size: 14px;
+  color: #767DE8;
 }

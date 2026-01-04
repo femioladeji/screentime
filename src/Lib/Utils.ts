@@ -1,12 +1,17 @@
-import { colors } from './Constants'
+import { colors, daysOfTheWeek } from './Constants'
 import * as storage from './Storage'
-import { type SiteConfigMap } from './Types'
+import { type DayOfTheWeek, type SiteConfig, type SiteConfigMap, type Timer } from './Types'
 
 export const getData = <T>(key: string) => {
   return storage.getData<T>(key)
 }
 
+export const initializeStorage = () => {
+  return storage.initialize()
+}
+
 export const saveConfiguration = <T>(key: string, data: T): Promise<void> => {
+  console.log('Saving configuration', key, data)
   return storage.save(key, data)
 }
 
@@ -46,21 +51,21 @@ export const getActiveTab = (): Promise<chrome.tabs.Tab | undefined> => {
 export const end = (cacheStorage: any): void => {
   const moment = Date.now()
   const { active } = cacheStorage
-
   if (active.name) {
-    const currentDate = new Date().toISOString().substring(0, 10)
+    const currentDate = new Date().toISOString().substring(0, 10);
+    const dayOfTheWeek = getDayOfTheWeek();
     const startOfDayTimestamp = new Date(`${currentDate}T00:00:00`).getTime()
     const start = Math.max(startOfDayTimestamp, active.timeStamp)
     const seconds = (moment - start) / 1000
-
-    if (!cacheStorage.data[currentDate]) {
-      cacheStorage.data = {}
-      cacheStorage.data[currentDate] = {}
+    if (!cacheStorage.data[dayOfTheWeek] || cacheStorage.data[dayOfTheWeek].date !== currentDate) {
+      cacheStorage.data[dayOfTheWeek] = {
+        date: currentDate
+      }
     }
 
     // intentionally manipulating cache storage to keep it updated real time
-    const currentlyUsedTime = cacheStorage.data[currentDate][active.name] || 0
-    cacheStorage.data[currentDate][active.name] = currentlyUsedTime + seconds
+    const currentlyUsedTime = cacheStorage.data[dayOfTheWeek][active.name] || 0
+    cacheStorage.data[dayOfTheWeek][active.name] = currentlyUsedTime + seconds
     cacheStorage.active = {}
     storage.update(active.name, seconds)
   }
@@ -78,9 +83,93 @@ export const getName = (url: string): string => {
 export const notify = (message: string): void => {
   const notificationObject = {
     type: chrome.notifications.TemplateType.BASIC,
-    iconUrl: 'images/icon_128.png',
+    iconUrl: '/images/icon_128.png',
     title: 'SCREENTIME',
     message
   }
   chrome.notifications.create(notificationObject)
+}
+
+export const getCurrentDate = (): string => {
+  return new Date().toISOString().substring(0, 10)
+}
+
+export const getDayOfTheWeek = (): DayOfTheWeek => {
+  const today = new Date()
+  return daysOfTheWeek[today.getDay()]!
+}
+
+const getCurrentTime = (currentDate: Date | null = null): string => {
+  if (!currentDate) {
+    currentDate = new Date();
+  }
+  let hours = currentDate.getHours();
+  let minutes = currentDate.getMinutes();
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
+
+export const getSecondsToNextBlock = (config: SiteConfig): number | null => {
+  const dayOfTheWeek = getDayOfTheWeek();
+  if (!config || !config.days || !config.days[dayOfTheWeek]) {
+    return null;
+  }
+  const frames = Object.values(config.days[dayOfTheWeek]);
+  if (!frames?.length) {
+    return null;
+  }
+  const currentTime = getCurrentTime();
+  let leastStart: string | null = null;
+  frames.forEach((each) => {
+    if (currentTime < each.from) {
+      if (!leastStart) {
+        leastStart = each.from;
+      } else if (each.from < leastStart) {
+        leastStart = each.from;
+      }
+    }
+  });
+  if (!leastStart) {
+    return null;
+  }
+  const leastStartDate = new Date();
+  const leastStartParts = (leastStart as string).split(':');
+  leastStartDate.setHours(Number(leastStartParts[0]), Number(leastStartParts[1]));
+  return (leastStartDate.getTime() - new Date().getTime()) / 1000;
+}
+
+export const isTimeExceeded = ({ data, configuration }: {
+  configuration: SiteConfigMap;
+  data: Timer;
+}, name: string) => {
+  const currentDayData = data[getDayOfTheWeek()];
+  if (!configuration[name]?.control || !currentDayData) {
+    return false;
+  }
+  if ((currentDayData[name] || 0) >= configuration[name]!.time * 60) {
+    notify(`Time limit exceeded for ${name}`);
+    return true;
+  }
+  return false;
+}
+
+export const isTimeframeBlocked = ({ configuration }: {
+  configuration: SiteConfigMap;
+}, name: string) => {
+  const day = getDayOfTheWeek();
+  if (!configuration[name]
+    || !configuration[name].control
+    || !configuration[name].days
+    || !configuration[name].days[day]) {
+    return false;
+  }
+  const currentTime = getCurrentTime();
+  const allDaysBlocks = Object.values(configuration[name].days[day]);
+  for (let i = 0; i < allDaysBlocks.length; i += 1) {
+    const { from, to } = allDaysBlocks[i]!;
+    if (from <= currentTime && to >= currentTime) {
+      notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
+      return true;
+    }
+  }
+  return false;
 }

@@ -1,10 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from './Views/HomePage.vue'
-import AppList from './Views/AppList.vue'
-import AdvancedAppPage from './Views/AdvancedAppPage.vue'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import HomePage from './views/HomePage.vue'
+import AppList from './views/AppList.vue'
+import AdvancedAppPage from './views/AdvancedAppPage.vue'
 
 export const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',

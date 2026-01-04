@@ -8,28 +8,32 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "run-p type-check \"build-only {@}\" -- && npm run move",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix --cache",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "move": "copyfiles manifest.json dist && copyfiles -f \"src/assets/images/*.png\" \"dist/images\""
   },
   "dependencies": {
     "chart.js": "^4.5.1",
     "vue": "^3.5.22",
     "vue-chartjs": "^5.3.3",
-    "vue-router": "^4.6.3"
+    "vue-router": "^4.6.3",
+    "vue-select": "^4.0.0-beta.6"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
     "@types/chart.js": "^2.9.41",
     "@types/chrome": "^0.1.27",
     "@types/node": "^22.18.11",
+    "@types/vue-select": "^3.16.8",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/tsconfig": "^0.8.1",
+    "copyfiles": "^2.4.1",
     "eslint": "^9.37.0",
     "eslint-plugin-vue": "~10.5.0",
     "jiti": "^2.6.1",

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Collapsible from '@/Components/Collapsible.vue'
-import TimeBlocks from '@/Components/TimeBlocks.vue'
+import Collapsible from '@/components/Collapsible.vue'
+import TimeBlocks from '@/components/TimeBlocks.vue'
 import { type DailyTimeBlocks, type SiteConfig, type SiteConfigMap, CONFIG_KEY } from '@/Lib'
 import * as utils from '@/Lib/Utils'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, toRaw } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -28,7 +28,7 @@ const update = async (): Promise<void> => {
   }
   sites.value = {
     ...sites.value,
-    [appName as string]: config.value
+    [appName as string]: toRaw(config.value)
   }
   await utils.saveConfiguration(CONFIG_KEY, sites.value)
   setTimeout(() => {

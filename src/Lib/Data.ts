@@ -4,10 +4,10 @@ export const allSites = {
     time: 0,
     url: '*://*.facebook.com/'
   },
-  twitter: {
+  x: {
     control: false,
     time: 0,
-    url: '*://*.twitter.com/'
+    url: '*://*.x.com/'
   },
   instagram: {
     control: false,

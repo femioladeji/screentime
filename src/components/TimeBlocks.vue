@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { daysOfTheWeek, type DailyTimeBlocks, type DayOfTheWeek, type TimeBlock } from '@/Lib'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, toRaw } from 'vue'
 import Collapsible from './Collapsible.vue'
 
 const emptyBlock: TimeBlock = {
@@ -43,21 +43,27 @@ const timeBlocks = reactive<
 )
 
 const deleteBlock = (day: DayOfTheWeek, index: number): void => void timeBlocks[day].splice(index, 1)
-const addTimeBlock = (day: DayOfTheWeek): void => void timeBlocks[day].push(emptyBlock)
+const addTimeBlock = (day: DayOfTheWeek): void => {
+  if (!timeBlocks[day]) {
+    timeBlocks[day] = []
+  }
+  timeBlocks[day].push({ ...emptyBlock })
+}
 
 onMounted((): void => {
   if (props.configDays) {
     const days = Object.keys(props.configDays) as Array<DayOfTheWeek>
     days.forEach((day) => {
-      daysChoosen.value.push(day)
-      timeBlocks[day] = []
-      props.configDays![day].forEach((timeBlock) => {
+      daysChoosen.value.push(day);
+      timeBlocks[day] = [];
+      const values = Object.values(toRaw(props.configDays![day]));
+      values.forEach((timeBlock) => {
         timeBlocks[day].push({
           from: timeBlock.from,
           to: timeBlock.to
-        })
-      })
-    })
+        });
+      });
+    });
   }
 })
 </script>
@@ -66,8 +72,7 @@ onMounted((): void => {
   <div>
     <div class="days-list">
       <div v-for="day in days" :key="day">
-        <label class="checkbox"
-          >{{ day }}
+        <label class="checkbox">{{ day }}
           <input v-model="daysChoosen" :value="day" :id="day" type="checkbox" />
           <span class="checkmark"></span>
         </label>
@@ -119,7 +124,7 @@ onMounted((): void => {
   margin: 16px 0px 32px;
 }
 
-.days-list > div {
+.days-list>div {
   width: 33%;
   margin-top: 16px;
 }
@@ -158,12 +163,12 @@ body.dark-mode .time-slots {
   margin-top: 16px;
 }
 
-.time-row > .input-field {
+.time-row>.input-field {
   width: 40%;
   margin-top: 0;
 }
 
-.time-row > .input-field input {
+.time-row>.input-field input {
   font-size: 16px;
   /* width: 45%; */
 }

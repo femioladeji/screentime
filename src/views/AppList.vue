@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import EachAppRow from '@/Components/EachAppRow.vue'
+import EachAppRow from '@/components/EachAppRow.vue'
 import { CONFIG_KEY, DATA_KEY, daysOfTheWeek, type SiteConfigMap, type Timer } from '@/Lib'
 import * as utils from '@/Lib/Utils'
 import { computed, onMounted, ref } from 'vue'
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css';
 
 const options = [
   { label: 'All', value: 'all' },
   { label: 'Active', value: 'active' },
   { label: 'Idle', value: 'idle' }
 ]
-const selectedFilter = ref('all')
+const selectedFilter = ref('')
 const timerDataForCurrentDay = ref<Record<string, number>>({})
 const sitesConfiguration = ref<SiteConfigMap>({})
 
@@ -57,24 +59,21 @@ const removeAppControl = async (appKey: string): Promise<void> => {
   <main>
     <div class="content">
       <div class="apps-header">
-        <div class="stats">
-          <span class="timers-caption">Time Sheet ⏱️</span>
+        <div class="page-title">
+          <span class="page-title-caption">Time Sheet ⏱️</span>
           <span>You have {{ Object.keys(sitesConfiguration).length }} time-blocked websites</span>
         </div>
+        <v-select :clearable="false" class="filter" :options="options" v-model="selectedFilter" label="label"
+          :reduce="(option: { label: string; value: string }) => option.value" placeholder="Filter by" />
 
-        <select class="filter" v-model="selectedFilter" placeholder="Filter">
-          <option v-for="option in options" :key="option.value" :value="option.value">
-            {{ option.label }}
-          </option>
-        </select>
       </div>
-      <table border="1">
+      <table>
         <thead>
           <tr>
             <th width="35%">Site</th>
             <th style="text-align: center;">Time Scheduled</th>
             <th style="text-align: center;">Time Spent</th>
-            <th>Actions</th>
+            <th style="text-align: center;">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -84,10 +83,16 @@ const removeAppControl = async (appKey: string): Promise<void> => {
           </tr>
         </tbody>
       </table>
-      <!-- <div class="app-list">
-        <EachAppRow v-for="(value, key) in filteredApps" :key="key" :siteKey="key" :details="value"
-          :time="timerDataForCurrentDay[key] || 0" @update="updateAppControl" @remove="removeAppControl" />
-      </div> -->
+
+    </div>
+    <div class="applist-footer">
+      <div>
+        <span class="hint">Hint</span>
+        Press <span style="font-weight: bold;">Alt + T / Option + T</span> (mac) to toggle all on/off
+      </div>
+      <button class="btn add-timer" @click="$router.push('/app')">
+        + Add Timer
+      </button>
     </div>
   </main>
 </template>
@@ -95,12 +100,6 @@ const removeAppControl = async (appKey: string): Promise<void> => {
 <style lang="css" scoped>
 .app-title {
   font-size: 16px;
-}
-
-.timers-caption {
-  font-weight: 500;
-  font-size: 14px;
-  color: #767DE8;
 }
 
 .apps-header {
@@ -114,12 +113,6 @@ const removeAppControl = async (appKey: string): Promise<void> => {
   align-items: center;
 }
 
-.stats {
-  display: flex;
-  flex-direction: column;
-  font-size: 10px;
-}
-
 body.dark-mode .count {
   background: #828282;
 }
@@ -128,38 +121,6 @@ body.dark-mode .count {
   margin-top: 32px;
   width: 100%;
   border-top: 1px solid #e0e0e0;
-}
-
-.apps-footer {
-  margin-top: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.apps-footer .toggle-all {
-  color: var(--active_link);
-  border-color: #e0e0e0;
-}
-
-.apps-footer .btn {
-  display: flex;
-  height: 30px;
-  align-items: center;
-  padding: 0 6px;
-  font-size: 12px;
-}
-
-.apps-footer .btn .shortcut {
-  padding: 2px 6px;
-  color: #eb5757;
-  background: #fce8e8;
-  margin-left: 12px;
-  border-radius: 4px;
-}
-
-.apps-footer .btn.add-timer {
-  padding: 8px;
 }
 
 .filter {
@@ -221,11 +182,68 @@ table thead th {
 
 table th {
   padding: 10px 14px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #E2E2E2;
 }
 
 table th {
   background: #f5f5f5;
   font-weight: bold;
+}
+
+.filter {
+  color: var(--text-color);
+  width: 150px;
+}
+
+.filter .vs__selected {
+  color: var(--text-color);
+}
+
+.filter .vs__dropdown-toggle {
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid var(--active_link);
+  padding-bottom: 8px;
+}
+
+.filter .vs__selected-options {
+  width: 100px;
+}
+
+.filter .vs__dropdown-menu {
+  right: 0;
+  left: auto;
+  padding: 0px;
+}
+
+.filter .vs__open-indicator {
+  fill: var(--icon_default);
+}
+
+.applist-footer {
+  margin-top: 21px;
+  border-top: 1px solid var(--nav_border);
+  padding: 26px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.applist-footer .hint {
+  color: #4C4B55;
+  background-color: #F4F4F6;
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.applist-footer .add-timer {
+  background-color: #767DE8;
+  color: #FFFFFF;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>

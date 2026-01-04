@@ -32,7 +32,7 @@ const chartData = computed((): ChartData<'bar', number[], string> => {
 const chartOptions = computed((): ChartOptions<'bar'> => {
   return {
     responsive: true,
-    indexAxis: 'y' as const,
+    indexAxis: 'x' as const,
     plugins: {
       legend: {
         display: false
@@ -42,20 +42,6 @@ const chartOptions = computed((): ChartOptions<'bar'> => {
         text: 'Screen Time (in minutes)'
       }
     },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Minutes'
-        }
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Sites'
-        }
-      }
-    }
   }
 })
 </script>

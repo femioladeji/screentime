@@ -37,13 +37,13 @@ import SettingsIcon from '../../assets/icons/settings-2.svg';
 .menu {
   display: flex;
   height: 52px;
+  gap: 24px;
 
   a {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
-    padding: 0 8px;
     color: var(--nav_color);
 
     .menu-icon {

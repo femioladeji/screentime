@@ -2,7 +2,7 @@ import { daysOfTheWeek, DATA_KEY, CONFIG_KEY } from './Constants'
 import { allSites } from './Data'
 import * as devStorage from './DevStorage'
 import { type SiteConfigMap, type Timer } from './Types'
-import { migrateFromLocalStorage, normalizeTimerData } from './Migration'
+import { migrateFromLocalStorage, normalizeSiteConfigKeys, normalizeTimerData } from './Migration'
 
 const mode = import.meta.env.MODE
 const storage = mode === 'development' ? devStorage : chrome.storage.sync
@@ -42,6 +42,13 @@ export const initialize = async (): Promise<void> => {
   const record = await getData<SiteConfigMap>(CONFIG_KEY)
   if (!Object.values(record).length) {
     await save(CONFIG_KEY, allSites)
+  }
+
+  // 2b. Normalize legacy title-keyed site entries to hostname-derived keys.
+  const rawSites = await getData<unknown>(CONFIG_KEY)
+  const normalizedSites = normalizeSiteConfigKeys(rawSites)
+  if (normalizedSites.changed) {
+    await save(CONFIG_KEY, normalizedSites.data)
   }
 
   // 3. Normalise the timer shape in sync (handles any residual old format).

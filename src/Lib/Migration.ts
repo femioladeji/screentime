@@ -99,6 +99,60 @@ export const normalizeTimerData = (raw: unknown): Timer => {
 }
 
 // ---------------------------------------------------------------------------
+// Site config key normalization (legacy title-keyed entries -> hostname keys)
+// ---------------------------------------------------------------------------
+
+const deriveSiteKeyFromUrl = (url: string): string | null => {
+    try {
+        const hostname = new URL(url).hostname
+        const parsed = hostname.replace('www.', '').replace('.com', '').trim()
+        return parsed || null
+    } catch {
+        return null
+    }
+}
+
+/**
+ * Normalise site config map keys so runtime enforcement can resolve settings
+ * by active tab hostname.
+ */
+export const normalizeSiteConfigKeys = (
+    raw: unknown
+): { data: SiteConfigMap; changed: boolean } => {
+    if (!isPlainObject(raw)) {
+        return { data: {}, changed: false }
+    }
+
+    const input = raw as SiteConfigMap
+    const output: SiteConfigMap = {}
+    let changed = false
+
+    for (const [key, value] of Object.entries(input)) {
+        if (!isPlainObject(value) || typeof value.url !== 'string') {
+            output[key] = value as SiteConfigMap[string]
+            continue
+        }
+
+        const derivedKey = deriveSiteKeyFromUrl(value.url)
+        if (!derivedKey || derivedKey === key) {
+            output[key] = value
+            continue
+        }
+
+        // Keep existing data when collisions exist.
+        if (output[derivedKey] || input[derivedKey]) {
+            output[key] = value
+            continue
+        }
+
+        output[derivedKey] = value
+        changed = true
+    }
+
+    return { data: output, changed }
+}
+
+// ---------------------------------------------------------------------------
 // Cross-storage-area migration (old chrome.storage.local → new chrome.storage.sync)
 // ---------------------------------------------------------------------------
 

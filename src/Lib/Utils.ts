@@ -6,12 +6,18 @@ export const getData = <T>(key: string) => {
   return storage.getData<T>(key)
 }
 
+export const hashPassword = async (password: string): Promise<string> => {
+  const encodedPassword = new TextEncoder().encode(password)
+  const hashedPasswordBuffer = await crypto.subtle.digest('SHA-256', encodedPassword)
+  const hashedPasswordArray = Array.from(new Uint8Array(hashedPasswordBuffer))
+  return hashedPasswordArray.map((byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
 export const initializeStorage = () => {
   return storage.initialize()
 }
 
 export const saveConfiguration = <T>(key: string, data: T): Promise<void> => {
-  console.log('Saving configuration', key, data)
   return storage.save(key, data)
 }
 
@@ -30,6 +36,7 @@ export const isTabAMatch = (tabUrl: string, configuration: SiteConfigMap): boole
   const allSites = Object.values(configuration).map((each) => each.url)
   const tabUrlParts = tabUrl.split('.')
   return allSites.some((each) => {
+    console.log('Checking if', tabUrlParts, 'matches', each)
     return tabUrlParts.every((eachPart) => each.includes(eachPart))
   })
 }
@@ -48,7 +55,7 @@ export const getActiveTab = (): Promise<chrome.tabs.Tab | undefined> => {
   })
 }
 
-export const end = (cacheStorage: any): void => {
+export const end = async (cacheStorage: any): Promise<void> => {
   const moment = Date.now()
   const { active } = cacheStorage
   if (active.name) {
@@ -57,17 +64,20 @@ export const end = (cacheStorage: any): void => {
     const startOfDayTimestamp = new Date(`${currentDate}T00:00:00`).getTime()
     const start = Math.max(startOfDayTimestamp, active.timeStamp)
     const seconds = (moment - start) / 1000
+
+    // Update cache immediately for real-time tracking
     if (!cacheStorage.data[dayOfTheWeek] || cacheStorage.data[dayOfTheWeek].date !== currentDate) {
       cacheStorage.data[dayOfTheWeek] = {
         date: currentDate
       }
     }
-
-    // intentionally manipulating cache storage to keep it updated real time
     const currentlyUsedTime = cacheStorage.data[dayOfTheWeek][active.name] || 0
     cacheStorage.data[dayOfTheWeek][active.name] = currentlyUsedTime + seconds
+
     cacheStorage.active = {}
-    storage.update(active.name, seconds)
+
+    // Persist to storage (will trigger sync via onChanged listener)
+    await storage.update(active.name, seconds)
   }
 }
 
@@ -143,6 +153,10 @@ export const isTimeExceeded = ({ data, configuration }: {
 }, name: string) => {
   const currentDayData = data[getDayOfTheWeek()];
   if (!configuration[name]?.control || !currentDayData) {
+    return false;
+  }
+  // If time limit is 0, treat as unlimited
+  if (configuration[name]!.time === 0) {
     return false;
   }
   if ((currentDayData[name] || 0) >= configuration[name]!.time * 60) {

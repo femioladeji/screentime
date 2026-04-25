@@ -45,13 +45,15 @@ export const update = async (host: string, seconds: number): Promise<void> => {
   if (!timerData) {
     timerData = {} as Timer
   }
-  if (!timerData[dayOfTheWeek!]) {
-    timerData[dayOfTheWeek!] = {}
+  if (!timerData[dayOfTheWeek!] || timerData[dayOfTheWeek!]?.date !== getCurrentDate()) {
+    timerData[dayOfTheWeek!] = {
+      date: getCurrentDate(),
+    } as Record<string, number> & { date: string }
   }
   if (!timerData[dayOfTheWeek!][host]) {
     timerData[dayOfTheWeek!][host] = 0
   }
-  timerData[dayOfTheWeek!][host]! += seconds
+  timerData[dayOfTheWeek!][host]! += Number(seconds)
   await save(DATA_KEY, timerData)
 }
 

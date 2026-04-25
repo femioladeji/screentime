@@ -5,7 +5,7 @@ export interface TimeBlock {
   to: string
 }
 
-export type Timer = Record<DayOfTheWeek, Record<string, number>>
+export type Timer = Record<DayOfTheWeek, Record<string, number> & { date?: string }>
 
 export type DailyTimeBlocks = Record<DayOfTheWeek, Array<TimeBlock>>
 

@@ -14,6 +14,80 @@ const cacheStorage: {
 
 let delayHandler: number;
 
+const tabCloseInFlight = new Set<number>();
+
+type TabCloseResult = 'closed' | 'already-gone' | 'busy' | 'failed' | 'invalid';
+
+const RETRY_DELAYS_MS = [0, 100, 250, 500];
+
+const isRetryableTabCloseError = (message: string): boolean => {
+    const normalized = message.toLowerCase();
+    return normalized.includes('cannot be edited right now') || normalized.includes('dragging a tab');
+};
+
+const isTabAlreadyGoneError = (message: string): boolean => {
+    const normalized = message.toLowerCase();
+    return normalized.includes('no tab with id') || normalized.includes('tab was closed');
+};
+
+const wait = async (ms: number): Promise<void> => {
+    await new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+const removeTabOnce = (tabId: number): Promise<string | null> => {
+    return new Promise((resolve) => {
+        try {
+            chrome.tabs.remove(tabId, () => {
+                // runtime.lastError is only guaranteed during this callback.
+                resolve(chrome.runtime.lastError?.message ?? null);
+            });
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            resolve(message);
+        }
+    });
+};
+
+const safeCloseTab = async (tabId: number, source: string): Promise<TabCloseResult> => {
+    if (!Number.isInteger(tabId)) {
+        return 'invalid';
+    }
+
+    if (tabCloseInFlight.has(tabId)) {
+        return 'busy';
+    }
+
+    tabCloseInFlight.add(tabId);
+
+    try {
+        for (const delay of RETRY_DELAYS_MS) {
+            if (delay > 0) {
+                await wait(delay);
+            }
+
+            const errorMessage = await removeTabOnce(tabId);
+            console.log(`[tabs.remove] Attempt to close tab ${tabId} from ${source} resulted in: ${errorMessage ?? 'success'}`);
+            if (!errorMessage) {
+                return 'closed';
+            }
+
+            if (isTabAlreadyGoneError(errorMessage)) {
+                return 'already-gone';
+            }
+
+            if (!isRetryableTabCloseError(errorMessage)) {
+                console.error(`[tabs.remove] ${source} failed for tab ${tabId}: ${errorMessage}`);
+                return 'failed';
+            }
+        }
+
+        console.warn(`[tabs.remove] ${source} retry limit reached for tab ${tabId}`);
+        return 'failed';
+    } finally {
+        tabCloseInFlight.delete(tabId);
+    }
+};
+
 const setDelayedAction = async (name: string, tabId: number): Promise<void> => {
     const { configuration } = cacheStorage;
     if (configuration[name] && configuration[name].control) {
@@ -29,9 +103,13 @@ const setDelayedAction = async (name: string, tabId: number): Promise<void> => {
         if (secondsToNextBlock && secondsToNextBlock < secondsToLimit) {
             secondsLeft = secondsToNextBlock;
         }
-        delayHandler = setTimeout(() => {
-            chrome.tabs.remove(tabId);
-            utils.notify(`You can no longer be on ${name}`);
+        delayHandler = setTimeout(async () => {
+            const closeResult = await safeCloseTab(tabId, 'delayed close');
+            if (closeResult === 'closed') {
+                utils.notify(`You can no longer be on ${name}`);
+            } else if (closeResult === 'already-gone') {
+                console.info(`[tabs.remove] delayed close skipped, tab ${tabId} was already gone`);
+            }
         }, secondsLeft * 1000);
     }
 };
@@ -43,9 +121,9 @@ const setActive = async () => {
         const name = utils.getName(url!);
         if (utils.isTabAMatch(name, cacheStorage.configuration)) {
             if (utils.isTimeExceeded(cacheStorage, name)) {
-                chrome.tabs.remove(id!);
+                await safeCloseTab(id!, `time exceeded for ${name}`);
             } else if (utils.isTimeframeBlocked(cacheStorage, name)) {
-                chrome.tabs.remove(id!);
+                await safeCloseTab(id!, `timeframe blocked for ${name}`);
             } else if (cacheStorage.active.name !== name) {
                 utils.end(cacheStorage);
                 cacheStorage.active = {
@@ -59,29 +137,25 @@ const setActive = async () => {
     }
 };
 
-const synchronize = async (fetchData = false) => {
-    const promises: Promise<SiteConfigMap | Timer>[] = [utils.getData<SiteConfigMap>(CONFIG_KEY)];
-    let currentDate;
-    if (fetchData) {
-        currentDate = utils.getCurrentDate();
-        promises.push(utils.getData<Timer>(DATA_KEY));
-    }
-    const details = await Promise.all(promises);
-    cacheStorage.configuration = details[0] as SiteConfigMap;
-    if (fetchData) {
-        const currentDayOfTheWeek = utils.getDayOfTheWeek();
-        if (!cacheStorage.data[currentDayOfTheWeek]) {
-            cacheStorage.data = {} as Timer;
-            cacheStorage.data[currentDayOfTheWeek] = details[1]![currentDayOfTheWeek] as Timer[DayOfTheWeek];
-        }
-    }
+const synchronize = async () => {
+    const [configuration, data] = await Promise.all([
+        utils.getData<SiteConfigMap>(CONFIG_KEY),
+        utils.getData<Timer>(DATA_KEY)
+    ]);
+
+    cacheStorage.configuration = configuration;
+    cacheStorage.data = data;
 };
 
 (async function () {
     await utils.initializeStorage();
-    synchronize(true);
+    await synchronize();
 
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+        if (!changeInfo.url && changeInfo.status !== 'complete') {
+            return;
+        }
+
         const { url } = tab;
         const name = utils.getName(url!);
         if (cacheStorage.active.name !== name) {
@@ -106,20 +180,8 @@ const synchronize = async (fetchData = false) => {
         }
     });
 
-    chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
-        if (buttonIndex === 0) {
-            // close the tab
-            chrome.tabs.query({
-                active: true,
-                currentWindow: true
-            }, (activeTab) => {
-                chrome.tabs.remove(activeTab[0]?.id!);
-            });
-        }
-    });
-
     chrome.storage.onChanged.addListener((changes, area) => {
-        if (changes.sites) {
+        if (changes.sites || changes.data) {
             synchronize();
         }
     });

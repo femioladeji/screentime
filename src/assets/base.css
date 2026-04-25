@@ -34,9 +34,9 @@ body.dark-mode {
   --nav_active_color: #272633;
 }
 
-svg path {
+/* svg path {
   fill: var(--icon_default);
-}
+} */
 
 #app {
   width: 600px;
@@ -243,9 +243,9 @@ body.dark-mode .btn {
   margin-right: 8px;
 }
 
-.btn.dark svg path {
+/* .btn.dark svg path {
   fill: var(--bg);
-}
+} */
 
 .add {
   width: 36px;

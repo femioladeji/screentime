@@ -11,7 +11,7 @@ const options = [
   { label: 'Active', value: 'active' },
   { label: 'Idle', value: 'idle' }
 ]
-const selectedFilter = ref('')
+const selectedFilter = ref('all')
 const timerDataForCurrentDay = ref<Record<string, number>>({})
 const sitesConfiguration = ref<SiteConfigMap>({})
 
@@ -63,8 +63,8 @@ const removeAppControl = async (appKey: string): Promise<void> => {
           <span class="page-title-caption">Time Sheet ⏱️</span>
           <span>You have {{ Object.keys(sitesConfiguration).length }} time-blocked websites</span>
         </div>
-        <v-select :clearable="false" class="filter" :options="options" v-model="selectedFilter" label="label"
-          :reduce="(option: { label: string; value: string }) => option.value" placeholder="Filter by" />
+        <v-select :clearable="false" :close-on-select="true" class="filter" :options="options" v-model="selectedFilter"
+          label="label" :reduce="(option: { label: string; value: string }) => option.value" placeholder="Filter by" />
 
       </div>
       <table>
@@ -90,7 +90,7 @@ const removeAppControl = async (appKey: string): Promise<void> => {
         <span class="hint">Hint</span>
         Press <span style="font-weight: bold;">Alt + T / Option + T</span> (mac) to toggle all on/off
       </div>
-      <button class="btn add-timer" @click="$router.push('/app')">
+      <button class="btn add-timer" @click="$router.push('/advanced-new')">
         + Add Timer
       </button>
     </div>
@@ -125,31 +125,56 @@ body.dark-mode .count {
 
 .filter {
   color: var(--text-color);
+  width: 150px;
 }
 
-.filter .vs__selected {
+.filter :deep(.vs__selected) {
   color: var(--text-color);
 }
 
-.filter .vs__dropdown-toggle {
-  border-radius: 0;
-  border: 0;
-  border-bottom: 1px solid var(--active_link);
-  padding-bottom: 8px;
+.filter :deep(.vs__dropdown-toggle) {
+  border-radius: 6px;
+  border: 1px solid #E0E0E0;
+  padding: 8px 12px;
+  background: var(--bg);
 }
 
-.filter .vs__selected-options {
-  width: 100px;
+.filter :deep(.vs__dropdown-toggle):hover {
+  border-color: #767DE8;
 }
 
-.filter .vs__dropdown-menu {
+.filter :deep(.vs__selected-options) {
+  flex-wrap: nowrap;
+}
+
+.filter :deep(.vs__dropdown-menu) {
   right: 0;
   left: auto;
-  padding: 0px;
+  border-radius: 6px;
+  border: 1px solid #E0E0E0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.filter .vs__open-indicator {
+.filter :deep(.vs__dropdown-option) {
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.filter :deep(.vs__dropdown-option--highlight) {
+  background: rgba(118, 125, 232, 0.1);
+  color: #767DE8;
+}
+
+.filter :deep(.vs__open-indicator) {
   fill: var(--icon_default);
+}
+
+.filter :deep(.vs__search) {
+  display: none;
+}
+
+body.dark-mode .filter :deep(.vs__dropdown-toggle) {
+  border-color: #828282;
 }
 
 .modal {
@@ -188,36 +213,6 @@ table th {
 table th {
   background: #f5f5f5;
   font-weight: bold;
-}
-
-.filter {
-  color: var(--text-color);
-  width: 150px;
-}
-
-.filter .vs__selected {
-  color: var(--text-color);
-}
-
-.filter .vs__dropdown-toggle {
-  border-radius: 0;
-  border: 0;
-  border-bottom: 1px solid var(--active_link);
-  padding-bottom: 8px;
-}
-
-.filter .vs__selected-options {
-  width: 100px;
-}
-
-.filter .vs__dropdown-menu {
-  right: 0;
-  left: auto;
-  padding: 0px;
-}
-
-.filter .vs__open-indicator {
-  fill: var(--icon_default);
 }
 
 .applist-footer {

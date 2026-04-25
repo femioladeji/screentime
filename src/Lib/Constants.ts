@@ -2,6 +2,8 @@ import type { DayOfTheWeek } from './Types'
 
 export const DATA_KEY = 'timer'
 export const CONFIG_KEY = 'sites'
+export const PASSWORD_KEY = 'password'
+export const MANAGE_TIME_UNLOCK_KEY = 'manage-time-unlock'
 
 export const daysOfTheWeek: Array<DayOfTheWeek> = [
   'sunday',

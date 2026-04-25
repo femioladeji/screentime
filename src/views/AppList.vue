@@ -19,7 +19,7 @@ onMounted(async (): Promise<void> => {
   const timerData = await utils.getData<Timer>(DATA_KEY)
   const configData = await utils.getData<SiteConfigMap>(CONFIG_KEY)
   const currentDayOfWeek = daysOfTheWeek[new Date().getDay()]
-  timerDataForCurrentDay.value = timerData?.[currentDayOfWeek!] || {}
+  timerDataForCurrentDay.value = timerData?.[currentDayOfWeek!]?.usage || {}
   sitesConfiguration.value = configData || {}
 })
 

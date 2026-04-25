@@ -16,6 +16,13 @@ const errorMessage = ref('')
 const successMessage = ref('')
 const hasUnsavedChanges = ref(false)
 
+const generateRandomColor = (): string => {
+  const randomValue = Math.floor(Math.random() * 0xffffff)
+  return `#${randomValue.toString(16).padStart(6, '0')}`
+}
+
+const defaultRandomColor = ref(generateRandomColor())
+
 const appName = ref(route.params.name as string)
 const buttonCaption = computed(() => (isSaving.value ? 'Saving...' : 'Save'))
 const dailyLimitInHours = computed(() => {
@@ -38,7 +45,7 @@ onMounted(async (): Promise<void> => {
       url: '',
       time: 60,
       control: true,
-      color: '#767DE8',
+      color: defaultRandomColor.value,
       days: undefined
     }
   } else {
@@ -51,7 +58,7 @@ onMounted(async (): Promise<void> => {
     }
     config.value = {
       ...existingConfig,
-      color: existingConfig.color || '#767DE8'
+      color: existingConfig.color || defaultRandomColor.value
     }
   }
 })
@@ -190,7 +197,7 @@ const updateDaysBlocks = async (timeBlocks: DailyTimeBlocks): Promise<void> => {
                   <div class="color-input-wrap">
                     <input id="timer-color" v-model="config.color" type="color" class="color-input"
                       aria-label="Timer color" @input="markAsChanged" />
-                    <span class="color-value">{{ config.color || '#767DE8' }}</span>
+                    <span class="color-value">{{ config.color || defaultRandomColor }}</span>
                   </div>
                 </div>
                 <button type="submit" class="btn dark save-btn" :disabled="isSaving">

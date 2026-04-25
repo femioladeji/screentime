@@ -66,7 +66,6 @@ const safeCloseTab = async (tabId: number, source: string): Promise<TabCloseResu
             }
 
             const errorMessage = await removeTabOnce(tabId);
-            console.log(`[tabs.remove] Attempt to close tab ${tabId} from ${source} resulted in: ${errorMessage ?? 'success'}`);
             if (!errorMessage) {
                 return 'closed';
             }
@@ -94,8 +93,8 @@ const setDelayedAction = async (name: string, tabId: number): Promise<void> => {
         const currentDayOfTheWeek = utils.getDayOfTheWeek();
         const { data } = cacheStorage;
         let timeSpent = 0;
-        if (data?.[currentDayOfTheWeek]?.[name]) {
-            timeSpent = data[currentDayOfTheWeek][name];
+        if (data?.[currentDayOfTheWeek]?.usage?.[name]) {
+            timeSpent = data[currentDayOfTheWeek]!.usage[name]!;
         }
         const secondsToLimit = configuration[name].time * 60 - timeSpent;
         const secondsToNextBlock = utils.getSecondsToNextBlock(configuration[name]);
@@ -181,7 +180,7 @@ const synchronize = async () => {
     });
 
     chrome.storage.onChanged.addListener((changes, area) => {
-        if (changes.sites || changes.data) {
+        if (changes.sites || changes.timer) {
             synchronize();
         }
     });

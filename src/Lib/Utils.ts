@@ -36,7 +36,6 @@ export const isTabAMatch = (tabUrl: string, configuration: SiteConfigMap): boole
   const allSites = Object.values(configuration).map((each) => each.url)
   const tabUrlParts = tabUrl.split('.')
   return allSites.some((each) => {
-    console.log('Checking if', tabUrlParts, 'matches', each)
     return tabUrlParts.every((eachPart) => each.includes(eachPart))
   })
 }
@@ -68,11 +67,14 @@ export const end = async (cacheStorage: any): Promise<void> => {
     // Update cache immediately for real-time tracking
     if (!cacheStorage.data[dayOfTheWeek] || cacheStorage.data[dayOfTheWeek].date !== currentDate) {
       cacheStorage.data[dayOfTheWeek] = {
-        date: currentDate
+        date: currentDate,
+        usage: {}
       }
+    } else if (!cacheStorage.data[dayOfTheWeek].usage) {
+      cacheStorage.data[dayOfTheWeek].usage = {}
     }
-    const currentlyUsedTime = cacheStorage.data[dayOfTheWeek][active.name] || 0
-    cacheStorage.data[dayOfTheWeek][active.name] = currentlyUsedTime + seconds
+    const usage = cacheStorage.data[dayOfTheWeek].usage
+    usage[active.name] = (usage[active.name] || 0) + seconds
 
     cacheStorage.active = {}
 
@@ -151,15 +153,15 @@ export const isTimeExceeded = ({ data, configuration }: {
   configuration: SiteConfigMap;
   data: Timer;
 }, name: string) => {
-  const currentDayData = data[getDayOfTheWeek()];
-  if (!configuration[name]?.control || !currentDayData) {
+  const currentDayBucket = data[getDayOfTheWeek()];
+  if (!configuration[name]?.control || !currentDayBucket) {
     return false;
   }
   // If time limit is 0, treat as unlimited
   if (configuration[name]!.time === 0) {
     return false;
   }
-  if ((currentDayData[name] || 0) >= configuration[name]!.time * 60) {
+  if ((currentDayBucket.usage?.[name] || 0) >= configuration[name]!.time * 60) {
     notify(`Time limit exceeded for ${name}`);
     return true;
   }

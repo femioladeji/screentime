@@ -2,6 +2,7 @@ import { daysOfTheWeek, DATA_KEY, CONFIG_KEY } from './Constants'
 import { allSites } from './Data'
 import * as devStorage from './DevStorage'
 import { type SiteConfigMap, type Timer } from './Types'
+import { migrateFromLocalStorage, normalizeTimerData } from './Migration'
 
 const mode = import.meta.env.MODE
 const storage = mode === 'development' ? devStorage : chrome.storage.sync
@@ -29,13 +30,25 @@ export const getData = async <T>(key: string): Promise<T> => {
 }
 
 /**
- * @description set up all the records for social media sites supported by default
+ * @description set up all the records for social media sites supported by default,
+ * migrate data from the old extension on first run, and normalise the timer shape.
  */
 export const initialize = async (): Promise<void> => {
-  const record = await getData<SiteConfigMap>(CONFIG_KEY)
+  // 1. Pull any existing data out of chrome.storage.local (old extension).
+  //    This is a no-op once sync already has data.
+  await migrateFromLocalStorage()
 
+  // 2. Seed default sites if the config is still empty after migration.
+  const record = await getData<SiteConfigMap>(CONFIG_KEY)
   if (!Object.values(record).length) {
-    save(CONFIG_KEY, allSites)
+    await save(CONFIG_KEY, allSites)
+  }
+
+  // 3. Normalise the timer shape in sync (handles any residual old format).
+  const rawTimer = await getData<unknown>(DATA_KEY)
+  const normalizedTimer = normalizeTimerData(rawTimer)
+  if (JSON.stringify(rawTimer || {}) !== JSON.stringify(normalizedTimer)) {
+    await save(DATA_KEY, normalizedTimer)
   }
 }
 
@@ -43,17 +56,17 @@ export const update = async (host: string, seconds: number): Promise<void> => {
   const dayOfTheWeek = daysOfTheWeek[new Date().getDay()]
   let timerData = await getData<Timer>(DATA_KEY)
   if (!timerData) {
-    timerData = {} as Timer
+    timerData = {}
   }
-  if (!timerData[dayOfTheWeek!] || timerData[dayOfTheWeek!]?.date !== getCurrentDate()) {
-    timerData[dayOfTheWeek!] = {
-      date: getCurrentDate(),
-    } as Record<string, number> & { date: string }
+  const currentDate = getCurrentDate()
+  const bucket = timerData[dayOfTheWeek!]
+  if (!bucket || bucket.date !== currentDate) {
+    timerData[dayOfTheWeek!] = { date: currentDate, usage: {} }
+  } else if (!bucket.usage) {
+    timerData[dayOfTheWeek!] = { ...bucket, usage: {} }
   }
-  if (!timerData[dayOfTheWeek!][host]) {
-    timerData[dayOfTheWeek!][host] = 0
-  }
-  timerData[dayOfTheWeek!][host]! += Number(seconds)
+  const usage = timerData[dayOfTheWeek!]!.usage
+  usage[host] = (usage[host] ?? 0) + Number(seconds)
   await save(DATA_KEY, timerData)
 }
 

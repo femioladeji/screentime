@@ -55,7 +55,7 @@ const dayOptions = computed((): DayOption[] => {
 
 const updateDisplayedData = (option: DayOption) => {
   if (allTimerData.value && option) {
-    timerDataForCurrentDay.value = allTimerData.value[option.value] || {}
+    timerDataForCurrentDay.value = allTimerData.value[option.value]?.usage || {}
   }
 }
 
@@ -65,7 +65,7 @@ onMounted(async (): Promise<void> => {
   const configData = await utils.getData<SiteConfigMap>(CONFIG_KEY)
 
   allTimerData.value = timerData
-  timerDataForCurrentDay.value = timerData?.[currentDayOfWeek!] || {}
+  timerDataForCurrentDay.value = timerData?.[currentDayOfWeek!]?.usage || {}
   sitesConfiguration.value = configData || {}
 
   // Set today as default

@@ -2,51 +2,65 @@ import { type Timer } from './Types'
 
 const timer: Timer = {
   saturday: {
-    instagram: 1000,
-    youtube: 1500,
-    twitter: 2200,
-    facebook: 800,
-    github: 900,
-    google: 1300
+    usage: {
+      instagram: 1000,
+      youtube: 1500,
+      twitter: 2200,
+      facebook: 800,
+      github: 900,
+      google: 1300
+    }
   },
   sunday: {
-    instagram: 550,
-    youtube: 800,
-    twitter: 3600,
-    facebook: 2200,
-    github: 900,
-    google: 240
+    usage: {
+      instagram: 550,
+      youtube: 800,
+      twitter: 3600,
+      facebook: 2200,
+      github: 900,
+      google: 240
+    }
   },
   monday: {
-    instagram: 950,
-    youtube: 400,
-    twitter: 1800,
-    facebook: 360,
-    github: 720,
-    google: 1920
+    usage: {
+      instagram: 950,
+      youtube: 400,
+      twitter: 1800,
+      facebook: 360,
+      github: 720,
+      google: 1920
+    }
   },
   tuesday: {
-    instagram: 0,
-    youtube: 1200,
-    twitter: 60,
-    facebook: 600,
-    github: 300,
-    google: 1000
+    usage: {
+      instagram: 0,
+      youtube: 1200,
+      twitter: 60,
+      facebook: 600,
+      github: 300,
+      google: 1000
+    }
   },
-  wednesday: {},
+  wednesday: {
+    usage: {}
+  },
   thursday: {
-    instagram: 2000,
-    youtube: 2240,
-    twitter: 2000,
-    facebook: 1800,
-    github: 1800,
-    google: 1000
+    usage: {
+      instagram: 2000,
+      youtube: 2240,
+      twitter: 2000,
+      facebook: 1800,
+      github: 1800,
+      google: 1000
+    }
   },
   friday: {
-    instagram: 1000,
-    youtube: 4000,
-    twitter: 2000,
-    facebook: 1800,
+    usage: {
+      instagram: 1000,
+      youtube: 4000,
+      twitter: 2000,
+      facebook: 1800,
+    }
   }
 }
 

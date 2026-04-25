@@ -1,0 +1,5 @@
+- Use typescript and vue3
+- Track last 7 days of data for each added website
+- fix bugs with time inconsistency especially when people switch from chrome to another app
+- Allow people to choose between local storage or sync storage
+- switching between the storage type should copy the settings and data so that they don't lose everything

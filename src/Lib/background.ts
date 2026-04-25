@@ -90,6 +90,7 @@ const safeCloseTab = async (tabId: number, source: string): Promise<TabCloseResu
 const setDelayedAction = async (name: string, tabId: number): Promise<void> => {
     const { configuration } = cacheStorage;
     if (configuration[name] && configuration[name].control) {
+        const displayName = utils.getConfiguredName(configuration, name);
         const currentDayOfTheWeek = utils.getDayOfTheWeek();
         const { data } = cacheStorage;
         let timeSpent = 0;
@@ -105,7 +106,7 @@ const setDelayedAction = async (name: string, tabId: number): Promise<void> => {
         delayHandler = setTimeout(async () => {
             const closeResult = await safeCloseTab(tabId, 'delayed close');
             if (closeResult === 'closed') {
-                utils.notify(`You can no longer be on ${name}`);
+                utils.notify(`You can no longer be on ${displayName}`);
             } else if (closeResult === 'already-gone') {
                 console.info(`[tabs.remove] delayed close skipped, tab ${tabId} was already gone`);
             }

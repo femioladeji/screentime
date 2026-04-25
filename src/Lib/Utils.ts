@@ -102,6 +102,10 @@ export const notify = (message: string): void => {
   chrome.notifications.create(notificationObject)
 }
 
+export const getConfiguredName = (configuration: SiteConfigMap, key: string): string => {
+  return configuration[key]?.title?.trim() || key
+}
+
 export const getCurrentDate = (): string => {
   return new Date().toISOString().substring(0, 10)
 }
@@ -162,7 +166,8 @@ export const isTimeExceeded = ({ data, configuration }: {
     return false;
   }
   if ((currentDayBucket.usage?.[name] || 0) >= configuration[name]!.time * 60) {
-    notify(`Time limit exceeded for ${name}`);
+    const displayName = getConfiguredName(configuration, name)
+    notify(`Time limit exceeded for ${displayName}`);
     return true;
   }
   return false;
@@ -183,7 +188,8 @@ export const isTimeframeBlocked = ({ configuration }: {
   for (let i = 0; i < allDaysBlocks.length; i += 1) {
     const { from, to } = allDaysBlocks[i]!;
     if (from <= currentTime && to >= currentTime) {
-      notify(`You can't use ${name} between ${from} and ${to} on ${day}`);
+      const displayName = getConfiguredName(configuration, name)
+      notify(`You can't use ${displayName} between ${from} and ${to} on ${day}`);
       return true;
     }
   }

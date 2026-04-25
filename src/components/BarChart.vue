@@ -14,9 +14,10 @@ const props = defineProps<{
 }>()
 
 const chartData = computed((): ChartData<'bar', number[], string> => {
-  const labels = Object.keys(props.data)
-  const data = Object.values(props.data).map((each) => Math.ceil(each / 60))
-  const backgroundColor = utils.getBarBackgroundColors(labels, props.config)
+  const keys = Object.keys(props.data)
+  const labels = keys.map((key) => utils.getConfiguredName(props.config, key))
+  const data = keys.map((key) => Math.round((props.data[key] || 0) / 60))
+  const backgroundColor = utils.getBarBackgroundColors(keys, props.config)
 
   return {
     labels,

@@ -80,6 +80,10 @@ const normalizeUrl = (url: string): string => {
   }
 }
 
+const getSiteKeyFromUrl = (url: string): string => {
+  return utils.getName(url).trim()
+}
+
 const update = async (): Promise<void> => {
   errorMessage.value = ''
   successMessage.value = ''
@@ -104,14 +108,23 @@ const update = async (): Promise<void> => {
 
   isSaving.value = true
 
-  // For create mode, use the title as the key
-  const siteKey = isCreateMode.value ? config.value.title : appName.value
+  // For create mode, key by parsed hostname so background enforcement can match tabs.
+  const siteKey = isCreateMode.value ? getSiteKeyFromUrl(config.value.url) : appName.value
 
-  // Check if site already exists in create mode (using normalized URLs)
+  if (isCreateMode.value && !siteKey) {
+    errorMessage.value = 'Please enter a valid URL (e.g., https://example.com)'
+    isSaving.value = false
+    return
+  }
+
+  // Check duplicates against stored URLs, not object keys.
   if (isCreateMode.value && sites.value) {
     const normalizedNewUrl = normalizeUrl(config.value.url)
     const existingKeys = Object.keys(sites.value)
-    const urlExists = existingKeys.some(key => normalizeUrl(key) === normalizedNewUrl)
+    const urlExists = existingKeys.some((key) => {
+      const existingUrl = sites.value?.[key]?.url
+      return typeof existingUrl === 'string' && normalizeUrl(existingUrl) === normalizedNewUrl
+    })
 
     if (urlExists) {
       errorMessage.value = 'A timer for this URL already exists'

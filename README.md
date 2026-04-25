@@ -1,48 +1,112 @@
-# .
+# Screentime Chrome Extension
 
-This template should help get you started developing with Vue 3 in Vite.
+Screentime is a Chrome extension that helps you reduce time on distracting websites.
+It tracks time spent per site, lets you define daily limits, supports day/time block windows,
+and automatically closes tabs when a rule is violated.
 
-## Recommended IDE Setup
+## What the extension does
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- Tracks active-tab usage time by site.
+- Shows activity insights in a dashboard (bar chart and recent day selection).
+- Lets you enable or disable control per site.
+- Lets you configure per-site daily limits (in minutes).
+- Lets you add optional day-specific blocked time windows.
+- Automatically closes tabs when:
+  - the daily limit is exceeded, or
+  - the current time falls inside a blocked window.
+- Sends notifications when a site is blocked/closed.
+- Supports optional password protection for the Manage Time screen.
 
-## Recommended Browser Setup
+## Screens in the popup
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- `Overview`: activity summary and chart.
+- `Manage Time`: list of configured sites, enable/disable controls, add/edit timers.
+- `Settings`: set or change password used to unlock Manage Time.
 
-## Type Support for `.vue` Imports in TS
+## Permissions used
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+The extension requests:
 
-## Customize configuration
+- `storage`: stores site rules, timer data, and password hash.
+- `tabs`: checks the current tab and closes blocked tabs.
+- `notifications`: notifies when a limit or blocked window is hit.
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## How enforcement works
 
-## Project Setup
+- A background service worker monitors tab updates, tab activation, and window focus changes.
+- Time is accumulated only while a tracked tab is active and the browser window is focused.
+- Rules are evaluated against current usage and current local time.
+- Tab-closing uses retry handling for transient Chrome tab-edit errors.
+
+## Password behavior
+
+- Passwords are hashed using SHA-256 before storage.
+- The hash is stored in extension storage; plaintext is not stored.
+- Manage Time access is session-unlocked after successful password entry.
+- Password recovery is not implemented; if forgotten, users may need to reinstall.
+
+## Data and migration
+
+- Current data is stored in `chrome.storage.sync`.
+- On first run, the extension attempts to migrate old data from `chrome.storage.local`.
+- Timer data is normalized to the current weekday-based bucket format.
+
+## Development
+
+### Requirements
+
+- Node.js 18+ (Node 20+ recommended)
+- npm
+
+### Install
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Run dev server
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### Build extension
 
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+This builds to `dist/`, copies `manifest.json`, and copies icon assets into `dist/images`.
 
-```sh
-npm run lint
-```
+### Load in Chrome
+
+1. Open `chrome://extensions`.
+2. Enable Developer mode.
+3. Click Load unpacked.
+4. Select the `dist/` folder.
+
+### Useful scripts
+
+- `npm run type-check`: Vue/TypeScript checks.
+- `npm run lint`: ESLint auto-fix pass.
+- `npm run preview`: preview production build.
+
+## Project structure
+
+- `src/views`: popup pages (`Overview`, `Manage Time`, `Settings`, etc.).
+- `src/components`: reusable UI components (rows, chart, collapsibles, time blocks).
+- `src/Lib/background.ts`: background enforcement logic.
+- `src/Lib/Storage.ts`: storage reads/writes and initialization.
+- `src/Lib/Migration.ts`: migration and timer data normalization.
+- `manifest.json`: extension metadata and permissions.
+
+## Tech stack
+
+- Vue 3 + Vue Router
+- TypeScript
+- Vite
+- Chart.js (`vue-chartjs`)
+
+## Current version
+
+`6.0.0`

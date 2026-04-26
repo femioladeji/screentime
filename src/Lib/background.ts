@@ -125,7 +125,7 @@ const setActive = async () => {
             } else if (utils.isTimeframeBlocked(cacheStorage, name)) {
                 await safeCloseTab(id!, `timeframe blocked for ${name}`);
             } else if (cacheStorage.active.name !== name) {
-                utils.end(cacheStorage);
+                await utils.end(cacheStorage);
                 cacheStorage.active = {
                     name,
                     timeStamp: Date.now()
@@ -163,12 +163,12 @@ const synchronize = async () => {
         }
     });
 
-    chrome.tabs.onActivated.addListener(() => {
+    chrome.tabs.onActivated.addListener(async () => {
         clearTimeout(delayHandler);
         if (cacheStorage.active.name) {
-            utils.end(cacheStorage);
+            await utils.end(cacheStorage);
         }
-        setActive();
+        await setActive();
     });
 
     chrome.windows.onFocusChanged.addListener((window) => {

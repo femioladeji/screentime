@@ -3,7 +3,7 @@
     "name": "Screentime",
     "description": "To keep track and manage your time on sites that reduce productivity. You can set the number of minutes you want and time frames",
     "short_name": "screentime",
-    "version": "6.0.0",
+    "version": "6.0.1",
     "icons": {
         "16": "images/icon_16.png",
         "48": "images/icon_48.png",

@@ -103,6 +103,7 @@ const setDelayedAction = async (name: string, tabId: number): Promise<void> => {
         if (secondsToNextBlock && secondsToNextBlock < secondsToLimit) {
             secondsLeft = secondsToNextBlock;
         }
+        const delayMs = Math.max(0, Math.floor(secondsLeft * 1000));
         delayHandler = setTimeout(async () => {
             const closeResult = await safeCloseTab(tabId, 'delayed close');
             if (closeResult === 'closed') {
@@ -110,7 +111,7 @@ const setDelayedAction = async (name: string, tabId: number): Promise<void> => {
             } else if (closeResult === 'already-gone') {
                 console.info(`[tabs.remove] delayed close skipped, tab ${tabId} was already gone`);
             }
-        }, secondsLeft * 1000);
+        }, delayMs);
     }
 };
 
@@ -133,6 +134,9 @@ const setActive = async () => {
                 clearTimeout(delayHandler);
                 setDelayedAction(name, id!);
             }
+        } else if (cacheStorage.active.name) {
+            clearTimeout(delayHandler);
+            await utils.end(cacheStorage);
         }
     }
 };

@@ -59,13 +59,13 @@ export const initialize = async (): Promise<void> => {
   }
 }
 
-export const update = async (host: string, seconds: number): Promise<void> => {
-  const dayOfTheWeek = daysOfTheWeek[new Date().getDay()]
+export const update = async (host: string, seconds: number, atDate: Date = new Date()): Promise<void> => {
+  const dayOfTheWeek = daysOfTheWeek[atDate.getDay()]
   let timerData = await getData<Timer>(DATA_KEY)
   if (!timerData) {
     timerData = {}
   }
-  const currentDate = getCurrentDate()
+  const currentDate = getCurrentDate(atDate)
   const bucket = timerData[dayOfTheWeek!]
   if (!bucket || bucket.date !== currentDate) {
     timerData[dayOfTheWeek!] = { date: currentDate, usage: {} }
@@ -77,8 +77,12 @@ export const update = async (host: string, seconds: number): Promise<void> => {
   await save(DATA_KEY, timerData)
 }
 
-export const getCurrentDate = () => {
-  return new Date().toISOString().substring(0, 10)
+export const getCurrentDate = (date: Date = new Date()) => {
+  const today = date
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 export const getCacheStorage = async <T>(): Promise<T> => {

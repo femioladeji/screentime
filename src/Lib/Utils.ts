@@ -58,28 +58,46 @@ export const end = async (cacheStorage: any): Promise<void> => {
   const moment = Date.now()
   const { active } = cacheStorage
   if (active.name) {
-    const currentDate = new Date().toISOString().substring(0, 10);
-    const dayOfTheWeek = getDayOfTheWeek();
-    const startOfDayTimestamp = new Date(`${currentDate}T00:00:00`).getTime()
-    const start = Math.max(startOfDayTimestamp, active.timeStamp)
-    const seconds = (moment - start) / 1000
-
-    // Update cache immediately for real-time tracking
-    if (!cacheStorage.data[dayOfTheWeek] || cacheStorage.data[dayOfTheWeek].date !== currentDate) {
-      cacheStorage.data[dayOfTheWeek] = {
-        date: currentDate,
-        usage: {}
-      }
-    } else if (!cacheStorage.data[dayOfTheWeek].usage) {
-      cacheStorage.data[dayOfTheWeek].usage = {}
+    let start = Number(active.timeStamp)
+    if (!Number.isFinite(start)) {
+      start = moment
     }
-    const usage = cacheStorage.data[dayOfTheWeek].usage
-    usage[active.name] = (usage[active.name] || 0) + seconds
+    start = Math.max(0, start)
+
+    // Split long sessions at local midnight boundaries so each day gets accurate usage.
+    while (start < moment) {
+      const segmentStartDate = new Date(start)
+      const nextDayStartTimestamp = new Date(
+        segmentStartDate.getFullYear(),
+        segmentStartDate.getMonth(),
+        segmentStartDate.getDate() + 1
+      ).getTime()
+      const segmentEnd = Math.min(moment, nextDayStartTimestamp)
+      const seconds = Math.max(0, (segmentEnd - start) / 1000)
+
+      if (seconds > 0) {
+        const currentDate = getCurrentDate(segmentStartDate)
+        const dayOfTheWeek = getDayOfTheWeek(segmentStartDate)
+
+        if (!cacheStorage.data[dayOfTheWeek] || cacheStorage.data[dayOfTheWeek].date !== currentDate) {
+          cacheStorage.data[dayOfTheWeek] = {
+            date: currentDate,
+            usage: {}
+          }
+        } else if (!cacheStorage.data[dayOfTheWeek].usage) {
+          cacheStorage.data[dayOfTheWeek].usage = {}
+        }
+        const usage = cacheStorage.data[dayOfTheWeek].usage
+        usage[active.name] = (usage[active.name] || 0) + seconds
+
+        // Persist each day segment to storage (will trigger sync via onChanged listener)
+        await storage.update(active.name, seconds, segmentStartDate)
+      }
+
+      start = segmentEnd
+    }
 
     cacheStorage.active = {}
-
-    // Persist to storage (will trigger sync via onChanged listener)
-    await storage.update(active.name, seconds)
   }
 }
 
@@ -106,12 +124,16 @@ export const getConfiguredName = (configuration: SiteConfigMap, key: string): st
   return configuration[key]?.title?.trim() || key
 }
 
-export const getCurrentDate = (): string => {
-  return new Date().toISOString().substring(0, 10)
+export const getCurrentDate = (date: Date = new Date()): string => {
+  const today = date
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
-export const getDayOfTheWeek = (): DayOfTheWeek => {
-  const today = new Date()
+export const getDayOfTheWeek = (date: Date = new Date()): DayOfTheWeek => {
+  const today = date
   return daysOfTheWeek[today.getDay()]!
 }
 

@@ -134,7 +134,7 @@ const update = async (): Promise<void> => {
   }
 
   config.value = {
-    ...(config.value as SiteConfig),
+    ...(config.value),
     control: true
   }
   sites.value = {

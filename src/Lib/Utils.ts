@@ -32,12 +32,22 @@ export const getBarBackgroundColors = (siteKeys: string[], allSitesConfig: SiteC
   })
 }
 
-export const isTabAMatch = (tabUrl: string, configuration: SiteConfigMap): boolean => {
+export const isTabAMatch = (tabUrl: string, configuration: SiteConfigMap): string | null => {
   const allSites = Object.values(configuration).map((each) => each.url)
-  const tabUrlParts = tabUrl.split('.')
-  return allSites.some((each) => {
-    return tabUrlParts.every((eachPart) => each.includes(eachPart))
-  })
+  try {
+    const tabHostname = new URL(tabUrl).hostname.replace('www.', '')
+    const configMatchIndex = allSites.findIndex((each) => {
+      try {
+        const configHostname = new URL(each.replace('*://', 'https://')).hostname.replace('www.', '')
+        return tabHostname === configHostname || tabHostname.endsWith('.' + configHostname)
+      } catch {
+        return each.includes(tabHostname.split('.')[0] ?? '')
+      }
+    })
+    return Object.keys(configuration)[configMatchIndex!] ?? null
+  } catch (err) {
+    return null
+  }
 }
 
 export const getActiveTab = (): Promise<chrome.tabs.Tab | undefined> => {
@@ -104,8 +114,8 @@ export const end = async (cacheStorage: any): Promise<void> => {
 export const getName = (url: string): string => {
   try {
     const host = new URL(url).hostname
-    return host.replace('www.', '').replace('.com', '')
-  } catch (error) {
+    return host;
+  } catch {
     return ''
   }
 }
@@ -117,7 +127,7 @@ export const notify = (message: string): void => {
     title: 'SCREENTIME',
     message
   }
-  chrome.notifications.create(notificationObject)
+  void chrome.notifications.create(notificationObject)
 }
 
 export const getConfiguredName = (configuration: SiteConfigMap, key: string): string => {
@@ -141,8 +151,8 @@ const getCurrentTime = (currentDate: Date | null = null): string => {
   if (!currentDate) {
     currentDate = new Date();
   }
-  let hours = currentDate.getHours();
-  let minutes = currentDate.getMinutes();
+  const hours = currentDate.getHours();
+  const minutes = currentDate.getMinutes();
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 }
 
@@ -184,10 +194,10 @@ export const isTimeExceeded = ({ data, configuration }: {
     return false;
   }
   // If time limit is 0, treat as unlimited
-  if (configuration[name]!.time === 0) {
+  if (configuration[name].time === 0) {
     return false;
   }
-  if ((currentDayBucket.usage?.[name] || 0) >= configuration[name]!.time * 60) {
+  if ((currentDayBucket.usage?.[name] || 0) >= configuration[name].time * 60) {
     const displayName = getConfiguredName(configuration, name)
     notify(`Time limit exceeded for ${displayName}`);
     return true;

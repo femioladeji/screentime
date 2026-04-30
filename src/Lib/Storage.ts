@@ -5,28 +5,18 @@ import { type SiteConfigMap, type Timer } from './Types'
 import { migrateFromLocalStorage, normalizeSiteConfigKeys, normalizeTimerData } from './Migration'
 
 const mode = import.meta.env.MODE
-const storage = mode === 'development' ? devStorage : chrome.storage.sync
+const storage = mode === 'development' ? devStorage : chrome.storage.local
 const defaultCache = {
   active: {}
 }
 
-/**
- * @description save in storage
- * @param {string} key - the key used in saving the record is the date
- * @param {object} value - value to save in the sync storage
- */
 export const save = async (key: string, value: unknown): Promise<void> => {
   await storage.set({ [key]: value })
 }
 
-/**
- * @description get the record for the specified day or current day
- * @param {string} key - data key
- */
 export const getData = async <T>(key: string): Promise<T> => {
-  // @ts-ignore
-  const fullData: Record<string, any> = await storage.get([key])
-  return fullData[key] || {}
+  const fullData = await storage.get([key]) as Record<string, T>
+  return fullData[key] || {} as T
 }
 
 /**
@@ -34,24 +24,19 @@ export const getData = async <T>(key: string): Promise<T> => {
  * migrate data from the old extension on first run, and normalise the timer shape.
  */
 export const initialize = async (): Promise<void> => {
-  // 1. Pull any existing data out of chrome.storage.local (old extension).
-  //    This is a no-op once sync already has data.
   await migrateFromLocalStorage()
 
-  // 2. Seed default sites if the config is still empty after migration.
   const record = await getData<SiteConfigMap>(CONFIG_KEY)
   if (!Object.values(record).length) {
     await save(CONFIG_KEY, allSites)
   }
 
-  // 2b. Normalize legacy title-keyed site entries to hostname-derived keys.
   const rawSites = await getData<unknown>(CONFIG_KEY)
   const normalizedSites = normalizeSiteConfigKeys(rawSites)
   if (normalizedSites.changed) {
     await save(CONFIG_KEY, normalizedSites.data)
   }
 
-  // 3. Normalise the timer shape in sync (handles any residual old format).
   const rawTimer = await getData<unknown>(DATA_KEY)
   const normalizedTimer = normalizeTimerData(rawTimer)
   if (JSON.stringify(rawTimer || {}) !== JSON.stringify(normalizedTimer)) {

@@ -209,6 +209,6 @@ export const set = async (details: any): Promise<void> => {
   const key = Object.keys(details)[0]
   if (key) {
     // @ts-ignore
-    data[key] = details[key!]
+    data[key] = details[key]
   }
 }

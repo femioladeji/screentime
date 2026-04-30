@@ -1,6 +1,6 @@
 import * as utils from './Utils';
 import { CONFIG_KEY, DATA_KEY } from './Constants';
-import type { DayOfTheWeek, SiteConfigMap, Timer } from './Types';
+import type { SiteConfigMap, Timer } from './Types';
 
 const cacheStorage: {
     active: { name?: string; timeStamp?: number };
@@ -12,7 +12,9 @@ const cacheStorage: {
     data: {} as Timer
 };
 
-let delayHandler: number;
+const HEARTBEAT_INTERVAL_MINUTES = 0.5;
+const HEARTBEAT_ALARM = 'screentime-heartbeat';
+const DELAYED_ACTION_ALARM = 'screentime-delayed-action';
 
 const tabCloseInFlight = new Set<number>();
 
@@ -38,7 +40,6 @@ const removeTabOnce = (tabId: number): Promise<string | null> => {
     return new Promise((resolve) => {
         try {
             chrome.tabs.remove(tabId, () => {
-                // runtime.lastError is only guaranteed during this callback.
                 resolve(chrome.runtime.lastError?.message ?? null);
             });
         } catch (error) {
@@ -48,7 +49,7 @@ const removeTabOnce = (tabId: number): Promise<string | null> => {
     });
 };
 
-const safeCloseTab = async (tabId: number, source: string): Promise<TabCloseResult> => {
+const safeCloseTab = async (tabId: number): Promise<TabCloseResult> => {
     if (!Number.isInteger(tabId)) {
         return 'invalid';
     }
@@ -75,12 +76,12 @@ const safeCloseTab = async (tabId: number, source: string): Promise<TabCloseResu
             }
 
             if (!isRetryableTabCloseError(errorMessage)) {
-                console.error(`[tabs.remove] ${source} failed for tab ${tabId}: ${errorMessage}`);
+                console.error(`[tabs.remove] failed for tab ${tabId}: ${errorMessage}`);
                 return 'failed';
             }
         }
 
-        console.warn(`[tabs.remove] ${source} retry limit reached for tab ${tabId}`);
+        console.warn(`[tabs.remove] retry limit reached for tab ${tabId}`);
         return 'failed';
     } finally {
         tabCloseInFlight.delete(tabId);
@@ -90,12 +91,11 @@ const safeCloseTab = async (tabId: number, source: string): Promise<TabCloseResu
 const setDelayedAction = async (name: string, tabId: number): Promise<void> => {
     const { configuration } = cacheStorage;
     if (configuration[name] && configuration[name].control) {
-        const displayName = utils.getConfiguredName(configuration, name);
         const currentDayOfTheWeek = utils.getDayOfTheWeek();
         const { data } = cacheStorage;
         let timeSpent = 0;
         if (data?.[currentDayOfTheWeek]?.usage?.[name]) {
-            timeSpent = data[currentDayOfTheWeek]!.usage[name]!;
+            timeSpent = data[currentDayOfTheWeek].usage[name]!;
         }
         const secondsToLimit = configuration[name].time * 60 - timeSpent;
         const secondsToNextBlock = utils.getSecondsToNextBlock(configuration[name]);
@@ -104,38 +104,90 @@ const setDelayedAction = async (name: string, tabId: number): Promise<void> => {
             secondsLeft = secondsToNextBlock;
         }
         const delayMs = Math.max(0, Math.floor(secondsLeft * 1000));
-        delayHandler = setTimeout(async () => {
-            const closeResult = await safeCloseTab(tabId, 'delayed close');
-            if (closeResult === 'closed') {
-                utils.notify(`You can no longer be on ${displayName}`);
-            } else if (closeResult === 'already-gone') {
-                console.info(`[tabs.remove] delayed close skipped, tab ${tabId} was already gone`);
-            }
-        }, delayMs);
+
+        void chrome.alarms.create(DELAYED_ACTION_ALARM, {
+            when: Date.now() + delayMs,
+            periodInMinutes: undefined
+        });
+        await chrome.storage.local.set({
+            [DELAYED_ACTION_ALARM]: { name, tabId }
+        });
     }
+};
+
+const handleDelayedAction = async (): Promise<void> => {
+    const payload = await chrome.storage.local.get(DELAYED_ACTION_ALARM);
+    const delayedPayload = payload[DELAYED_ACTION_ALARM] as { name: string; tabId: number } | undefined;
+    if (!delayedPayload?.name || delayedPayload.tabId === undefined) return;
+
+    const { name, tabId } = delayedPayload;
+    await chrome.storage.local.remove(DELAYED_ACTION_ALARM);
+
+    const { configuration } = cacheStorage;
+    if (configuration[name] && configuration[name].control) {
+        const displayName = utils.getConfiguredName(configuration, name);
+        const closeResult = await safeCloseTab(tabId);
+        if (closeResult === 'closed') {
+            utils.notify(`You can no longer be on ${displayName}`);
+        } else if (closeResult === 'already-gone') {
+            console.info(`[tabs.remove] delayed close skipped, tab ${tabId} was already gone`);
+        }
+    }
+};
+
+const flushActiveTime = async (): Promise<void> => {
+    const { active } = cacheStorage;
+    if (!active.name || !active.timeStamp) return;
+
+    const moment = Date.now();
+    const start = Number(active.timeStamp);
+    if (!Number.isFinite(start) || start >= moment) return;
+
+    const seconds = Math.max(0, (moment - start) / 1000);
+    if (seconds <= 0) return;
+
+    const dayOfTheWeek = utils.getDayOfTheWeek();
+    const currentDate = utils.getCurrentDate();
+
+    if (!cacheStorage.data[dayOfTheWeek] || cacheStorage.data[dayOfTheWeek].date !== currentDate) {
+        cacheStorage.data[dayOfTheWeek] = {
+            date: currentDate,
+            usage: {}
+        };
+    } else if (!cacheStorage.data[dayOfTheWeek].usage) {
+        cacheStorage.data[dayOfTheWeek].usage = {};
+    }
+
+    cacheStorage.data[dayOfTheWeek].usage[active.name] =
+        (cacheStorage.data[dayOfTheWeek].usage[active.name] || 0) + seconds;
+
+    cacheStorage.active.timeStamp = moment;
+    await chrome.storage.local.set({ [DATA_KEY]: cacheStorage.data });
 };
 
 const setActive = async () => {
     const activeTab = await utils.getActiveTab();
     if (activeTab) {
         const { url, id } = activeTab;
-        const name = utils.getName(url!);
-        if (utils.isTabAMatch(name, cacheStorage.configuration)) {
-            if (utils.isTimeExceeded(cacheStorage, name)) {
-                await safeCloseTab(id!, `time exceeded for ${name}`);
-            } else if (utils.isTimeframeBlocked(cacheStorage, name)) {
-                await safeCloseTab(id!, `timeframe blocked for ${name}`);
-            } else if (cacheStorage.active.name !== name) {
+        const configurationTabKey = utils.isTabAMatch(url!, cacheStorage.configuration);
+        if (configurationTabKey) {
+            if (utils.isTimeExceeded(cacheStorage, configurationTabKey)) {
+                await safeCloseTab(id!);
+            } else if (utils.isTimeframeBlocked(cacheStorage, configurationTabKey)) {
+                await safeCloseTab(id!);
+            } else if (cacheStorage.active.name !== configurationTabKey) {
                 await utils.end(cacheStorage);
                 cacheStorage.active = {
-                    name,
+                    name: configurationTabKey,
                     timeStamp: Date.now()
                 };
-                clearTimeout(delayHandler);
-                setDelayedAction(name, id!);
+                void chrome.alarms.clear(DELAYED_ACTION_ALARM);
+                await chrome.storage.local.remove(DELAYED_ACTION_ALARM);
+                void setDelayedAction(configurationTabKey, id!);
             }
         } else if (cacheStorage.active.name) {
-            clearTimeout(delayHandler);
+            void chrome.alarms.clear(DELAYED_ACTION_ALARM);
+            await chrome.storage.local.remove(DELAYED_ACTION_ALARM);
             await utils.end(cacheStorage);
         }
     }
@@ -151,42 +203,61 @@ const synchronize = async () => {
     cacheStorage.data = data;
 };
 
-(async function () {
+void (async function () {
     await utils.initializeStorage();
     await synchronize();
 
-    chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    void chrome.alarms.create(HEARTBEAT_ALARM, {
+        periodInMinutes: HEARTBEAT_INTERVAL_MINUTES
+    });
+
+    chrome.alarms.onAlarm.addListener((alarm) => {
+        void (async () => {
+            if (alarm.name === HEARTBEAT_ALARM) {
+                await flushActiveTime();
+            } else if (alarm.name === DELAYED_ACTION_ALARM) {
+                await handleDelayedAction();
+            }
+        })();
+    });
+
+    chrome.tabs.onUpdated.addListener((_tabId, changeInfo, tab) => {
         if (!changeInfo.url && changeInfo.status !== 'complete') {
             return;
         }
 
         const { url } = tab;
-        const name = utils.getName(url!);
-        if (cacheStorage.active.name !== name) {
-            setActive();
+        const configurationTabKey = utils.isTabAMatch(url!, cacheStorage.configuration);
+        if (cacheStorage.active.name !== configurationTabKey) {
+            void setActive();
         }
     });
 
-    chrome.tabs.onActivated.addListener(async () => {
-        clearTimeout(delayHandler);
-        if (cacheStorage.active.name) {
-            await utils.end(cacheStorage);
-        }
-        await setActive();
+    chrome.tabs.onActivated.addListener(() => {
+        void (async () => {
+            void chrome.alarms.clear(DELAYED_ACTION_ALARM);
+            if (cacheStorage.active.name) {
+                await utils.end(cacheStorage);
+            }
+            await setActive();
+        })();
     });
 
     chrome.windows.onFocusChanged.addListener((window) => {
-        clearTimeout(delayHandler);
+        void chrome.alarms.clear(DELAYED_ACTION_ALARM);
         if (window === -1) {
-            utils.end(cacheStorage);
+            void utils.end(cacheStorage);
         } else {
-            setActive();
+            void setActive();
         }
     });
 
     chrome.storage.onChanged.addListener((changes, area) => {
-        if (changes.sites || changes.timer) {
-            synchronize();
+        if (changes.sites) {
+            void synchronize();
+        }
+        if (area === 'local' && changes[DATA_KEY]) {
+            cacheStorage.data = changes[DATA_KEY].newValue as Timer;
         }
     });
 }());

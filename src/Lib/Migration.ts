@@ -30,7 +30,7 @@ const extractBucket = (raw: Record<string, unknown>): TimerBucket => {
     // New shape: usage is an explicit sub-object
     if (isPlainObject(raw.usage)) {
         const usage: Record<string, number> = {}
-        for (const [site, val] of Object.entries(raw.usage as Record<string, unknown>)) {
+        for (const [site, val] of Object.entries(raw.usage)) {
             if (typeof val === 'number' && Number.isFinite(val) && val >= 0) {
                 usage[site] = val
             }
@@ -129,7 +129,7 @@ export const normalizeSiteConfigKeys = (
 
     for (const [key, value] of Object.entries(input)) {
         if (!isPlainObject(value) || typeof value.url !== 'string') {
-            output[key] = value as SiteConfigMap[string]
+            output[key] = value
             continue
         }
 
@@ -174,41 +174,68 @@ const getFromLocal = (key: string): Promise<unknown> => {
 
 /**
  * One-time migration from the old extension (v1–v5) which used
- * chrome.storage.local with a date-keyed timer format, to the current
- * chrome.storage.sync with a weekday-keyed TimerBucket format.
+ * chrome.storage.local with a date-keyed timer format.
  *
  * Rules:
- * - Timer: read from local, normalize, write to sync — only when sync is empty.
+ * - Timer: read from local, normalize, write back to local — only when local is empty.
  * - Sites config: read from local, write to sync — only when sync is empty.
  * - Password: intentionally skipped. Old version used bcrypt; new uses SHA-256.
  *   These hashes are incompatible so the user will simply have no password set
  *   after upgrading and can create a new one in Settings.
  */
 export const migrateFromLocalStorage = async (): Promise<void> => {
-    const [syncTimer, syncSites] = await Promise.all([
-        getData<unknown>(DATA_KEY),
+    const [localTimer, syncSites] = await Promise.all([
+        getFromLocal(DATA_KEY),
         getData<SiteConfigMap>(CONFIG_KEY),
     ])
 
-    const syncHasTimer = isPlainObject(syncTimer) && Object.keys(syncTimer).length > 0
+    const localHasTimer = isPlainObject(localTimer) && Object.keys(localTimer).length > 0
     const syncHasSites = isPlainObject(syncSites) && Object.keys(syncSites).length > 0
 
-    // Nothing to do if sync already has both datasets
-    if (syncHasTimer && syncHasSites) return
+    if (localHasTimer && syncHasSites) return
 
-    const [localTimer, localSites] = await Promise.all([
-        syncHasTimer ? Promise.resolve(null) : getFromLocal(DATA_KEY),
-        syncHasSites ? Promise.resolve(null) : getFromLocal(CONFIG_KEY),
-    ])
-
-    if (!syncHasTimer && isPlainObject(localTimer) && Object.keys(localTimer).length > 0) {
+    if (localHasTimer) {
         const normalized = normalizeTimerData(localTimer)
         if (Object.keys(normalized).length > 0) {
-            await save(DATA_KEY, normalized)
+            const existingTimer = await getData<unknown>(DATA_KEY)
+            const merged = isPlainObject(existingTimer) && Object.keys(existingTimer).length > 0
+                ? mergeTimerData(existingTimer, normalized)
+                : normalized
+            await save(DATA_KEY, merged)
         }
     }
 
-    if (!syncHasSites && isPlainObject(localSites) && Object.keys(localSites).length > 0) {
-        await save(CONFIG_KEY, localSites as SiteConfigMap)
+    if (!syncHasSites) {
+        const localSites = await getFromLocal(CONFIG_KEY)
+        if (isPlainObject(localSites) && Object.keys(localSites).length > 0) {
+            await save(CONFIG_KEY, localSites as SiteConfigMap)
+        }
     }
+}
+
+const mergeTimerData = (existing: unknown, incoming: Timer): Timer => {
+    const result: Timer = {}
+    if (isPlainObject(existing)) {
+        for (const [day, bucket] of Object.entries(existing)) {
+            if (isPlainObject(bucket)) {
+                result[day as DayOfTheWeek] = extractBucket(bucket)
+            }
+        }
+    }
+    for (const day of daysOfTheWeek) {
+        const incomingBucket = incoming[day]
+        if (incomingBucket) {
+            const existingBucket = result[day]
+            if (existingBucket) {
+                const mergedUsage = { ...existingBucket.usage, ...incomingBucket.usage }
+                result[day] = {
+                    usage: mergedUsage,
+                    date: incomingBucket.date || existingBucket.date
+                }
+            } else {
+                result[day] = incomingBucket
+            }
+        }
+    }
+    return result
 }

@@ -37,11 +37,12 @@ export const isTabAMatch = (tabUrl: string, configuration: SiteConfigMap): strin
   try {
     const tabHostname = new URL(tabUrl).hostname.replace('www.', '')
     const configMatchIndex = allSites.findIndex((each) => {
+      const normalizedUrl = normalizeUrl(each);
       try {
-        const configHostname = new URL(each.replace('*://', 'https://')).hostname.replace('www.', '')
+        const configHostname = new URL(normalizedUrl).hostname.replace('www.', '')
         return tabHostname === configHostname || tabHostname.endsWith('.' + configHostname)
       } catch {
-        return each.includes(tabHostname.split('.')[0] ?? '')
+        return normalizedUrl.includes(tabHostname.split('.')[0] ?? '')
       }
     })
     return Object.keys(configuration)[configMatchIndex!] ?? null
@@ -111,9 +112,14 @@ export const end = async (cacheStorage: any): Promise<void> => {
   }
 }
 
+const normalizeUrl = (url: string): string => {
+  return url.replace(/^\*:\/\/\*\./, 'https://')
+}
+
 export const getName = (url: string): string => {
   try {
-    const host = new URL(url).hostname
+    const normalised = normalizeUrl(url);
+    const host = new URL(normalised).hostname
     return host;
   } catch {
     return ''

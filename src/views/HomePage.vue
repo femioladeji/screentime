@@ -18,6 +18,15 @@ const allTimerData = ref<Timer>()
 const loaded = ref(false)
 const selectedDay = ref<DayOption>()
 
+const getUsageForDayOption = (timerData: Timer | undefined, option: DayOption): Record<string, number> => {
+  const bucket = timerData?.[option.value]
+  const selectedDate = utils.getCurrentDate(option.date)
+  if (!bucket || bucket.date !== selectedDate) {
+    return {}
+  }
+  return bucket.usage || {}
+}
+
 // Generate last 7 days options
 const dayOptions = computed((): DayOption[] => {
   const options: DayOption[] = []
@@ -55,7 +64,7 @@ const dayOptions = computed((): DayOption[] => {
 
 const updateDisplayedData = (option: DayOption) => {
   if (allTimerData.value && option) {
-    timerDataForCurrentDay.value = allTimerData.value[option.value]?.usage || {}
+    timerDataForCurrentDay.value = getUsageForDayOption(allTimerData.value, option)
   }
 }
 
@@ -65,7 +74,13 @@ onMounted(async (): Promise<void> => {
   const configData = await utils.getData<SiteConfigMap>(CONFIG_KEY)
 
   allTimerData.value = timerData
-  timerDataForCurrentDay.value = timerData?.[currentDayOfWeek!]?.usage || {}
+  if (currentDayOfWeek) {
+    timerDataForCurrentDay.value = getUsageForDayOption(timerData, {
+      label: '',
+      value: currentDayOfWeek,
+      date: new Date()
+    })
+  }
   sitesConfiguration.value = configData || {}
 
   // Set today as default

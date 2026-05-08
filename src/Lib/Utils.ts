@@ -195,8 +195,10 @@ export const isTimeExceeded = ({ data, configuration }: {
   configuration: SiteConfigMap;
   data: Timer;
 }, name: string) => {
-  const currentDayBucket = data[getDayOfTheWeek()];
-  if (!configuration[name]?.control || !currentDayBucket) {
+  const dayOfTheWeek = getDayOfTheWeek();
+  const today = getCurrentDate();
+  const currentDayBucket = data[dayOfTheWeek];
+  if (!configuration[name]?.control || !currentDayBucket || currentDayBucket.date !== today) {
     return false;
   }
   // If time limit is 0, treat as unlimited

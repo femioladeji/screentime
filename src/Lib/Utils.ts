@@ -1,6 +1,6 @@
 import { colors, daysOfTheWeek } from './Constants'
 import * as storage from './Storage'
-import { type DayOfTheWeek, type SiteConfig, type SiteConfigMap, type Timer } from './Types'
+import { type DayOfTheWeek, type SiteConfig, type SiteConfigMap, type Timer, type TimerBucket } from './Types'
 
 export const getData = <T>(key: string) => {
   return storage.getData<T>(key)
@@ -191,21 +191,32 @@ export const getSecondsToNextBlock = (config: SiteConfig): number | null => {
   return (leastStartDate.getTime() - new Date().getTime()) / 1000;
 }
 
+export const getTodaysBucket = (data: Timer, now: Date = new Date()): TimerBucket | null => {
+  const dayOfTheWeek = getDayOfTheWeek(now);
+  const today = getCurrentDate(now);
+  const bucket = data[dayOfTheWeek];
+  if (!bucket || bucket.date !== today) {
+    return null;
+  }
+  return bucket;
+}
+
 export const isTimeExceeded = ({ data, configuration }: {
   configuration: SiteConfigMap;
   data: Timer;
 }, name: string) => {
-  const dayOfTheWeek = getDayOfTheWeek();
-  const today = getCurrentDate();
-  const currentDayBucket = data[dayOfTheWeek];
-  if (!configuration[name]?.control || !currentDayBucket || currentDayBucket.date !== today) {
+  if (!configuration[name]?.control) {
+    return false;
+  }
+  const todaysBucket = getTodaysBucket(data);
+  if (!todaysBucket) {
     return false;
   }
   // If time limit is 0, treat as unlimited
   if (configuration[name].time === 0) {
     return false;
   }
-  if ((currentDayBucket.usage?.[name] || 0) >= configuration[name].time * 60) {
+  if ((todaysBucket.usage?.[name] || 0) >= configuration[name].time * 60) {
     const displayName = getConfiguredName(configuration, name)
     notify(`Time limit exceeded for ${displayName}`);
     return true;

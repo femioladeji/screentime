@@ -91,11 +91,11 @@ const safeCloseTab = async (tabId: number): Promise<TabCloseResult> => {
 const setDelayedAction = async (name: string, tabId: number): Promise<void> => {
     const { configuration } = cacheStorage;
     if (configuration[name] && configuration[name].control) {
-        const currentDayOfTheWeek = utils.getDayOfTheWeek();
         const { data } = cacheStorage;
+        const todaysBucket = utils.getTodaysBucket(data);
         let timeSpent = 0;
-        if (data?.[currentDayOfTheWeek]?.usage?.[name]) {
-            timeSpent = data[currentDayOfTheWeek].usage[name]!;
+        if (todaysBucket?.usage?.[name]) {
+            timeSpent = todaysBucket.usage[name]!;
         }
         const secondsToLimit = configuration[name].time * 60 - timeSpent;
         const secondsToNextBlock = utils.getSecondsToNextBlock(configuration[name]);
